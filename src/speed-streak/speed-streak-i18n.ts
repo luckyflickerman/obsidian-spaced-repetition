@@ -82,6 +82,8 @@ const EN = {
     VIBRATION: "Vibration (mobile)",
     TEST_SOUND: "Test",
     G_DISPLAY: "Display",
+    THEME: "Theme",
+    THEME_DESC: "Colors of the Speed Streak panel. Obsidian = follows your vault theme.",
     HUD_POSITION: "Panel position",
     HUD_TOP: "Above the card",
     HUD_BOTTOM: "Above the buttons",
@@ -200,6 +202,8 @@ const PL: Record<Keys, string> = {
     VIBRATION: "Wibracje (telefon)",
     TEST_SOUND: "Test",
     G_DISPLAY: "Wygląd",
+    THEME: "Motyw",
+    THEME_DESC: "Kolory panelu Speed Streak. Obsidian = jak motyw Twojego vaulta.",
     HUD_POSITION: "Pozycja panelu",
     HUD_TOP: "Nad kartą",
     HUD_BOTTOM: "Nad przyciskami",
@@ -235,7 +239,7 @@ const PL: Record<Keys, string> = {
     TOGGLED_OFF: "Speed Streak wyłączony",
 };
 
-function isPolish(): boolean {
+export function isPolish(): boolean {
     let locale = "";
     try {
         locale = LocaleManagerInstance.getInstance().currentLocale ?? "";

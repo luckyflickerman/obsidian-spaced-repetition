@@ -5,6 +5,11 @@
  * for the Obsidian Spaced Repetition plugin.
  */
 
+import {
+    DEFAULT_SPEED_STREAK_THEME_ID,
+    getSpeedStreakTheme,
+} from "src/speed-streak/speed-streak-themes";
+
 export type SpeedStreakGameplayMode = "time_boost" | "points";
 export type SpeedStreakRecordDisplay = "all_time" | "today" | "both" | "none";
 export type SpeedStreakHudPosition = "top" | "bottom";
@@ -41,6 +46,8 @@ export interface SpeedStreakSettings {
 
     // Display
     hudPosition: SpeedStreakHudPosition;
+    /** Theme id, see speed-streak-themes.ts */
+    theme: string;
     recordDisplay: SpeedStreakRecordDisplay;
     showRatingTrail: boolean;
     showSessionSummary: boolean;
@@ -77,6 +84,7 @@ export const DEFAULT_SPEED_STREAK_SETTINGS: SpeedStreakSettings = {
     vibrationEnabled: true,
 
     hudPosition: "top",
+    theme: DEFAULT_SPEED_STREAK_THEME_ID,
     recordDisplay: "both",
     showRatingTrail: true,
     showSessionSummary: true,
@@ -119,6 +127,7 @@ export function normalizeSpeedStreakSettings(
     if (!["all_time", "today", "both", "none"].includes(merged.recordDisplay))
         merged.recordDisplay = d.recordDisplay;
     if (merged.hudPosition !== "bottom") merged.hudPosition = "top";
+    merged.theme = getSpeedStreakTheme(merged.theme).id;
     merged.pauseHotkey = String(merged.pauseHotkey ?? "").slice(0, 1);
     merged.boostHotkey = String(merged.boostHotkey ?? "").slice(0, 1);
     merged.specialTimerRules = String(merged.specialTimerRules ?? "");

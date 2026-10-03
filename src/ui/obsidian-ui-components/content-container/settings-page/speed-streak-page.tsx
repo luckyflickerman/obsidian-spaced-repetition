@@ -9,7 +9,7 @@ import {
     saveSpeedStreakData,
     SpeedStreakController,
 } from "src/speed-streak/speed-streak-controller";
-import { ss } from "src/speed-streak/speed-streak-i18n";
+import { isPolish, ss } from "src/speed-streak/speed-streak-i18n";
 import {
     DEFAULT_SPEED_STREAK_SETTINGS,
     normalizeSpeedStreakSettings,
@@ -17,6 +17,12 @@ import {
     SpeedStreakSettings,
     topRuns,
 } from "src/speed-streak/speed-streak-settings";
+import {
+    applySpeedStreakTheme,
+    getSpeedStreakTheme,
+    SPEED_STREAK_THEMES,
+    themeDisplayName,
+} from "src/speed-streak/speed-streak-themes";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
 
@@ -225,6 +231,37 @@ export class SpeedStreakPage extends SettingsPage {
 
         // Display
         const display = new SettingGroup(this.containerEl).setHeading(ss("G_DISPLAY"));
+        display.addSetting((setting: Setting) => {
+            setting.setName(ss("THEME")).setDesc(ss("THEME_DESC"));
+            const preview = setting.descEl.createDiv({ cls: "sr-ss-theme-preview" });
+            const renderPreview = () => {
+                preview.empty();
+                applySpeedStreakTheme(preview, getSpeedStreakTheme(s().theme));
+                const panel = preview.createDiv({ cls: "sr-ss-swatch-panel" });
+                panel.createSpan({ text: "⚡ 12" });
+                for (const v of [
+                    "--ss-good",
+                    "--ss-hard",
+                    "--ss-again",
+                    "--ss-easy",
+                    "--ss-boost",
+                ]) {
+                    panel.createSpan({ cls: "sr-ss-swatch" }).style.background = `var(${v})`;
+                }
+            };
+            renderPreview();
+            setting.addDropdown((dropdown) => {
+                const polish = isPolish();
+                for (const theme of SPEED_STREAK_THEMES) {
+                    dropdown.addOption(theme.id, themeDisplayName(theme, polish));
+                }
+                dropdown.setValue(s().theme).onChange(async (value) => {
+                    s().theme = value;
+                    renderPreview();
+                    await this.save();
+                });
+            });
+        });
         display.addSetting((setting: Setting) =>
             setting.setName(ss("HUD_POSITION")).addDropdown((dropdown) =>
                 dropdown

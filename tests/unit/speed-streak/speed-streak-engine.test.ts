@@ -9,6 +9,14 @@ import {
     TimerPolicy,
     topRuns,
 } from "src/speed-streak/speed-streak-settings";
+import {
+    DEFAULT_SPEED_STREAK_THEME_ID,
+    getSpeedStreakTheme,
+    parseColor,
+    RGB,
+    SPEED_STREAK_THEMES,
+    timerColor,
+} from "src/speed-streak/speed-streak-themes";
 
 function setup(overrides: Partial<SpeedStreakSettings> = {}) {
     let now = 1_000_000;
@@ -297,5 +305,40 @@ describe("Speed Streak settings & records", () => {
         expect(bestRun(runs)?.activeMs).toBe(200);
         expect(bestRun(runs, (r) => r.day === "2026-10-03")?.activeMs).toBe(300);
         expect(topRuns(runs, 5).map((r) => r.streak)).toEqual([9, 9, 5]);
+    });
+});
+
+describe("Speed Streak themes", () => {
+    test("theme ids are unique and colors are valid", () => {
+        const ids = SPEED_STREAK_THEMES.map((t) => t.id);
+        expect(new Set(ids).size).toBe(ids.length);
+        expect(ids.includes(DEFAULT_SPEED_STREAK_THEME_ID)).toBe(true);
+        for (const theme of SPEED_STREAK_THEMES) {
+            for (const value of Object.values(theme.colors)) {
+                expect(
+                    parseColor(value as string) !== null || String(value).startsWith("var("),
+                ).toBe(true);
+            }
+        }
+    });
+
+    test("unknown theme falls back to the default", () => {
+        expect(normalizeSpeedStreakSettings({ theme: "nope" }).theme).toBe(
+            DEFAULT_SPEED_STREAK_THEME_ID,
+        );
+        expect(normalizeSpeedStreakSettings({ theme: "ocean" }).theme).toBe("ocean");
+        expect(getSpeedStreakTheme("forest").name.en).toBe("Forest");
+    });
+
+    test("timer color goes good → hard → again", () => {
+        const good: RGB = [0, 200, 0];
+        const hard: RGB = [200, 200, 0];
+        const again: RGB = [200, 0, 0];
+        expect(timerColor(1, good, hard, again)).toBe("rgb(0, 200, 0)");
+        expect(timerColor(0.5, good, hard, again)).toBe("rgb(200, 200, 0)");
+        expect(timerColor(0, good, hard, again)).toBe("rgb(200, 0, 0)");
+        expect(timerColor(0.75, good, hard, again)).toBe("rgb(100, 200, 0)");
+        expect(parseColor("#abc")).toEqual([170, 187, 204]);
+        expect(parseColor("rgb(1, 2, 3)")).toEqual([1, 2, 3]);
     });
 });

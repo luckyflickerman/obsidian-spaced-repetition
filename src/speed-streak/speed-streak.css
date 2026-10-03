@@ -1,9 +1,29 @@
 /* MARK: Speed Streak HUD */
 
+.sr-ss-hud,
+.sr-ss-theme-preview {
+    /* Theme tokens — defaults follow the Obsidian theme.
+       A Speed Streak theme overrides them inline (see speed-streak-themes.ts). */
+    --ss-bg: var(--background-secondary);
+    --ss-bg-end: var(--ss-bg);
+    --ss-border: var(--background-modifier-border);
+    --ss-text: var(--text-normal);
+    --ss-muted: var(--text-muted);
+    --ss-faint: var(--text-faint);
+    --ss-track: var(--background-modifier-border);
+    --ss-toast-bg: var(--background-primary);
+    --ss-again: var(--color-red);
+    --ss-hard: var(--color-orange);
+    --ss-good: var(--color-green);
+    --ss-easy: var(--color-blue);
+    --ss-boost: var(--color-purple);
+    --ss-gold: #e8b10e;
+    /* Set every frame by the controller (good → hard → again) */
+    --sr-ss-time-color: var(--ss-good);
+}
+
 .sr-ss-hud {
-    --sr-ss-time-hue: 120;
-    --sr-ss-time-color: hsl(var(--sr-ss-time-hue), 70%, 48%);
-    --sr-ss-gold: #e8b10e;
+    color: var(--ss-text);
 
     position: relative;
     display: grid;
@@ -13,8 +33,8 @@
     margin: var(--size-4-1) var(--size-4-2) var(--size-4-2);
     padding: var(--size-4-2) var(--size-4-3) calc(var(--size-4-2) + 3px);
     border-radius: var(--radius-l);
-    background: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
+    background: linear-gradient(135deg, var(--ss-bg), var(--ss-bg-end));
+    border: 1px solid var(--ss-border);
     user-select: none;
     overflow: hidden;
     flex-shrink: 0;
@@ -44,7 +64,7 @@
 
 .sr-ss-ring-track {
     fill: none;
-    stroke: var(--background-modifier-border);
+    stroke: var(--ss-track);
     stroke-width: 5;
 }
 
@@ -72,7 +92,7 @@
     font-size: 1.05em;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: var(--text-normal);
+    color: var(--ss-text);
 }
 
 .sr-ss-phase-label {
@@ -80,7 +100,7 @@
     font-size: 0.5em;
     text-transform: uppercase;
     letter-spacing: 0;
-    color: var(--text-muted);
+    color: var(--ss-muted);
     max-width: 46px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -108,7 +128,7 @@
 .sr-ss-streak-icon {
     align-self: center;
     display: flex;
-    color: var(--sr-ss-gold);
+    color: var(--ss-gold);
 }
 
 .sr-ss-streak-icon svg {
@@ -121,20 +141,20 @@
     font-size: 1.9em;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
-    color: var(--text-normal);
+    color: var(--ss-text);
     transition: color 200ms ease;
 }
 
 .sr-ss-streak-label {
     font-size: 0.75em;
-    color: var(--text-muted);
+    color: var(--ss-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .sr-ss-record {
     font-size: 0.75em;
-    color: var(--text-muted);
+    color: var(--ss-muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
@@ -156,16 +176,16 @@
 }
 
 .sr-ss-dot-again {
-    background: var(--color-red);
+    background: var(--ss-again);
 }
 .sr-ss-dot-hard {
-    background: var(--color-orange);
+    background: var(--ss-hard);
 }
 .sr-ss-dot-good {
-    background: var(--color-green);
+    background: var(--ss-good);
 }
 .sr-ss-dot-easy {
-    background: var(--color-blue);
+    background: var(--ss-easy);
 }
 
 /* Toast */
@@ -184,8 +204,8 @@
     transition:
         opacity 180ms ease,
         transform 180ms ease;
-    background: var(--background-primary);
-    border: 1px solid var(--background-modifier-border);
+    background: var(--ss-toast-bg);
+    border: 1px solid var(--ss-border);
     box-shadow: var(--shadow-s);
     z-index: 2;
 }
@@ -196,16 +216,16 @@
 }
 
 .sr-ss-toast-bad {
-    color: var(--color-red);
+    color: var(--ss-again);
 }
 .sr-ss-toast-warn {
-    color: var(--color-orange);
+    color: var(--ss-hard);
 }
 .sr-ss-toast-good {
-    color: var(--sr-ss-gold);
+    color: var(--ss-gold);
 }
 .sr-ss-toast-boost {
-    color: var(--color-purple);
+    color: var(--ss-boost);
 }
 
 /* Right: boost bank + pause */
@@ -231,15 +251,15 @@ button.sr-ss-boost-btn {
     min-height: 26px;
     font-size: 0.8em;
     font-weight: 700;
-    color: var(--color-purple);
-    background: color-mix(in srgb, var(--color-purple) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-purple) 40%, transparent);
+    color: var(--ss-boost);
+    background: color-mix(in srgb, var(--ss-boost) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ss-boost) 40%, transparent);
     box-shadow: none;
     cursor: pointer;
 }
 
 button.sr-ss-boost-btn:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--color-purple) 22%, transparent);
+    background: color-mix(in srgb, var(--ss-boost) 22%, transparent);
 }
 
 button.sr-ss-boost-btn:disabled {
@@ -266,26 +286,26 @@ button.sr-ss-boost-btn:disabled {
     height: 8px;
     border-radius: 2px;
     transform: rotate(45deg);
-    border: 1px solid color-mix(in srgb, var(--color-purple) 60%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ss-boost) 60%, transparent);
     background: transparent;
 }
 
 .sr-ss-pip.is-full {
-    background: var(--color-purple);
-    border-color: var(--color-purple);
+    background: var(--ss-boost);
+    border-color: var(--ss-boost);
 }
 
 .sr-ss-boost-progress {
     width: 100%;
     height: 2px;
     border-radius: 1px;
-    background: var(--background-modifier-border);
+    background: var(--ss-track);
     overflow: hidden;
 }
 
 .sr-ss-boost-progress-fill {
     height: 100%;
-    background: var(--color-purple);
+    background: var(--ss-boost);
     transform-origin: left center;
     transition: transform 300ms ease;
 }
@@ -316,16 +336,16 @@ button.sr-ss-pause-btn {
 /* States */
 .sr-ss-hud.is-untimed .sr-ss-ring-progress,
 .sr-ss-hud.is-untimed .sr-ss-bar-fill {
-    stroke: var(--text-faint);
-    background: var(--text-faint);
+    stroke: var(--ss-faint);
+    background: var(--ss-faint);
 }
 
 .sr-ss-hud.is-free .sr-ss-ring-progress {
-    stroke: var(--color-green);
+    stroke: var(--ss-good);
 }
 
 .sr-ss-hud.is-warning {
-    border-color: var(--color-red);
+    border-color: var(--ss-again);
 }
 
 .sr-ss-hud.is-warning .sr-ss-timer {
@@ -333,27 +353,27 @@ button.sr-ss-pause-btn {
 }
 
 .sr-ss-hud.is-timeout {
-    border-color: var(--color-red);
-    background: color-mix(in srgb, var(--color-red) 8%, var(--background-secondary));
+    border-color: var(--ss-again);
+    background: color-mix(in srgb, var(--ss-again) 10%, var(--ss-bg));
 }
 
 .sr-ss-hud.is-timeout .sr-ss-timer-text {
-    color: var(--color-red);
+    color: var(--ss-again);
 }
 
 .sr-ss-hud.is-paused .sr-ss-ring-progress,
 .sr-ss-hud.is-paused .sr-ss-bar-fill {
-    stroke: var(--text-muted);
-    background: var(--text-muted);
+    stroke: var(--ss-muted);
+    background: var(--ss-muted);
 }
 
 .sr-ss-hud.is-new-best {
-    border-color: var(--sr-ss-gold);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--sr-ss-gold) 40%, transparent);
+    border-color: var(--ss-gold);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ss-gold) 40%, transparent);
 }
 
 .sr-ss-hud.is-new-best .sr-ss-streak-num {
-    color: var(--sr-ss-gold);
+    color: var(--ss-gold);
 }
 
 /* One-shot animations */
@@ -423,21 +443,21 @@ button.sr-ss-pause-btn {
 @keyframes sr-ss-boost {
     0% {
         transform: scale(1);
-        filter: drop-shadow(0 0 0 var(--color-purple));
+        filter: drop-shadow(0 0 0 var(--ss-boost));
     }
     40% {
         transform: scale(1.15);
-        filter: drop-shadow(0 0 8px var(--color-purple));
+        filter: drop-shadow(0 0 8px var(--ss-boost));
     }
     100% {
         transform: scale(1);
-        filter: drop-shadow(0 0 0 var(--color-purple));
+        filter: drop-shadow(0 0 0 var(--ss-boost));
     }
 }
 
 @keyframes sr-ss-glow {
     0% {
-        box-shadow: 0 0 0 0 var(--sr-ss-gold);
+        box-shadow: 0 0 0 0 var(--ss-gold);
     }
     100% {
         box-shadow: 0 0 0 12px transparent;
@@ -536,4 +556,43 @@ button.sr-ss-pause-btn {
     .sr-ss-records {
         grid-template-columns: 1fr;
     }
+}
+
+/* Icon buttons follow the theme text color */
+.sr-ss-hud button.sr-ss-pause-btn {
+    color: var(--ss-muted);
+    --icon-color: var(--ss-muted);
+}
+
+.sr-ss-hud button.sr-ss-pause-btn:hover {
+    color: var(--ss-text);
+    --icon-color: var(--ss-text);
+    background: color-mix(in srgb, var(--ss-text) 10%, transparent);
+}
+
+/* Theme preview swatches (settings page) */
+.sr-ss-theme-preview {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    align-items: center;
+}
+
+.sr-ss-theme-preview .sr-ss-swatch-panel {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: var(--radius-m);
+    border: 1px solid var(--ss-border);
+    background: linear-gradient(135deg, var(--ss-bg), var(--ss-bg-end));
+    color: var(--ss-text);
+    font-weight: 700;
+    font-size: 0.9em;
+}
+
+.sr-ss-theme-preview .sr-ss-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }

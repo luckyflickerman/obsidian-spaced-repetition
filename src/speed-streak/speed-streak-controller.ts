@@ -13,6 +13,13 @@ import {
 } from "src/speed-streak/speed-streak-engine";
 import { ss } from "src/speed-streak/speed-streak-i18n";
 import {
+    applySpeedStreakTheme,
+    getSpeedStreakTheme,
+    parseColor,
+    RGB,
+    timerColor,
+} from "src/speed-streak/speed-streak-themes";
+import {
     bestRun,
     localDayKey,
     MAX_STORED_RUNS,
@@ -111,6 +118,7 @@ export class SpeedStreakController {
     private barFill: HTMLElement;
     private pausedOverlay: HTMLElement;
     private toastTimer: number | null = null;
+    private themeRgb: { good: RGB; hard: RGB; again: RGB } | null = null;
     private lastRenderedTrail = "";
 
     constructor(
@@ -147,6 +155,7 @@ export class SpeedStreakController {
         this.engine.startSession(deckName);
         SpeedStreakController.active = this;
         this.placeHud();
+        this.themeRgb = null;
         this.hud.removeClass("sr-is-hidden");
         this.attachWindowListeners();
         this.startLoop();
@@ -247,6 +256,7 @@ export class SpeedStreakController {
         this.audio.enabled = this.settings.soundEnabled;
         this.audio.volume = this.settings.soundVolume / 100;
         this.hud?.toggleClass("sr-ss-reduced-motion", this.settings.reducedMotion);
+        this.applyTheme();
         if (this.engine.sessionActive) {
             if (!this.settings.enabled) {
                 this.endSession();
@@ -497,9 +507,41 @@ export class SpeedStreakController {
         this.hud.toggleClass("sr-ss-at-bottom", this.settings.hudPosition === "bottom");
     }
 
+    // MARK: Theme
+
+    private applyTheme() {
+        if (!this.hud) return;
+        applySpeedStreakTheme(this.hud, getSpeedStreakTheme(this.settings.theme));
+        this.themeRgb = null; // re-resolve colors lazily
+    }
+
+    /** Resolves a theme CSS variable (which may reference Obsidian variables) to RGB. */
+    private resolveVar(cssVar: string): RGB | null {
+        const probe = this.hud.createSpan();
+        probe.style.color = `var(${cssVar})`;
+        probe.style.display = "none";
+        const computed = getComputedStyle(probe).color;
+        probe.remove();
+        return parseColor(computed);
+    }
+
+    private timeColor(fraction: number, untimed: boolean): string {
+        if (untimed) return "var(--ss-faint)";
+        if (!this.themeRgb) {
+            const good = this.resolveVar("--ss-good");
+            const hard = this.resolveVar("--ss-hard");
+            const again = this.resolveVar("--ss-again");
+            if (!good || !hard || !again) return "var(--ss-good)";
+            this.themeRgb = { good, hard, again };
+        }
+        const { good, hard, again } = this.themeRgb;
+        return timerColor(fraction, good, hard, again);
+    }
+
     private buildHud() {
         this.hud = this.hostEl.createDiv({ cls: "sr-ss-hud sr-is-hidden" });
         this.hud.toggleClass("sr-ss-reduced-motion", this.settings.reducedMotion);
+        this.applyTheme();
 
         // Timer ring
         this.timerEl = this.hud.createDiv({ cls: "sr-ss-timer" });
@@ -610,8 +652,7 @@ export class SpeedStreakController {
             String(RING_CIRCUMFERENCE * (1 - fraction)),
         );
         this.barFill.style.transform = `scaleX(${fraction})`;
-        const hue = Math.round(120 * fraction); // green → red
-        this.hud.style.setProperty("--sr-ss-time-hue", String(hue));
+        this.hud.style.setProperty("--sr-ss-time-color", this.timeColor(fraction, untimed));
 
         let label = "";
         if (e.paused) label = ss("PAUSED");

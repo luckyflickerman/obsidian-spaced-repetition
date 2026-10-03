@@ -22,6 +22,12 @@ Port dodatku Anki **Speed Streak** wbudowany w plugin *Spaced Repetition* (wersj
 - **Dźwięki** (syntezowane, domyślnie wyłączone), **wibracje** na telefonie, **podsumowanie sesji** po wyjściu.
 - **Tryb Punkty** (klasyczny): punkty × mnożnik serii.
 
+## Motywy
+Ustawienia → Speed Streak → Wygląd → **Motyw**. Do wyboru: Obsidian (jak motyw vaulta), Klasyczny, Jak karta, Grafit, Północ, Las, Żar, Fiolet, Ocean (8 ostatnich przeniesione z dodatku do Anki).
+Timer przechodzi płynnie przez kolory motywu: dobre → trudne → ponownie.
+
+**Nowy motyw**: dopisz jeden obiekt do listy `SPEED_STREAK_THEMES` w `src/speed-streak/speed-streak-themes.ts` (instrukcja na górze pliku). Wystarczy podać tylko kolory, które chcesz zmienić — reszta bierze się z motywu Obsidiana.
+
 ## Specjalne reguły timera
 Jedna reguła na linię, dopasowanie do tagu notatki lub ścieżki talii:
 ```
