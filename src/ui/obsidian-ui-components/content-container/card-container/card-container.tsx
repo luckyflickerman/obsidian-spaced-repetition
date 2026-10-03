@@ -9,6 +9,7 @@ import type SRPlugin from "src/main";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
+import { SpeedStreakController } from "src/speed-streak/speed-streak-controller";
 import ContextSectionComponent from "src/ui/obsidian-ui-components/content-container/card-container/context-section/context-section";
 import ResponseSectionComponent from "src/ui/obsidian-ui-components/content-container/card-container/response-section/response-section";
 import CardToolbarComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/toolbar";
@@ -39,6 +40,9 @@ export class CardContainer {
 
     private response: ResponseSectionComponent;
 
+    /** Speed Streak timer/streak game. */
+    public speedStreak: SpeedStreakController;
+
     private clozeInputs: NodeListOf<HTMLInputElement> | null = null;
     private clozeAnswers: NodeListOf<Element> | null = null;
 
@@ -66,8 +70,15 @@ export class CardContainer {
         this.app = app;
         this.plugin = plugin;
         this.cardState = CardState.Closed;
-        this.processReviewHandler = processReviewHandler;
-        this.skipCardHandler = skipCardHandler;
+        // Speed Streak hooks: notify the game before the review continues
+        this.processReviewHandler = async (response: ReviewResponse) => {
+            if (this.cardState === CardState.Back) this.speedStreak?.onRate(response);
+            await processReviewHandler(response);
+        };
+        this.skipCardHandler = () => {
+            if (this.cardState !== CardState.Closed) this.speedStreak?.onSkip();
+            skipCardHandler();
+        };
         this.showAnswerHandler = showAnswerHandler;
         this.jumpToCardHandler = jumpToCurrentCardHandler;
 
@@ -112,6 +123,13 @@ export class CardContainer {
             this.showAnswerHandler,
             this.processReviewHandler,
         );
+
+        this.speedStreak = new SpeedStreakController(
+            plugin,
+            this.view,
+            this.scrollWrapper,
+            this.response.responseEl,
+        );
     }
 
     // #region -> public methods
@@ -125,6 +143,7 @@ export class CardContainer {
             return;
         }
 
+        this.speedStreak.startSession(sessionData.deckData.chosenDeck?.deckName ?? "");
         await this.drawCardFront(sessionData, settings);
 
         this.view.removeClass("sr-is-hidden");
@@ -145,6 +164,7 @@ export class CardContainer {
             this.pendingResumeTimeout = null;
         }
         this.cardState = CardState.Closed;
+        this.speedStreak.endSession();
         activeDocument.removeEventListener("keydown", this._keydownHandler);
         this.view.addClass("sr-is-hidden");
     }
@@ -178,6 +198,9 @@ export class CardContainer {
         // Setup cloze input listeners
         this._setupClozeInputListeners();
 
+        // Start the Speed Streak question timer
+        this.speedStreak.onQuestionShown(this._speedStreakCardContext(sessionData));
+
         // auto-focus the first cloze input if this card is a cloze card
         if (sessionData.currentQuestion.questionType === CardType.Cloze) {
             const firstInput: HTMLInputElement | null =
@@ -186,6 +209,31 @@ export class CardContainer {
                 firstInput.focus();
             }
         }
+    }
+
+    private _speedStreakCardContext(sessionData: SessionData): {
+        tags: string[];
+        deckPath: string;
+    } {
+        const tags: string[] = [];
+        try {
+            tags.push(...(sessionData.currentNote?.file?.getAllTagsFromCache() ?? []));
+        } catch {
+            /* metadata cache not ready */
+        }
+        try {
+            const list = sessionData.currentQuestion?.topicPathList?.list ?? [];
+            for (const topicPath of list) tags.push(topicPath.formatAsTag());
+        } catch {
+            /* no topic paths */
+        }
+        let deckPath = "";
+        try {
+            deckPath = sessionData.deckData.currentDeck?.getTopicPath()?.formatAsTag() ?? "";
+        } catch {
+            deckPath = "";
+        }
+        return { tags, deckPath };
     }
 
     private drawCardContext(sessionData: SessionData, settings: SRSettings) {
@@ -373,6 +421,9 @@ export class CardContainer {
         // Evaluate cloze answers
         this._evaluateClozeAnswers();
 
+        // Switch Speed Streak to the answer timer
+        this.speedStreak.onAnswerShown();
+
         // Show response buttons
         this.response.showRatingButtons(
             reviewMode,
@@ -410,6 +461,12 @@ export class CardContainer {
             e.preventDefault();
             e.stopPropagation();
         };
+
+        // Speed Streak shortcuts (pause / boost)
+        if (this.speedStreak.handleKey(e)) {
+            consumeKeyEvent();
+            return;
+        }
 
         switch (e.code) {
             case "KeyS":

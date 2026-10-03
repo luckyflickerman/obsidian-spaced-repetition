@@ -47,6 +47,12 @@ export default {
         // don't include in results
         "src/declarations.d.ts",
         "src/lang/",
+
+        // Speed Streak UI / audio glue
+        "src/speed-streak/speed-streak-controller.ts",
+        "src/speed-streak/speed-streak-audio.ts",
+        "src/speed-streak/speed-streak-i18n.ts",
+        "src/speed-streak/speed-streak.css",
     ],
     coverageDirectory: "coverage",
     collectCoverage: true,

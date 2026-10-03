@@ -1,10 +1,15 @@
-import { Platform, TFile } from "obsidian";
+import { Notice, Platform, TFile } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
+import {
+    getSpeedStreakSettings,
+    SpeedStreakController,
+} from "src/speed-streak/speed-streak-controller";
+import { ss } from "src/speed-streak/speed-streak-i18n";
 import { UIManager, UIState } from "src/ui/ui-manager";
 import EmulatedPlatform from "src/utils/platform-detector";
 
@@ -299,6 +304,39 @@ export class CommandManager {
      * add all the plugin commands
      */
     private addPluginCommands() {
+        // Speed Streak
+        this.plugin.addCommand({
+            id: "srs-speed-streak-boost",
+            name: ss("CMD_BOOST"),
+            checkCallback: (checking: boolean) => {
+                const controller = SpeedStreakController.active;
+                if (!controller || !controller.engine.sessionActive) return false;
+                if (!checking) controller.useBoost();
+                return true;
+            },
+        });
+        this.plugin.addCommand({
+            id: "srs-speed-streak-pause",
+            name: ss("CMD_PAUSE"),
+            checkCallback: (checking: boolean) => {
+                const controller = SpeedStreakController.active;
+                if (!controller || !controller.engine.sessionActive) return false;
+                if (!checking) controller.togglePause();
+                return true;
+            },
+        });
+        this.plugin.addCommand({
+            id: "srs-speed-streak-toggle",
+            name: ss("CMD_TOGGLE"),
+            callback: async () => {
+                const settings = getSpeedStreakSettings(this.plugin);
+                settings.enabled = !settings.enabled;
+                await this.settingsManager.save();
+                SpeedStreakController.active?.refreshSettings();
+                new Notice(settings.enabled ? ss("TOGGLED_ON") : ss("TOGGLED_OFF"));
+            },
+        });
+
         this.plugin.addCommand({
             id: "srs-note-review-open-note",
             name: t("OPEN_NOTE_FOR_REVIEW"),

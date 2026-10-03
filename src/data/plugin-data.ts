@@ -2,6 +2,10 @@ import { DEFAULT_SETTINGS, SRSettings } from "src/data/settings";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
 import { ISerializedFSRSScheduleData } from "src/scheduling/algorithms/fsrs/serialized-schedule-data";
 import { ISerializedSM2ScheduleData } from "src/scheduling/algorithms/osr/serialized-schedule-data";
+import {
+    createDefaultSpeedStreakData,
+    SpeedStreakData,
+} from "src/speed-streak/speed-streak-settings";
 
 export interface ISerializedScheduleEntry {
     algorithm: SRAlgorithmType;
@@ -28,6 +32,7 @@ export interface PluginData {
     buryList: string[];
     historyDeck: string | null;
     scheduleData: ISerializedScheduleData;
+    speedStreak: SpeedStreakData;
 }
 
 export const DEFAULT_DATA: PluginData = {
@@ -40,4 +45,5 @@ export const DEFAULT_DATA: PluginData = {
         noteSchedules: {},
         cardSchedules: {},
     },
+    speedStreak: createDefaultSpeedStreakData(),
 };

@@ -1,6 +1,10 @@
 import { StorageType } from "src/data/data-store/base/data-store";
 import { t } from "src/lang/helpers";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
+import {
+    DEFAULT_SPEED_STREAK_SETTINGS,
+    SpeedStreakSettings,
+} from "src/speed-streak/speed-streak-settings";
 import { pathMatchesPattern } from "src/utils/fs";
 
 export interface SRSettings {
@@ -93,6 +97,9 @@ export interface SRSettings {
 
     preferredDateFormatForNoteReviewQueue: string;
     preferredLocale: string;
+
+    // Speed Streak (timer + streak game during review)
+    speedStreak: SpeedStreakSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -182,6 +189,8 @@ export const DEFAULT_SETTINGS: SRSettings = {
     showParserDebugMessages: false,
     preferredDateFormatForNoteReviewQueue: "MMM DD YYYY",
     preferredLocale: "-",
+
+    speedStreak: { ...DEFAULT_SPEED_STREAK_SETTINGS },
 };
 
 export function upgradeSettings(settings: SRSettings) {

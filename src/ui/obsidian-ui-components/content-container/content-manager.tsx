@@ -381,6 +381,7 @@ export default class ContentManager {
         const textPrompt = currentQ.questionText.actualQuestion;
         const currentUIState = this.uiManager.uiState;
         this.uiManager.setUIState(UIState.EditModal);
+        this.cardContainer.speedStreak.beginInterruption();
         const editModal = FlashcardEditModal.Prompt(
             this.app,
             this.settings,
@@ -409,13 +410,15 @@ export default class ContentManager {
                     }
                 }
             })
-            .catch((reason) => console.log(reason));
+            .catch((reason) => console.log(reason))
+            .finally(() => this.cardContainer.speedStreak.endInterruption());
     }
 
     public async _jumpToCurrentCard(): Promise<void> {
         if (this.reviewSequencer === null) return;
         const currentQuestion = this.reviewSequencer.currentQuestion;
         if (!currentQuestion) return;
+        this.cardContainer.speedStreak.pauseForDeparture();
 
         if (
             (!this.settings.openViewInNewTab &&
