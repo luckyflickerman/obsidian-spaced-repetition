@@ -1,6 +1,7 @@
 import { SpeedStreakEngine, SpeedStreakEvent } from "src/speed-streak/speed-streak-engine";
 import {
     bestRun,
+    boostsActive,
     DEFAULT_SPEED_STREAK_SETTINGS,
     normalizeSpeedStreakSettings,
     parseTimerRules,
@@ -89,6 +90,36 @@ describe("SpeedStreakEngine", () => {
         card(1000, 9000); // answer limit is 8 s
         expect(events.some((e) => e.type === "answer-timeout")).toBe(true);
         expect(engine.streak).toBe(2);
+    });
+
+    test("Boosts switched off: none earned, none usable, streak unaffected", () => {
+        const { engine, card, events, policy, advance } = setup({
+            boostsEnabled: false,
+            cardsPerBoostCharge: 2,
+        });
+        const startCharges = engine.boostCharges;
+        for (let i = 0; i < 6; i++) card(1000, 1000);
+        expect(engine.streak).toBe(6);
+        expect(engine.boostProgress).toBe(0);
+        expect(engine.boostCharges).toBe(startCharges);
+        expect(events.some((e) => e.type === "boost-earned")).toBe(false);
+
+        engine.onQuestionShown(policy);
+        advance(500);
+        expect(engine.boostUnavailableReason()).toBe("off");
+        expect(engine.useBoost()).toBe(false);
+        expect(events[events.length - 1]).toEqual({ type: "boost-blocked", text: "off" });
+    });
+
+    test("boostsActive: only in Time Boost mode with Boosts on", () => {
+        const s = normalizeSpeedStreakSettings({});
+        expect(s.boostsEnabled).toBe(true);
+        expect(boostsActive(s)).toBe(true);
+        expect(boostsActive({ ...s, boostsEnabled: false })).toBe(false);
+        expect(boostsActive({ ...s, gameplayMode: "points" })).toBe(false);
+        expect(normalizeSpeedStreakSettings({ boostsEnabled: "no" as never }).boostsEnabled).toBe(
+            true,
+        );
     });
 
     test("auto pause (reading aloud) freezes the answer timer and keeps the run Pure", () => {

@@ -48,6 +48,8 @@ export interface SpeedStreakSettings {
     specialTimerRules: string;
 
     // Time Boost
+    /** Boosts can be switched off entirely (Time Boost mode only) */
+    boostsEnabled: boolean;
     boostSeconds: number;
     maxBoostCharges: number;
     startingBoostCharges: number;
@@ -104,6 +106,7 @@ export const DEFAULT_SPEED_STREAK_SETTINGS: SpeedStreakSettings = {
     againBreaksStreak: false,
     specialTimerRules: "",
 
+    boostsEnabled: true,
     boostSeconds: 10,
     maxBoostCharges: 5,
     startingBoostCharges: 3,
@@ -196,6 +199,7 @@ export function normalizeSpeedStreakSettings(
     merged.recordsList = oneOf(merged.recordsList, ["ranking", "recent"] as const, "ranking");
     merged.recordsFilter = oneOf(merged.recordsFilter, ["all", "pure"] as const, "all");
     merged.celebrateNewBest = bool(merged.celebrateNewBest, true);
+    merged.boostsEnabled = bool(merged.boostsEnabled, true);
     merged.sidePanelCollapsed = bool(merged.sidePanelCollapsed, false);
     merged.pauseHotkey = String(merged.pauseHotkey ?? "").slice(0, 1);
     merged.boostHotkey = String(merged.boostHotkey ?? "").slice(0, 1);
@@ -392,6 +396,11 @@ export function resolveTimerPolicy(
         answerMs: apply(rule.answer, baseA),
         source: rule.matcher,
     };
+}
+
+/** Are Boosts in play (Time Boost mode and not switched off)? */
+export function boostsActive(settings: SpeedStreakSettings): boolean {
+    return settings.gameplayMode === "time_boost" && settings.boostsEnabled;
 }
 
 // MARK: Layout & performance

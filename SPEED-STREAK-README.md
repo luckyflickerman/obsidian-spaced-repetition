@@ -16,7 +16,7 @@ Port dodatku Anki **Speed Streak** wbudowany w plugin _Spaced Repetition_ (wersj
 - **Dwa timery**: czas na pytanie (domyślnie 12 s) i na odpowiedź (8 s). Pierścień i pasek zmieniają kolor z zielonego na czerwony.
 - **Seria**: każda karta skończona w czasie zwiększa serię (każda ocena się liczy, także „Ponownie”, jak w oryginale; można to zmienić).
   Przekroczenie czasu = seria stracona, karta zostaje i oceniasz ją uczciwie.
-- **Time Boost**: za co 10 kart dostajesz Boost (bank max 5, start 3). Boost dodaje +10 s do bieżącego timera. Klawisz **C**.
+- **Time Boost**: za co 10 kart dostajesz Boost (bank max 5, start 3). Boost dodaje +10 s do bieżącego timera. Klawisz **C**. Boosty można wyłączyć (Ustawienia → Speed Streak → Time Boost → **Boosty**). Wtedy liczy się tylko timer.
 - **Pauza**: klawisz **P**, przycisk lub kliknięcie w pierścień. Karta jest wtedy zasłonięta. Automatyczna pauza, gdy wychodzisz z Obsidiana, edytujesz kartę lub skaczesz do notatki.
 - **Pierwsza karta gratis**: rozgrzewka bez limitu po wejściu w powtórkę.
 - **Rekordy**: wszech czasów i dzisiejszy, „Czyste” serie (bez pauz i Boostów), top 5 (więcej niżej).

@@ -245,6 +245,7 @@ export class SpeedStreakPage extends SettingsPage {
 
         // Time Boost
         const boost = new SettingGroup(this.containerEl).setHeading(ss("G_BOOST"));
+        this.addToggle(boost, "boostsEnabled", ss("BOOSTS_ENABLED"), ss("BOOSTS_ENABLED_DESC"));
         this.addNumber(boost, "boostSeconds", ss("BOOST_SECONDS"), undefined, 0.5);
         this.addNumber(boost, "maxBoostCharges", ss("MAX_BOOSTS"));
         this.addNumber(boost, "startingBoostCharges", ss("START_BOOSTS"));

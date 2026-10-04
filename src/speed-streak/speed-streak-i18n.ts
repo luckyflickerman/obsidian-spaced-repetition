@@ -27,6 +27,10 @@ const EN = {
     BOOST_BLOCKED_UNTIMED: "This card is untimed",
     BOOST_BLOCKED_EXPIRED: "Timer already expired",
     BOOST_BLOCKED_MODE: "Time Boost mode is off",
+    BOOST_BLOCKED_OFF: "Boosts are switched off",
+    BOOSTS_ENABLED: "Boosts",
+    BOOSTS_ENABLED_DESC:
+        "Earn Boosts and spend them on extra time. Off: no Boosts, the timer is all you have (Time Boost mode only).",
     BOOST_BLOCKED_NO_CARD: "Wait for the next card",
     PAUSE_BLOCKED: "No Pause mode is on",
     CLICK_TO_RESUME: "Click to resume",
@@ -220,6 +224,10 @@ const PL: Record<Keys, string> = {
     BOOST_BLOCKED_UNTIMED: "Ta karta nie ma limitu",
     BOOST_BLOCKED_EXPIRED: "Czas już minął",
     BOOST_BLOCKED_MODE: "Tryb Time Boost jest wyłączony",
+    BOOST_BLOCKED_OFF: "Boosty są wyłączone",
+    BOOSTS_ENABLED: "Boosty",
+    BOOSTS_ENABLED_DESC:
+        "Zdobywaj Boosty i wydawaj je na dodatkowy czas. Wyłączone: bez Boostów, liczy się tylko timer (dotyczy trybu Time Boost).",
     BOOST_BLOCKED_NO_CARD: "Poczekaj na następną kartę",
     PAUSE_BLOCKED: "Tryb bez pauz jest włączony",
     CLICK_TO_RESUME: "Kliknij, aby wznowić",

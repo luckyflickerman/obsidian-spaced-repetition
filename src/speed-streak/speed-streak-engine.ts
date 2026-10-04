@@ -13,6 +13,7 @@
  */
 
 import {
+    boostsActive,
     localDayKey,
     SpeedStreakRunRecord,
     SpeedStreakSettings,
@@ -244,7 +245,7 @@ export class SpeedStreakEngine {
         this.summary.ratings[rating]++;
 
         // Boost progress: every completed card counts (same as original)
-        if (this.settings.gameplayMode === "time_boost") this.advanceBoostProgress();
+        if (boostsActive(this.settings)) this.advanceBoostProgress();
 
         if (rating === "again" && this.settings.againBreaksStreak) {
             this.ratingTrail = [];
@@ -413,6 +414,7 @@ export class SpeedStreakEngine {
 
     boostUnavailableReason(): string {
         if (this.settings.gameplayMode !== "time_boost") return "mode";
+        if (!this.settings.boostsEnabled) return "off";
         if (!this.sessionActive || this.phase === "idle") return "no-card";
         if (this.paused) return "paused";
         if (this.phaseLimitMs === null) return "untimed";

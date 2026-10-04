@@ -29,6 +29,7 @@ import {
     runBadge,
 } from "src/speed-streak/speed-streak-records";
 import {
+    boostsActive,
     MAX_STORED_RUNS,
     normalizeSpeedStreakData,
     normalizeSpeedStreakSettings,
@@ -289,7 +290,11 @@ export class SpeedStreakController {
         if (e.ctrlKey || e.metaKey || e.altKey) return false;
         const key = (e.key ?? "").toLowerCase();
         if (!key) return false;
-        if (this.settings.boostHotkey && key === this.settings.boostHotkey.toLowerCase()) {
+        if (
+            boostsActive(this.settings) &&
+            this.settings.boostHotkey &&
+            key === this.settings.boostHotkey.toLowerCase()
+        ) {
             this.useBoost();
             return true;
         }
@@ -591,6 +596,8 @@ export class SpeedStreakController {
                 return ss("BOOST_BLOCKED_EXPIRED");
             case "mode":
                 return ss("BOOST_BLOCKED_MODE");
+            case "off":
+                return ss("BOOST_BLOCKED_OFF");
             default:
                 return ss("BOOST_BLOCKED_NO_CARD");
         }
@@ -730,7 +737,7 @@ export class SpeedStreakController {
 
         const newBest = e.streak > 0 && this.bestStreak > 0 && e.streak > this.bestStreak;
         const recordValue = Math.max(this.bestStreak, e.streak);
-        const boostMode = s.gameplayMode === "time_boost";
+        const boostMode = boostsActive(s);
         const full = e.boostCharges >= s.maxBoostCharges;
 
         const vm: HudViewModel = {

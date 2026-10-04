@@ -12,6 +12,7 @@ import {
     SpeedStreakController,
 } from "src/speed-streak/speed-streak-controller";
 import { ss } from "src/speed-streak/speed-streak-i18n";
+import { boostsActive } from "src/speed-streak/speed-streak-settings";
 import { TtsController } from "src/tts/tts-controller";
 import { tt } from "src/tts/tts-i18n";
 import { toggleUnderline } from "src/tts/tts-text";
@@ -373,6 +374,7 @@ export class CommandManager {
             checkCallback: (checking: boolean) => {
                 const controller = SpeedStreakController.active;
                 if (!controller || !controller.engine.sessionActive) return false;
+                if (!boostsActive(controller.engine.settings)) return false;
                 if (!checking) controller.useBoost();
                 return true;
             },
