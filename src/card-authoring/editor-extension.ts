@@ -1,6 +1,6 @@
 /**
  * Card authoring — CodeMirror 6 extension (Live Preview and source mode):
- * a 🃏 icon at the end of every card line, ⚠ plus a soft yellow underline for
+ * a preview icon at the end of every card line, a "!" icon plus a soft yellow underline for
  * unfinished cards, a tap on the icon opens the preview, and Tab in a card
  * template jumps from the word to the translation.
  *
@@ -37,6 +37,30 @@ const DEBOUNCE_MS = 300;
 /** How far to look for the blank line that starts / ends a block of cards */
 const MAX_EXPAND = 200;
 
+/**
+ * Line icons drawn in the text color: a rounded square with a side panel
+ * ("open the preview") or with an exclamation mark (unfinished card).
+ */
+function iconSvg(kind: "card" | "warn"): SVGSVGElement {
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = activeDocument.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    const add = (tag: string, attrs: Record<string, string>) => {
+        const el = activeDocument.createElementNS(NS, tag);
+        for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+        svg.appendChild(el);
+    };
+    add("rect", { x: "3", y: "3", width: "18", height: "18", rx: "4" });
+    if (kind === "card") {
+        add("path", { d: "M15 3v18" });
+    } else {
+        add("path", { d: "M12 7.5v5.5" });
+        add("path", { d: "M12 16.5h.01" });
+    }
+    return svg;
+}
+
 class CardIconWidget extends WidgetType {
     constructor(
         private kind: "card" | "warn",
@@ -53,7 +77,7 @@ class CardIconWidget extends WidgetType {
     toDOM(view: EditorView): HTMLElement {
         const el = activeDocument.createElement("span");
         el.className = `sr-ca-icon sr-ca-icon-${this.kind}`;
-        el.textContent = this.kind === "card" ? "🃏" : "⚠";
+        el.appendChild(iconSvg(this.kind));
         el.setAttribute("role", "button");
         el.setAttribute("aria-label", this.host.iconLabel(this.kind));
         // keep the cursor where it is

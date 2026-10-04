@@ -5,7 +5,6 @@
  */
 
 import "src/card-authoring/daily-goal.css";
-import { setIcon } from "obsidian";
 
 import { ca } from "src/card-authoring/card-authoring-i18n";
 import { normalizeCardAuthoringSettings } from "src/card-authoring/card-authoring-settings";
@@ -55,8 +54,6 @@ export class DailyGoalView {
             );
 
             const head = this.rootEl.createDiv({ cls: "sr-goal-head" });
-            const icon = head.createSpan({ cls: "sr-goal-icon" });
-            setIcon(icon, goal.reached ? "circle-check" : "target");
             head.createSpan({ cls: "sr-goal-title", text: ca("GOAL_TITLE") });
             head.createSpan({ cls: "sr-goal-value", text: `${goal.done}/${goal.goal}` });
 

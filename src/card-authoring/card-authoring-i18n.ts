@@ -58,7 +58,8 @@ const EN = {
     BOTH_DESC:
         "New cards use the two-way separator (${sep}), so each word is also asked from Polish.",
     ICONS: "Show card icons in the editor",
-    ICONS_DESC: "🃏 next to every card (tap: preview with sound), ⚠ next to unfinished ones.",
+    ICONS_DESC:
+        "A preview icon next to every card (tap: preview with sound), an icon with “!” next to unfinished ones.",
     G_COUNTER: "Daily counter",
     GOAL: "Daily goal",
     GOAL_DESC: "How many new cards a day you aim for.",
@@ -137,7 +138,8 @@ const PL: Record<Keys, string> = {
     BOTH_DESC:
         "Nowe fiszki mają separator dwukierunkowy (${sep}), więc każde słowo jest też odpytywane z polskiego.",
     ICONS: "Pokazuj ikonki fiszek w edytorze",
-    ICONS_DESC: "🃏 przy każdej fiszce (dotknięcie: podgląd z odsłuchem), ⚠ przy niedokończonych.",
+    ICONS_DESC:
+        "Ikonka podglądu przy każdej fiszce (dotknięcie: podgląd z odsłuchem), ikonka z „!” przy niedokończonych.",
     G_COUNTER: "Licznik dzienny",
     GOAL: "Cel dzienny",
     GOAL_DESC: "Ile nowych fiszek dziennie chcesz robić.",

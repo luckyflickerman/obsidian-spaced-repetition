@@ -11,10 +11,21 @@
   line-height: 1.4;
   cursor: pointer;
   user-select: none;
+  color: var(--text-muted);
   opacity: 0.7;
-  vertical-align: baseline;
+  vertical-align: middle;
+}
+.sr-ca-icon svg {
+  width: 1.05em;
+  height: 1.05em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .sr-ca-icon:hover {
+  color: var(--text-normal);
   opacity: 1;
   background: var(--background-modifier-hover);
 }
@@ -27,7 +38,8 @@
   position: absolute;
   inset: -12px -10px;
 }
-.sr-ca-icon-warn {
+.sr-ca-icon-warn,
+.sr-ca-icon-warn:hover {
   color: var(--color-yellow);
   opacity: 1;
 }
@@ -182,14 +194,6 @@ button.sr-ca-notice-btn {
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
-}
-.sr-goal-icon {
-  display: inline-flex;
-  color: var(--sr-goal-color);
-}
-.sr-goal-icon svg {
-  width: 18px;
-  height: 18px;
 }
 .sr-goal-title {
   flex: 1 1 auto;

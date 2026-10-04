@@ -256,7 +256,7 @@ Ustawienia → Spaced Repetition → **Tworzenie fiszek** → **Talie fiszek**. 
 
 ### Podgląd
 
-Przy każdej fiszce w edytorze jest ikonka 🃏, a przy niedokończonej ⚠ i żółte podkreślenie. Dotknij ikonki, żeby zobaczyć:
+Przy każdej fiszce w edytorze jest ikonka podglądu (zaokrąglony kwadrat z panelem), a przy niedokończonej żółta ikonka z wykrzyknikiem i żółte podkreślenie. Dotknij ikonki, żeby zobaczyć:
 
 - fiszkę wyglądającą tak jak w powtórce,
 - przycisk 🔊,

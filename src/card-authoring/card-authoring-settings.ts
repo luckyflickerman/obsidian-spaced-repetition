@@ -22,7 +22,7 @@ export interface CardAuthoringSettings {
     lastDeckTag: string;
     /** Also review Polish → foreign right away (`:::` / `??` separators) */
     bothDirections: boolean;
-    /** 🃏 / ⚠ icons next to cards in the editor */
+    /** Preview / unfinished icons next to cards in the editor */
     editorIcons: boolean;
     /** New cards to create per day */
     dailyGoal: number;
