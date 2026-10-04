@@ -65,6 +65,13 @@ const EN = {
     SHOW_COUNTER: "Show “New today”",
     SHOW_COUNTER_DESC:
         "In the status bar (computer) or in the preview and after “Finish card” (phone).",
+    GOAL_IN_DECKS: "Show the goal in the deck list",
+    GOAL_IN_DECKS_DESC:
+        "Its own block above the review calendar (also when the calendar is expanded or switched off).",
+    GOAL_TITLE: "New cards today",
+    GOAL_ARIA: "${done} of ${goal} new cards created today",
+    GOAL_LEFT: "${n} more to go",
+    GOAL_REACHED: "Goal reached!",
     G_IMAGES: "Images",
     RENAME_PASTED: "Name pasted images after the word",
     RENAME_PASTED_DESC:
@@ -137,6 +144,13 @@ const PL: Record<Keys, string> = {
     SHOW_COUNTER: "Pokazuj „Nowe dziś”",
     SHOW_COUNTER_DESC:
         "Na pasku stanu (komputer) albo w podglądzie i po „Zakończ fiszkę” (telefon).",
+    GOAL_IN_DECKS: "Pokazuj cel na liście talii",
+    GOAL_IN_DECKS_DESC:
+        "Osobny blok nad kalendarzem powtórek (także gdy kalendarz jest rozwinięty albo wyłączony).",
+    GOAL_TITLE: "Nowe fiszki dziś",
+    GOAL_ARIA: "Dziś stworzono ${done} z ${goal} nowych fiszek",
+    GOAL_LEFT: "Jeszcze ${n}",
+    GOAL_REACHED: "Cel osiągnięty!",
     G_IMAGES: "Obrazki",
     RENAME_PASTED: "Nazywaj wklejone obrazki od słowa",
     RENAME_PASTED_DESC:

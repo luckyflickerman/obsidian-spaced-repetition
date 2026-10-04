@@ -19,10 +19,11 @@ import {
     counterText,
     countToday,
     createCardHistory,
+    createdPerDay,
+    goalProgress,
     normalizeCardHistory,
     observeCards,
     OLD,
-    trimHistory,
 } from "src/card-authoring/daily-counter";
 import { DEFAULT_SETTINGS } from "src/data/settings";
 
@@ -162,16 +163,57 @@ describe("daily counter", () => {
         expect(countToday(h, at(23), "04:00:00")).toBe(1);
     });
 
-    test("old history days collapse to 'old' but stay known", () => {
+    test("stored history is repaired; days are kept for the calendar", () => {
         const h = normalizeCardHistory({
             initialized: true,
+            since: "bad",
             seen: { a: "2026-06-01", b: "2026-10-01", c: OLD, bad: "yesterday" },
         });
         expect(h.seen).toEqual({ a: "2026-06-01", b: "2026-10-01", c: OLD });
-        trimHistory(h, at(12), "00:00:00", 90);
-        expect(h.seen).toEqual({ a: OLD, b: "2026-10-01", c: OLD });
+        expect(h.since).toBeUndefined();
         expect(observeCards(h, ["a"], at(12), "00:00:00")).toBe(0);
+        // a history from before `since`: counting started with the first counted card
+        expect(h.since).toBe("2026-06-01");
         expect(normalizeCardHistory(null)).toEqual(createCardHistory());
+    });
+
+    test("cards created per day for the calendar (null = before counting started)", () => {
+        const h = createCardHistory();
+        expect(createdPerDay(h)("2026-10-04")).toBeNull();
+        observeCards(h, ["old1", "old2"], at(9, 0, 2), "00:00:00");
+        expect(h.since).toBe("2026-10-02");
+        observeCards(h, ["a"], at(10, 0, 3), "00:00:00");
+        observeCards(h, ["b", "c"], at(10, 0, 4), "00:00:00");
+        const created = createdPerDay(h);
+        expect(created("2026-10-01")).toBeNull();
+        expect(created("2026-10-02")).toBe(0);
+        expect(created("2026-10-03")).toBe(1);
+        expect(created("2026-10-04")).toBe(2);
+        expect(created("2026-10-05")).toBe(0);
+    });
+
+    test("goal progress", () => {
+        expect(goalProgress(4, 10)).toEqual({
+            done: 4,
+            goal: 10,
+            left: 6,
+            fraction: 0.4,
+            reached: false,
+        });
+        expect(goalProgress(12, 10)).toEqual({
+            done: 12,
+            goal: 10,
+            left: 0,
+            fraction: 1,
+            reached: true,
+        });
+        expect(goalProgress(-1, 0)).toEqual({
+            done: 0,
+            goal: 1,
+            left: 1,
+            fraction: 0,
+            reached: false,
+        });
     });
 });
 

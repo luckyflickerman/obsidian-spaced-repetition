@@ -70,7 +70,7 @@ export function getPageName(pageType: SettingsPageType): string {
         case "heatmap-page":
             return hm("PAGE_NAME");
         case "daily-goal-page":
-            return hm("GOAL_LABEL");
+            return ca("GOAL");
         case "card-authoring-page":
             return ca("PAGE_NAME");
         case "notes-page":

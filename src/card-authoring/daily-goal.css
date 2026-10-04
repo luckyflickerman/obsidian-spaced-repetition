@@ -1,0 +1,70 @@
+/* Daily goal of new cards — its own block above the review calendar */
+
+.sr-goal {
+    --sr-goal-color: var(--interactive-accent);
+    max-width: 900px;
+    margin: var(--size-4-4) auto 0;
+    padding: var(--size-4-2) var(--size-4-3);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-m);
+    font-size: var(--font-ui-small);
+}
+
+.sr-goal.is-reached {
+    --sr-goal-color: var(--color-green);
+}
+
+.sr-goal-head {
+    display: flex;
+    align-items: center;
+    gap: var(--size-4-2);
+}
+
+.sr-goal-icon {
+    display: inline-flex;
+    color: var(--sr-goal-color);
+}
+
+.sr-goal-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.sr-goal-title {
+    flex: 1 1 auto;
+    color: var(--text-muted);
+}
+
+.sr-goal-value {
+    font-size: 1.15em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-normal);
+}
+
+.sr-goal.is-reached .sr-goal-value {
+    color: var(--sr-goal-color);
+}
+
+.sr-goal-bar {
+    height: 8px;
+    margin-top: var(--size-4-2);
+    border-radius: 4px;
+    background-color: var(--background-modifier-border);
+    overflow: hidden;
+}
+
+.sr-goal-fill {
+    width: var(--sr-goal-fill, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--sr-goal-color);
+    transition: width 400ms ease;
+}
+
+.sr-goal-note {
+    margin-top: var(--size-4-1);
+    font-size: var(--font-smallest);
+    color: var(--text-muted);
+    text-align: right;
+}

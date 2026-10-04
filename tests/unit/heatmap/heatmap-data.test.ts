@@ -7,13 +7,10 @@ import {
     dayKey,
     DEFAULT_HEATMAP_SETTINGS,
     estimateMinutesLeft,
-    goalProgress,
     heatmapLevel,
     HeatmapSettings,
     levelReference,
-    MAX_DAILY_GOAL,
     MAX_MS_PER_CARD,
-    normalizeDailyGoal,
     normalizeHeatmapSettings,
     normalizeReviewLog,
     parseDayKey,
@@ -346,56 +343,5 @@ describe("minimized calendar", () => {
         expect(todayProgress(12, 0)).toEqual({ left: 0, planned: 12, fraction: 1 });
         expect(todayProgress(0, 0)).toEqual({ left: 0, planned: 0, fraction: 1 });
         expect(todayProgress(-3, -1).left).toBe(0);
-    });
-});
-
-describe("daily goal", () => {
-    test("on by default with 50 cards, survives normalization", () => {
-        expect(DEFAULT_HEATMAP_SETTINGS.dailyGoalEnabled).toBe(true);
-        expect(DEFAULT_HEATMAP_SETTINGS.dailyGoal).toBe(50);
-        const s = normalizeHeatmapSettings({ dailyGoalEnabled: false, dailyGoal: 120 });
-        expect(s.dailyGoalEnabled).toBe(false);
-        expect(s.dailyGoal).toBe(120);
-    });
-
-    test("invalid stored goals fall back to the default", () => {
-        for (const bad of [0, -5, Number.NaN, "x", null]) {
-            expect(
-                normalizeHeatmapSettings({ dailyGoal: bad as unknown as number }).dailyGoal,
-            ).toBe(50);
-        }
-        expect(normalizeHeatmapSettings({ dailyGoal: 12.6 }).dailyGoal).toBe(13);
-        expect(normalizeHeatmapSettings({ dailyGoal: 50_000 }).dailyGoal).toBe(MAX_DAILY_GOAL);
-    });
-
-    test("normalizeDailyGoal reads typed text", () => {
-        expect(normalizeDailyGoal(" 75 ", 50)).toBe(75);
-        expect(normalizeDailyGoal("", -1)).toBe(-1);
-        expect(normalizeDailyGoal("abc", -1)).toBe(-1);
-        expect(normalizeDailyGoal("0", -1)).toBe(-1);
-    });
-
-    test("goalProgress", () => {
-        expect(goalProgress(32, 50)).toEqual({
-            done: 32,
-            goal: 50,
-            left: 18,
-            fraction: 0.64,
-            reached: false,
-        });
-        expect(goalProgress(205, 100)).toEqual({
-            done: 205,
-            goal: 100,
-            left: 0,
-            fraction: 1,
-            reached: true,
-        });
-        expect(goalProgress(-1, 0)).toEqual({
-            done: 0,
-            goal: 1,
-            left: 1,
-            fraction: 0,
-            reached: false,
-        });
     });
 });

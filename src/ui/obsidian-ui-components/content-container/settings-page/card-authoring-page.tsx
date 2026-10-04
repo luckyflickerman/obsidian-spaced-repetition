@@ -114,6 +114,7 @@ export class CardAuthoringPage extends SettingsPage {
         const counter = new SettingGroup(this.containerEl).setHeading(ca("G_COUNTER"));
         this.addNumber(counter, "dailyGoal", ca("GOAL"), ca("GOAL_DESC"));
         this.addToggle(counter, "showDailyCounter", ca("SHOW_COUNTER"), ca("SHOW_COUNTER_DESC"));
+        this.addToggle(counter, "goalInDeckList", ca("GOAL_IN_DECKS"), ca("GOAL_IN_DECKS_DESC"));
 
         // Images
         const images = new SettingGroup(this.containerEl).setHeading(ca("G_IMAGES"));

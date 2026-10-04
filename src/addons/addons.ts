@@ -11,6 +11,7 @@
  * 3. Create its page in `AddonsModal.createPage` (addons-modal.tsx).
  */
 
+import { normalizeCardAuthoringSettings } from "src/card-authoring/card-authoring-settings";
 import type { SRSettings } from "src/data/settings";
 import { normalizeHeatmapSettings } from "src/heatmap/heatmap-data";
 import { normalizeSpeedStreakSettings } from "src/speed-streak/speed-streak-settings";
@@ -44,9 +45,12 @@ export const ADDONS: AddonInfo[] = [
         id: "daily-goal",
         icon: "target",
         pageType: "daily-goal-page",
-        isEnabled: (s) => normalizeHeatmapSettings(s.heatmap).dailyGoalEnabled,
+        isEnabled: (s) => normalizeCardAuthoringSettings(s.cardAuthoring).goalInDeckList,
         setEnabled: (s, enabled) => {
-            s.heatmap = { ...normalizeHeatmapSettings(s.heatmap), dailyGoalEnabled: enabled };
+            s.cardAuthoring = {
+                ...normalizeCardAuthoringSettings(s.cardAuthoring),
+                goalInDeckList: enabled,
+            };
         },
     },
     {

@@ -42,10 +42,11 @@ describe("add-ons", () => {
 
         getAddon("heatmap").setEnabled(settings, false);
         expect(settings.heatmap.showInDeckList).toBe(false);
-        settings.heatmap.dailyGoal = 80;
+        getAddon("daily-goal").setEnabled(settings, true);
+        settings.cardAuthoring.dailyGoal = 25;
         getAddon("daily-goal").setEnabled(settings, false);
-        expect(settings.heatmap.dailyGoalEnabled).toBe(false);
-        expect(settings.heatmap.dailyGoal).toBe(80);
+        expect(settings.cardAuthoring.goalInDeckList).toBe(false);
+        expect(settings.cardAuthoring.dailyGoal).toBe(25);
         expect(settings.heatmap.showInDeckList).toBe(false);
         getAddon("speed-streak").setEnabled(settings, false);
         expect(settings.speedStreak.enabled).toBe(false);

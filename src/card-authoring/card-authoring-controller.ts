@@ -60,8 +60,8 @@ import {
     countToday,
     normalizeCardHistory,
     observeCards,
-    trimHistory,
 } from "src/card-authoring/daily-counter";
+import { refreshDailyGoalViews } from "src/card-authoring/daily-goal-view";
 import { cardEditorExtension, refreshCardIcons } from "src/card-authoring/editor-extension";
 import { Card } from "src/data/data-structures/card/card";
 import { CardType, Question } from "src/data/data-structures/card/questions/question";
@@ -247,7 +247,6 @@ export class CardAuthoringController {
                 new Date(),
                 this.sr.startOfDay,
             );
-            trimHistory(history, new Date(), this.sr.startOfDay);
             if (JSON.stringify(history) !== before) void this.saveData();
         } catch (e) {
             console.error("[Card authoring] could not read the synced cards", e);
@@ -313,6 +312,7 @@ export class CardAuthoringController {
     }
 
     private updateStatusBar() {
+        refreshDailyGoalViews();
         if (!this.statusEl) return;
         const show = this.settings.showDailyCounter;
         this.statusEl.toggleClass("sr-is-hidden", !show);

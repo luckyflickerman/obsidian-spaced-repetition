@@ -2,6 +2,7 @@ import "src/ui/obsidian-ui-components/content-container/deck-container/deck-cont
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import h from "vhtml";
 
+import { DailyGoalView } from "src/card-authoring/daily-goal-view";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
 import { getHeatmapSettings, HeatmapView } from "src/heatmap/heatmap-view";
@@ -21,6 +22,7 @@ export class DeckContainer {
     private deckListHeader: DeckListHeaderComponent;
     private plugin: SRPlugin;
     private heatmap: HeatmapView;
+    private dailyGoal: DailyGoalView;
     private lastReviewSequencer: IFlashcardReviewSequencer | null = null;
 
     constructor(
@@ -46,17 +48,20 @@ export class DeckContainer {
 
         this.deckList = new DeckListComponent(this.containerEl, startReviewOfDeck);
 
-        // Review calendar below the deck tree
+        // Daily goal of new cards, then the review calendar below the deck tree
+        this.dailyGoal = new DailyGoalView(this.deckList.contentEl, plugin);
         this.heatmap = new HeatmapView(this.deckList.contentEl, plugin);
     }
 
     /** Add-on switched on/off or its settings changed: redraw what depends on it. */
     private onAddonsChanged() {
+        this.dailyGoal.render();
         if (this.lastReviewSequencer) this.redrawHeatmap(this.lastReviewSequencer);
     }
 
     private redrawHeatmap(reviewSequencer: IFlashcardReviewSequencer) {
         this.lastReviewSequencer = reviewSequencer;
+        this.dailyGoal.render();
         try {
             const visible = getHeatmapSettings(this.plugin).showInDeckList;
             this.heatmap.show(visible);

@@ -77,6 +77,8 @@ export default {
         "src/card-authoring/card-preview.ts",
         "src/card-authoring/card-authoring-i18n.ts",
         "src/card-authoring/card-authoring.css",
+        "src/card-authoring/daily-goal-view.ts",
+        "src/card-authoring/daily-goal.css",
 
         // Review window DOM glue
         "src/review-window/review-window-controller.ts",

@@ -3,18 +3,21 @@
  *
  * Pure logic, no DOM. A card counts for the day the plugin FIRST saw its
  * question (so cards typed by hand count too, not only those made with the
- * command). The history stores normalized keys with that day; days older than
- * the kept history collapse to "old" (still known, never counted again).
+ * command). The history stores normalized keys with that day, so the review
+ * calendar can also show how many cards were created on any day.
  * The first run after the update marks every existing card as old.
  */
 
 export const OLD = "old";
-export const HISTORY_DAYS = 90;
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 export interface CardHistory {
     version: number;
     /** Existing cards were marked as old on the first run */
     initialized: boolean;
+    /** First day that is counted (`YYYY-MM-DD`); earlier days have no data */
+    since?: string;
     /** card key → day it was first seen (`YYYY-MM-DD`) or "old" */
     seen: Record<string, string>;
 }
@@ -27,13 +30,20 @@ export function normalizeCardHistory(stored: Partial<CardHistory> | null | undef
     const h = createCardHistory();
     if (!stored || typeof stored !== "object") return h;
     h.initialized = stored.initialized === true;
+    if (typeof stored.since === "string" && DAY.test(stored.since)) h.since = stored.since;
     if (stored.seen && typeof stored.seen === "object") {
         for (const [k, v] of Object.entries(stored.seen)) {
-            if (typeof v === "string" && (v === OLD || /^\d{4}-\d{2}-\d{2}$/.test(v)))
-                h.seen[k] = v;
+            if (typeof v === "string" && (v === OLD || DAY.test(v))) h.seen[k] = v;
         }
     }
     return h;
+}
+
+/** Earliest day with a counted card, or null. */
+function firstSeenDay(history: CardHistory): string | null {
+    let first: string | null = null;
+    for (const v of Object.values(history.seen)) if (v !== OLD && (!first || v < first)) first = v;
+    return first;
 }
 
 /** `HH:MM:SS` → seconds after midnight (invalid → 0). */
@@ -79,6 +89,8 @@ export function observeCards(
         if (!firstRun) added++;
     }
     history.initialized = true;
+    // histories from before `since` existed: start at the first counted card
+    if (!history.since) history.since = firstRun ? day : (firstSeenDay(history) ?? day);
     return added;
 }
 
@@ -90,23 +102,41 @@ export function countToday(history: CardHistory, now: Date, startOfDay: string):
     return n;
 }
 
-/** Days older than `days` become "old" (kept, so they are never counted again). */
-export function trimHistory(
-    history: CardHistory,
-    now: Date,
-    startOfDay: string,
-    days: number = HISTORY_DAYS,
-): void {
-    const today = counterDay(now, startOfDay);
-    const [y, m, d] = today.split("-").map((p) => parseInt(p, 10));
-    const cutoffDate = new Date(y, m - 1, d - days);
-    const cutoff = counterDay(cutoffDate, "00:00:00");
-    for (const [k, v] of Object.entries(history.seen)) {
-        if (v !== OLD && v < cutoff) history.seen[k] = OLD;
-    }
+/**
+ * Cards created per day: `lookup(day)` is the count for `YYYY-MM-DD`, or null
+ * for days before the counting started (no data — not the same as 0).
+ */
+export function createdPerDay(history: CardHistory): (day: string) => number | null {
+    const days: Record<string, number> = {};
+    for (const v of Object.values(history.seen)) if (v !== OLD) days[v] = (days[v] ?? 0) + 1;
+    const since = history.initialized ? history.since : undefined;
+    return (day) => (!since || day < since ? null : (days[day] ?? 0));
 }
 
 /** "New today: 4/10" values. */
 export function counterText(count: number, goal: number): string {
     return `${count}/${goal}`;
+}
+
+export interface GoalProgress {
+    done: number;
+    goal: number;
+    /** Cards still needed to reach the goal */
+    left: number;
+    /** Share of the goal done (0–1, capped) */
+    fraction: number;
+    reached: boolean;
+}
+
+/** Daily goal: cards created that day vs. the goal. */
+export function goalProgress(done: number, goal: number): GoalProgress {
+    const d = Math.max(0, Math.round(done));
+    const g = Math.max(1, Math.round(goal));
+    return {
+        done: d,
+        goal: g,
+        left: Math.max(0, g - d),
+        fraction: Math.min(1, d / g),
+        reached: d >= g,
+    };
 }

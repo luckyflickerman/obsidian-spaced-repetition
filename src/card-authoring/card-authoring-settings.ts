@@ -24,8 +24,12 @@ export interface CardAuthoringSettings {
     bothDirections: boolean;
     /** 🃏 / ⚠ icons next to cards in the editor */
     editorIcons: boolean;
+    /** New cards to create per day */
     dailyGoal: number;
+    /** "New today" in the status bar (computer) / a notice after a card (phone) */
     showDailyCounter: boolean;
+    /** Daily goal block above the review calendar in the deck list */
+    goalInDeckList: boolean;
     /** Rename "Pasted image …" pasted into a card line after its word */
     renamePastedImages: boolean;
     /** Shrink large photos before saving them */
@@ -43,6 +47,7 @@ export const DEFAULT_CARD_AUTHORING_SETTINGS: CardAuthoringSettings = {
     editorIcons: true,
     dailyGoal: 10,
     showDailyCounter: true,
+    goalInDeckList: true,
     renamePastedImages: true,
     resizeImages: true,
     maxImageWidth: 800,
@@ -98,6 +103,7 @@ export function normalizeCardAuthoringSettings(
         editorIcons: bool(s.editorIcons, d.editorIcons),
         dailyGoal: num(s.dailyGoal, d.dailyGoal, 1, 999),
         showDailyCounter: bool(s.showDailyCounter, d.showDailyCounter),
+        goalInDeckList: bool(s.goalInDeckList, d.goalInDeckList),
         renamePastedImages: bool(s.renamePastedImages, d.renamePastedImages),
         resizeImages: bool(s.resizeImages, d.resizeImages),
         maxImageWidth: num(s.maxImageWidth, d.maxImageWidth, 200, 4000),
