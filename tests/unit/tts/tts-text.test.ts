@@ -2,6 +2,7 @@ import {
     buildSpeechPlan,
     cleanMarkdownForSpeech,
     extractMarkedSegments,
+    fallbackSpeechSide,
     parseLangAttribute,
     splitIntoSentences,
     TextEdit,
@@ -174,15 +175,36 @@ describe("splitIntoSentences", () => {
 });
 
 describe("buildSpeechPlan", () => {
+    const answerOnly = (answer: string) => ({ question: "el gato", answer });
+
     test("marked fragments in the card language", () => {
-        expect(buildSpeechPlan("Este es un <u>gato</u>", "es-ES", true)).toEqual([
+        expect(buildSpeechPlan(answerOnly("Este es un <u>gato</u>"), "es-ES", "question")).toEqual([
             { text: "gato", lang: "es-ES" },
+        ]);
+    });
+
+    test("<u> in the question counts too (question first, then answer)", () => {
+        const card = {
+            question: "He <u>forestalled</u> her question.",
+            answer: "uprzedził jej pytanie",
+        };
+        expect(buildSpeechPlan(card, "en-GB", "none")).toEqual([
+            { text: "forestalled", lang: "en-GB" },
+        ]);
+        const both = { question: "<u>cat</u>", answer: '<u lang="es">gato</u>' };
+        expect(buildSpeechPlan(both, "en-GB", "none")).toEqual([
+            { text: "cat", lang: "en-GB" },
+            { text: "gato", lang: "es" },
         ]);
     });
 
     test("per-fragment language override", () => {
         expect(
-            buildSpeechPlan(`<u lang="en">computer</u> = <u>ordenador</u>`, "es-ES", true),
+            buildSpeechPlan(
+                answerOnly(`<u lang="en">computer</u> = <u>ordenador</u>`),
+                "es-ES",
+                "question",
+            ),
         ).toEqual([
             { text: "computer", lang: "en" },
             { text: "ordenador", lang: "es-ES" },
@@ -190,18 +212,51 @@ describe("buildSpeechPlan", () => {
     });
 
     test("no card language: only fragments with their own language", () => {
-        expect(buildSpeechPlan(`<u lang="en">computer</u> <u>ordenador</u>`, null, true)).toEqual([
-            { text: "computer", lang: "en" },
-        ]);
-        expect(buildSpeechPlan("Este es un gato", null, true)).toEqual([]);
+        expect(
+            buildSpeechPlan(
+                answerOnly(`<u lang="en">computer</u> <u>ordenador</u>`),
+                null,
+                "question",
+            ),
+        ).toEqual([{ text: "computer", lang: "en" }]);
+        expect(buildSpeechPlan(answerOnly("Este es un gato"), null, "question")).toEqual([]);
     });
 
-    test("whole answer when nothing is marked (can be switched off)", () => {
-        expect(buildSpeechPlan("Es un **gato** #hiszpanski", "es-ES", true)).toEqual([
-            { text: "Es un gato", lang: "es-ES" },
+    test("nothing underlined: `#ENG forestalled:: uprzedzić` reads the question", () => {
+        const card = { question: "forestalled", answer: "uprzedzić" };
+        expect(buildSpeechPlan(card, "en-GB", "question")).toEqual([
+            { text: "forestalled", lang: "en-GB" },
         ]);
-        expect(buildSpeechPlan("Es un gato", "es-ES", false)).toEqual([]);
-        expect(buildSpeechPlan("![[foto.png]]", "es-ES", true)).toEqual([]);
+        expect(buildSpeechPlan(card, "en-GB", "answer")).toEqual([
+            { text: "uprzedzić", lang: "en-GB" },
+        ]);
+        expect(buildSpeechPlan(card, "en-GB", "none")).toEqual([]);
+    });
+
+    test("the reversed side of a `:::` card reads the foreign side (the answer)", () => {
+        const reversed = { question: "uprzedzić", answer: "forestalled", reversedSibling: true };
+        expect(buildSpeechPlan(reversed, "en-GB", "question")).toEqual([
+            { text: "forestalled", lang: "en-GB" },
+        ]);
+        expect(buildSpeechPlan(reversed, "en-GB", "answer")).toEqual([
+            { text: "uprzedzić", lang: "en-GB" },
+        ]);
+        expect(fallbackSpeechSide("question", true)).toBe("answer");
+        expect(fallbackSpeechSide("none", true)).toBe("none");
+        expect(fallbackSpeechSide("answer", false)).toBe("answer");
+    });
+
+    test("formatting is cleaned; empty sides are not read", () => {
+        expect(
+            buildSpeechPlan(
+                { question: "Es un **gato** #hiszpanski", answer: "" },
+                "es-ES",
+                "question",
+            ),
+        ).toEqual([{ text: "Es un gato", lang: "es-ES" }]);
+        expect(
+            buildSpeechPlan({ question: "![[foto.png]]", answer: "x" }, "es-ES", "question"),
+        ).toEqual([]);
     });
 });
 

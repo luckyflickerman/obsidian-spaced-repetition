@@ -168,25 +168,53 @@ function splitLong(sentence: string, limit: number): string[] {
     return result.filter((s) => s.length > 0);
 }
 
+export interface SpeechCard {
+    /** Shown side (front) of the card being reviewed */
+    question: string;
+    /** Revealed side (back) */
+    answer: string;
+    /**
+     * The reversed sibling of a `:::` / `??` card (asks with the translation):
+     * its foreign side is the answer.
+     */
+    reversedSibling?: boolean;
+}
+
+/** Which side to read when nothing is underlined (the reversed side flips it). */
+export function fallbackSpeechSide(
+    fallback: "question" | "answer" | "none",
+    reversedSibling: boolean,
+): "question" | "answer" | "none" {
+    if (fallback === "none" || !reversedSibling) return fallback;
+    return fallback === "question" ? "answer" : "question";
+}
+
 /**
- * What to read for a revealed answer.
- * - `<u>` fragments, each in its own language (`lang` attribute) or the card language.
- * - No fragments: the whole answer (if enabled).
+ * What to read for a revealed card.
+ * - `<u>` fragments from the question AND the answer, each in its own
+ *   language (`lang` attribute) or the card language.
+ * - No fragments: the side chosen in the settings (by default the question,
+ *   i.e. the foreign word of `#ENG word:: translation`; the answer for the
+ *   reversed side of `:::` cards).
  * - No card language: only fragments with an explicit `lang` are read.
  */
 export function buildSpeechPlan(
-    answerMarkdown: string,
+    card: SpeechCard,
     cardLang: string | null,
-    readWholeAnswer: boolean,
+    fallback: "question" | "answer" | "none",
 ): Array<{ text: string; lang: string }> {
-    const segments = extractMarkedSegments(answerMarkdown);
+    const segments = [
+        ...extractMarkedSegments(card.question),
+        ...extractMarkedSegments(card.answer),
+    ];
     if (segments.length > 0) {
         return segments
             .map((s) => ({ text: s.text, lang: s.lang || cardLang || "" }))
             .filter((s) => s.lang !== "");
     }
-    if (!readWholeAnswer || !cardLang) return [];
-    const text = cleanMarkdownForSpeech(answerMarkdown);
+    const side = fallbackSpeechSide(fallback, card.reversedSibling === true);
+    if (side === "none" || !cardLang) return [];
+    const text = cleanMarkdownForSpeech(side === "question" ? card.question : card.answer);
     return text ? [{ text, lang: cardLang }] : [];
 }
 

@@ -4,7 +4,7 @@ import { Platform, Setting, SettingGroup } from "obsidian";
 import { DataManager } from "src/data/data-manager";
 import { SettingsManager } from "src/data/settings-manager";
 import SRPlugin from "src/main";
-import { TtsController } from "src/tts/tts-controller";
+import { deckLanguageRules, TtsController } from "src/tts/tts-controller";
 import { sampleSentence, tt } from "src/tts/tts-i18n";
 import { createTtsProvider, TTS_PROVIDERS, TtsProvider } from "src/tts/tts-provider";
 import {
@@ -103,7 +103,24 @@ export class TtsPage extends SettingsPage {
         const general = new SettingGroup(this.containerEl).setHeading(tt("G_GENERAL"));
         this.addToggle(general, "enabled", tt("ENABLED"), tt("ENABLED_DESC"));
         this.addToggle(general, "autoPlay", tt("AUTO_PLAY"), tt("AUTO_PLAY_DESC"));
-        this.addToggle(general, "readWholeAnswer", tt("WHOLE_ANSWER"), tt("WHOLE_ANSWER_DESC"));
+        general.addSetting((setting: Setting) =>
+            setting
+                .setName(tt("FALLBACK"))
+                .setDesc(tt("FALLBACK_DESC"))
+                .addDropdown((dropdown) =>
+                    dropdown
+                        .addOptions({
+                            question: tt("FALLBACK_QUESTION"),
+                            answer: tt("FALLBACK_ANSWER"),
+                            none: tt("FALLBACK_NONE"),
+                        })
+                        .setValue(s().fallbackSide)
+                        .onChange(async (value) => {
+                            s().fallbackSide = value as TtsSettings["fallbackSide"];
+                            await this.save();
+                        }),
+                ),
+        );
         if (TTS_PROVIDERS.length > 1) {
             general.addSetting((setting: Setting) =>
                 setting.setName(tt("PROVIDER")).addDropdown((dropdown) => {
@@ -240,7 +257,7 @@ export class TtsPage extends SettingsPage {
     private renderDynamic() {
         const token = ++this.renderToken;
         const available = this.provider.isAvailable();
-        const languages = configuredLanguages(this.ttsSettings);
+        const languages = configuredLanguages(this.ttsSettings, deckLanguageRules(this.plugin));
 
         this.diagnosticsHost.empty();
         this.voicesHost.empty();

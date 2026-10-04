@@ -1,6 +1,7 @@
 import "src/tts/tts.css";
 import { setIcon } from "obsidian";
 
+import { normalizeCardAuthoringSettings } from "src/card-authoring/card-authoring-settings";
 import type SRPlugin from "src/main";
 import type { SpeedStreakController } from "src/speed-streak/speed-streak-controller";
 import { tt } from "src/tts/tts-i18n";
@@ -11,10 +12,11 @@ import {
     normalizeTtsSettings,
     parseLanguageRules,
     resolveCardLanguage,
+    rulesFromDecks,
     TtsLanguageRule,
     TtsSettings,
 } from "src/tts/tts-settings";
-import { buildSpeechPlan } from "src/tts/tts-text";
+import { buildSpeechPlan, SpeechCard } from "src/tts/tts-text";
 
 export interface TtsCardContext {
     tags: string[];
@@ -32,6 +34,22 @@ export function getTtsSettings(plugin: SRPlugin): TtsSettings {
     const normalized = normalizeTtsSettings(settings.tts);
     settings.tts = normalized;
     return normalized;
+}
+
+/**
+ * Language rules: the read-aloud rules, then the card decks of "Card
+ * authoring" (each deck's reading language works like a rule).
+ */
+export function ttsLanguageRules(plugin: SRPlugin, settings: TtsSettings): TtsLanguageRule[] {
+    return [...parseLanguageRules(settings.languageRules), ...deckLanguageRules(plugin)];
+}
+
+/** Only the rules coming from the card decks. */
+export function deckLanguageRules(plugin: SRPlugin): TtsLanguageRule[] {
+    const decks = normalizeCardAuthoringSettings(
+        plugin.dataManager.data.settings.cardAuthoring,
+    ).decks;
+    return rulesFromDecks(decks);
 }
 
 /** Voice chosen in the settings for a language (exact code, then same base language). */
@@ -79,7 +97,7 @@ export class TtsController {
         this.hostEl = hostEl;
         this.getSpeedStreak = getSpeedStreak;
         this.settings = getTtsSettings(plugin);
-        this.rules = parseLanguageRules(this.settings.languageRules);
+        this.rules = ttsLanguageRules(plugin, this.settings);
         this.provider = createTtsProvider(this.settings.provider);
         // iOS: unlock speech inside the first tap of the session (capture phase,
         // i.e. synchronously before e.g. the "Show answer" handler runs)
@@ -134,9 +152,11 @@ export class TtsController {
 
     /**
      * Call after the answer has been rendered into `contentEl`.
-     * `answerMarkdown` is the card's back (already swapped for reversed cards).
+     * `card` holds the shown question and the revealed answer (already swapped
+     * for the reversed side of `:::` cards — see `reversedSibling`).
+     * `ctx.tags`: the card's own tag first, then the note's tags.
      */
-    onAnswerShown(answerMarkdown: string, ctx: TtsCardContext, contentEl: HTMLElement) {
+    onAnswerShown(card: SpeechCard, ctx: TtsCardContext, contentEl: HTMLElement) {
         this.cancel();
         this.answerShown = true;
         this.plan = [];
@@ -149,7 +169,7 @@ export class TtsController {
             ctx.deckPath,
             this.settings.defaultLanguage,
         );
-        this.plan = buildSpeechPlan(answerMarkdown, this.cardLang, this.settings.readWholeAnswer);
+        this.plan = buildSpeechPlan(card, this.cardLang, this.settings.fallbackSide);
         this.decorateWords(contentEl);
         if (this.plan.length === 0) return;
 
@@ -186,7 +206,7 @@ export class TtsController {
 
     refreshSettings() {
         this.settings = getTtsSettings(this.plugin);
-        this.rules = parseLanguageRules(this.settings.languageRules);
+        this.rules = ttsLanguageRules(this.plugin, this.settings);
         if (this.provider.id !== this.settings.provider) {
             this.cancel();
             this.provider.dispose?.();

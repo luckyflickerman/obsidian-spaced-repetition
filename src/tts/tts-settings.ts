@@ -6,6 +6,8 @@
 
 import { ruleMatches } from "src/speed-streak/speed-streak-settings";
 
+export type TtsFallbackSide = "question" | "answer" | "none";
+
 export interface TtsSettings {
     enabled: boolean;
     /** Read automatically when the answer is revealed */
@@ -22,7 +24,14 @@ export interface TtsSettings {
     rate: number;
     /** Volume, 0–100 */
     volume: number;
-    /** Read the whole answer when nothing is marked with <u>…</u> */
+    /**
+     * What to read when nothing is marked with <u>…</u>: the question (the
+     * foreign word in `#ENG word:: translation`), the answer, or nothing.
+     * For the reversed side of `:::` cards the other side is read, so it is
+     * always the foreign one.
+     */
+    fallbackSide: TtsFallbackSide;
+    /** @deprecated replaced by fallbackSide; kept so old data still loads */
     readWholeAnswer: boolean;
     /** Speed Streak: freeze the answer timer while speaking */
     pauseSpeedStreak: boolean;
@@ -39,6 +48,7 @@ export const DEFAULT_TTS_SETTINGS: TtsSettings = {
     voices: {},
     rate: 0.85,
     volume: 100,
+    fallbackSide: "question",
     readWholeAnswer: true,
     pauseSpeedStreak: true,
     replayHotkey: "r",
@@ -65,6 +75,15 @@ export function normalizeTtsSettings(stored: Partial<TtsSettings> | null | undef
     merged.enabled = bool(merged.enabled, d.enabled);
     merged.autoPlay = bool(merged.autoPlay, d.autoPlay);
     merged.readWholeAnswer = bool(merged.readWholeAnswer, d.readWholeAnswer);
+    const source: Partial<TtsSettings> = stored && typeof stored === "object" ? stored : {};
+    const side = source.fallbackSide;
+    // old data: "read the whole answer" switched off = read nothing
+    merged.fallbackSide =
+        side === "question" || side === "answer" || side === "none"
+            ? side
+            : source.readWholeAnswer === false
+              ? "none"
+              : d.fallbackSide;
     merged.pauseSpeedStreak = bool(merged.pauseSpeedStreak, d.pauseSpeedStreak);
     merged.rate = Math.round(num(merged.rate, d.rate, TTS_RATE_MIN, TTS_RATE_MAX) * 100) / 100;
     merged.volume = Math.round(num(merged.volume, d.volume, 0, 100));
@@ -146,8 +165,10 @@ export function parseLanguageRules(text: string): TtsLanguageRule[] {
 }
 
 /**
- * Language of a card: the first rule matching the note's tags or the deck path,
- * otherwise the default language. `null` = the card is not read.
+ * Language of a card. Tags are tried in the given order — pass the card's own
+ * tag (`#ENG word:: …`) first and the note's tags after it, because one file
+ * can hold `#ENG` and `#ESP` cards. Then the deck path, then the default
+ * language. `null` = the card is not read.
  */
 export function resolveCardLanguage(
     rules: TtsLanguageRule[],
@@ -155,16 +176,36 @@ export function resolveCardLanguage(
     deckPath: string,
     defaultLanguage: string = "",
 ): string | null {
-    const rule = rules.find((r) => ruleMatches(r.matcher, tags, deckPath));
-    if (rule) return rule.lang;
+    for (const tag of tags) {
+        const rule = rules.find((r) => ruleMatches(r.matcher, [tag], ""));
+        if (rule) return rule.lang;
+    }
+    const byDeck = deckPath ? rules.find((r) => ruleMatches(r.matcher, [], deckPath)) : undefined;
+    if (byDeck) return byDeck.lang;
     const def = normalizeLangCode(defaultLanguage);
     return def || null;
 }
 
+/** Card decks with a reading language work like rules (`#ENG = en-GB`). */
+export function rulesFromDecks(decks: Array<{ tag: string; lang: string }>): TtsLanguageRule[] {
+    const rules: TtsLanguageRule[] = [];
+    for (const d of decks ?? []) {
+        const lang = normalizeLangCode(d?.lang ?? "");
+        const matcher = String(d?.tag ?? "")
+            .trim()
+            .toLowerCase();
+        if (matcher && lang) rules.push({ matcher, lang });
+    }
+    return rules;
+}
+
 /** Distinct languages used by the rules (+ default language), in order. */
-export function configuredLanguages(settings: TtsSettings): string[] {
+export function configuredLanguages(
+    settings: TtsSettings,
+    extraRules: TtsLanguageRule[] = [],
+): string[] {
     const langs: string[] = [];
-    for (const rule of parseLanguageRules(settings.languageRules)) {
+    for (const rule of [...parseLanguageRules(settings.languageRules), ...extraRules]) {
         if (!langs.includes(rule.lang)) langs.push(rule.lang);
     }
     if (settings.defaultLanguage && !langs.includes(settings.defaultLanguage))

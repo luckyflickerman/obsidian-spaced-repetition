@@ -2,6 +2,7 @@ import "src/ui/obsidian-ui-components/content-container/card-container/card-cont
 import moment from "moment";
 import { App, Platform } from "obsidian";
 
+import { isReversedSibling } from "src/card-authoring/card-detect";
 import { CardType } from "src/data/data-structures/card/questions/question";
 import { SRSettings } from "src/data/settings";
 import { t } from "src/lang/helpers";
@@ -260,6 +261,21 @@ export class CardContainer {
         return { tags, deckPath };
     }
 
+    /** Read-aloud context: the card's own tag (`#ENG word:: …`) before the note's tags. */
+    private _ttsCardContext(sessionData: SessionData): { tags: string[]; deckPath: string } {
+        const ctx = this._speedStreakCardContext(sessionData);
+        let cardTag: string | null = null;
+        try {
+            cardTag =
+                sessionData.currentQuestion?.questionText?.topicPathWithWs?.topicPath?.formatAsTag() ??
+                null;
+        } catch {
+            cardTag = null;
+        }
+        if (cardTag) ctx.tags = [cardTag, ...ctx.tags.filter((t) => t !== cardTag)];
+        return ctx;
+    }
+
     private drawCardContext(sessionData: SessionData, settings: SRSettings) {
         if (settings.showContextInCards) {
             this.contextSection = new ContextSectionComponent(this.content);
@@ -450,9 +466,17 @@ export class CardContainer {
         this.speedStreak.onAnswerShown();
 
         // Read the answer aloud (holds the Speed Streak answer timer while speaking)
+        const shownCard = sessionData.cardData.currentCard;
         this.tts.onAnswerShown(
-            sessionData.cardData.currentCard.back,
-            this._speedStreakCardContext(sessionData),
+            {
+                question: shownCard.front,
+                answer: shownCard.back,
+                reversedSibling: isReversedSibling(
+                    sessionData.currentQuestion.questionType,
+                    shownCard.cardIdx,
+                ),
+            },
+            this._ttsCardContext(sessionData),
             this.content,
         );
 

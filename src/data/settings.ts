@@ -1,3 +1,8 @@
+import {
+    CardAuthoringSettings,
+    DEFAULT_CARD_AUTHORING_SETTINGS,
+    normalizeCardAuthoringSettings,
+} from "src/card-authoring/card-authoring-settings";
 import { StorageType } from "src/data/data-store/base/data-store";
 import { DEFAULT_HEATMAP_SETTINGS, HeatmapSettings } from "src/heatmap/heatmap-data";
 import { t } from "src/lang/helpers";
@@ -115,6 +120,9 @@ export interface SRSettings {
 
     // Review window: full screen and position
     reviewWindow: ReviewWindowSettings;
+
+    // Card authoring: decks, templates, editor icons, daily counter, images
+    cardAuthoring: CardAuthoringSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -209,6 +217,7 @@ export const DEFAULT_SETTINGS: SRSettings = {
     tts: { ...DEFAULT_TTS_SETTINGS, voices: {} },
     heatmap: { ...DEFAULT_HEATMAP_SETTINGS },
     reviewWindow: { ...DEFAULT_REVIEW_WINDOW_SETTINGS },
+    cardAuthoring: normalizeCardAuthoringSettings(DEFAULT_CARD_AUTHORING_SETTINGS),
 };
 
 export function upgradeSettings(settings: SRSettings) {

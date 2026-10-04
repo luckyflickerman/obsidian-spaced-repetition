@@ -1,3 +1,4 @@
+import { CardHistory, createCardHistory } from "src/card-authoring/daily-counter";
 import { DEFAULT_SETTINGS, SRSettings } from "src/data/settings";
 import { createDefaultReviewLog, ReviewLog } from "src/heatmap/heatmap-data";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
@@ -36,6 +37,8 @@ export interface PluginData {
     speedStreak: SpeedStreakData;
     /** Cards reviewed per day (for the review calendar) */
     reviewLog: ReviewLog;
+    /** When each card was first seen (daily "New today" counter) */
+    cardHistory: CardHistory;
 }
 
 export const DEFAULT_DATA: PluginData = {
@@ -50,4 +53,5 @@ export const DEFAULT_DATA: PluginData = {
     },
     speedStreak: createDefaultSpeedStreakData(),
     reviewLog: createDefaultReviewLog(),
+    cardHistory: createCardHistory(),
 };

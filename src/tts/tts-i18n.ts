@@ -15,9 +15,12 @@ const EN = {
     AUTO_PLAY: "Read automatically",
     AUTO_PLAY_DESC:
         "Read as soon as the answer is shown. Off: only with the 🔊 button, by tapping a word, or with the key.",
-    WHOLE_ANSWER: "Read the whole answer when nothing is marked",
-    WHOLE_ANSWER_DESC:
-        "If the answer has no <u>…</u>, read all of it (without formatting, links, images and tags).",
+    FALLBACK: "When nothing is underlined, read",
+    FALLBACK_DESC:
+        "If the card has no <u>…</u>: the question (the foreign word in “#ENG word:: translation”), the answer, or nothing. For the reversed side of ::: cards the foreign side is read.",
+    FALLBACK_QUESTION: "The question",
+    FALLBACK_ANSWER: "The answer",
+    FALLBACK_NONE: "Nothing",
     G_LANGUAGES: "Languages",
     RULES: "Language rules",
     RULES_DESC:
@@ -62,7 +65,7 @@ const EN = {
     PROVIDER: "Voice source",
     PROVIDER_SYSTEM: "System voices (this device)",
     // Commands / editor
-    CMD_MARK: "Mark for reading aloud",
+    CMD_MARK: "Underline for reading aloud",
     CMD_REPLAY: "Read aloud: read again",
     TEST_SENTENCE: "This is a test.",
 };
@@ -82,9 +85,12 @@ const PL: Record<Keys, string> = {
     AUTO_PLAY: "Czytaj automatycznie",
     AUTO_PLAY_DESC:
         "Czytaj od razu po pokazaniu odpowiedzi. Wyłączone: tylko przyciskiem 🔊, dotknięciem słowa albo klawiszem.",
-    WHOLE_ANSWER: "Czytaj całą odpowiedź, gdy nic nie jest oznaczone",
-    WHOLE_ANSWER_DESC:
-        "Jeśli w odpowiedzi nie ma <u>…</u>, czytaj całą (bez formatowania, linków, obrazków i tagów).",
+    FALLBACK: "Gdy nic nie jest podkreślone, czytaj",
+    FALLBACK_DESC:
+        "Jeśli w karcie nie ma <u>…</u>: pytanie (obce słowo w „#ENG słowo:: tłumaczenie”), odpowiedź albo nic. Przy odwróconej stronie kart ::: czytana jest strona w obcym języku.",
+    FALLBACK_QUESTION: "Pytanie",
+    FALLBACK_ANSWER: "Odpowiedź",
+    FALLBACK_NONE: "Nic",
     G_LANGUAGES: "Języki",
     RULES: "Reguły języków",
     RULES_DESC:
@@ -128,7 +134,7 @@ const PL: Record<Keys, string> = {
     RESET_DEFAULT: "Przywróć domyślne",
     PROVIDER: "Źródło głosu",
     PROVIDER_SYSTEM: "Głosy systemowe (to urządzenie)",
-    CMD_MARK: "Oznacz do czytania na głos",
+    CMD_MARK: "Podkreśl do czytania",
     CMD_REPLAY: "Czytanie na głos: przeczytaj ponownie",
     TEST_SENTENCE: "To jest test.",
 };

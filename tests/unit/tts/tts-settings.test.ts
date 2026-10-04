@@ -8,6 +8,7 @@ import {
     normalizeTtsSettings,
     parseLanguageRules,
     resolveCardLanguage,
+    rulesFromDecks,
     TtsSettings,
     TtsVoice,
     voicesForLanguage,
@@ -87,8 +88,31 @@ describe("resolveCardLanguage", () => {
         expect(resolveCardLanguage(rules, [], "#jezyki/niemiecki/slowka")).toBe("de-DE");
     });
 
-    test("first matching rule wins", () => {
-        expect(resolveCardLanguage(rules, ["#angielski", "#hiszpanski"], "")).toBe("es-ES");
+    test("the first tag decides: the card's own tag before the note's tags", () => {
+        // a note tagged #hiszpanski with an `#angielski word:: …` card
+        expect(resolveCardLanguage(rules, ["#angielski", "#hiszpanski"], "")).toBe("en-GB");
+        expect(resolveCardLanguage(rules, ["#hiszpanski", "#angielski"], "")).toBe("es-ES");
+        // unknown card tag: the note's tag is next
+        expect(resolveCardLanguage(rules, ["#historia", "#hiszpanski"], "")).toBe("es-ES");
+    });
+
+    test("card decks work as rules", () => {
+        const deckRules = rulesFromDecks([
+            { tag: "#ENG", lang: "en_GB" },
+            { tag: "#ESP", lang: "" },
+            { tag: "", lang: "de" },
+        ]);
+        expect(deckRules).toEqual([{ matcher: "#eng", lang: "en-GB" }]);
+        expect(resolveCardLanguage([...rules, ...deckRules], ["#ENG"], "")).toBe("en-GB");
+        expect(configuredLanguages(normalizeTtsSettings({}), deckRules)).toEqual(["en-GB"]);
+    });
+
+    test("what to read without <u>: question by default, old 'whole answer off' = nothing", () => {
+        expect(normalizeTtsSettings({}).fallbackSide).toBe("question");
+        expect(normalizeTtsSettings({ readWholeAnswer: false }).fallbackSide).toBe("none");
+        expect(normalizeTtsSettings({ readWholeAnswer: true }).fallbackSide).toBe("question");
+        expect(normalizeTtsSettings({ fallbackSide: "answer" }).fallbackSide).toBe("answer");
+        expect(normalizeTtsSettings({ fallbackSide: "x" as never }).fallbackSide).toBe("question");
     });
 
     test("no match: default language or null", () => {
