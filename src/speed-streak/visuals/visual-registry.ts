@@ -26,8 +26,10 @@
  */
 
 import { SpeedStreakVisualId, STYLE_DEFAULT_THEME } from "src/speed-streak/speed-streak-settings";
+import { CrystalVisual } from "src/speed-streak/visuals/crystal-visual";
 import { FusionVisual } from "src/speed-streak/visuals/fusion-visual";
 import { MinimalVisual } from "src/speed-streak/visuals/minimal-visual";
+import { SingularityVisual } from "src/speed-streak/visuals/singularity-visual";
 import type { SpeedStreakVisual } from "src/speed-streak/visuals/visual-types";
 
 export interface SpeedStreakVisualInfo {
@@ -49,6 +51,8 @@ function entry(create: () => SpeedStreakVisual): SpeedStreakVisualInfo {
 
 export const SPEED_STREAK_VISUALS: SpeedStreakVisualInfo[] = [
     entry(() => new FusionVisual()),
+    entry(() => new SingularityVisual()),
+    entry(() => new CrystalVisual()),
     entry(() => new MinimalVisual()),
 ];
 
