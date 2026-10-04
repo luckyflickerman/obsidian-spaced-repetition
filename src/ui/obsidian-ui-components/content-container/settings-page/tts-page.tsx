@@ -19,7 +19,7 @@ import {
     voicesForLanguage,
 } from "src/tts/tts-settings";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
-import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 
 type BoolKey = {
     [K in keyof TtsSettings]: TtsSettings[K] extends boolean ? K : never;

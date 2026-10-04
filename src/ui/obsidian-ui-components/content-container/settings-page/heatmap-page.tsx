@@ -14,7 +14,7 @@ import { formatNumber, hm } from "src/heatmap/heatmap-i18n";
 import { getReviewLog, HeatmapView, saveReviewLog } from "src/heatmap/heatmap-view";
 import SRPlugin from "src/main";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
-import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 
 type BoolKey = {
     [K in keyof HeatmapSettings]: HeatmapSettings[K] extends boolean ? K : never;

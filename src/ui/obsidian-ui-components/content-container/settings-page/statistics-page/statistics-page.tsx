@@ -25,7 +25,7 @@ import { RepItemState } from "src/scheduling/algorithms/base/repetition-item";
 import { SRAlgorithm } from "src/scheduling/algorithms/base/sr-algorithm";
 import { textInterval } from "src/scheduling/algorithms/osr/note-scheduling";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
-import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 import ChartComponent from "src/ui/obsidian-ui-components/content-container/settings-page/statistics-page/chart-component";
 import NoteStatsComponent from "src/ui/obsidian-ui-components/content-container/settings-page/statistics-page/note-stats-component";
 import { getKeysPreserveType, getTypedObjectEntries, mapRecord } from "src/utils/types";

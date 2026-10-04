@@ -24,7 +24,7 @@ import {
     themeDisplayName,
 } from "src/speed-streak/speed-streak-themes";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
-import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 
 type NumberKey = {
     [K in keyof SpeedStreakSettings]: SpeedStreakSettings[K] extends number ? K : never;

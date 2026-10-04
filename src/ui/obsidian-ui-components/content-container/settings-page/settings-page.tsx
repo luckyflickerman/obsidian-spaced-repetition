@@ -8,7 +8,7 @@ import {
     getPageIcon,
     getPageName,
     SettingsPageType,
-} from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+} from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 
 /**
  * Represents a settings page.

@@ -3,11 +3,7 @@ import h from "vhtml";
 
 import { DataManager } from "src/data/data-manager";
 import { SettingsManager } from "src/data/settings-manager";
-import { hm } from "src/heatmap/heatmap-i18n";
-import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
-import { ss } from "src/speed-streak/speed-streak-i18n";
-import { tt } from "src/tts/tts-i18n";
 import { DataPage } from "src/ui/obsidian-ui-components/content-container/settings-page/data-page";
 import { FlashcardsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/flashcards-page";
 import { HeatmapPage } from "src/ui/obsidian-ui-components/content-container/settings-page/heatmap-page";
@@ -15,108 +11,20 @@ import { MainPage } from "src/ui/obsidian-ui-components/content-container/settin
 import { NotesPage } from "src/ui/obsidian-ui-components/content-container/settings-page/notes-page";
 import { SchedulingPage } from "src/ui/obsidian-ui-components/content-container/settings-page/scheduling-page";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
+import {
+    getPageIcon,
+    getPageName,
+    SettingsPageType,
+    SettingsPageTypesArray,
+} from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 import { SpeedStreakPage } from "src/ui/obsidian-ui-components/content-container/settings-page/speed-streak-page";
 import { StatisticsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/statistics-page/statistics-page";
 import { TtsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/tts-page";
 import { UIPreferencesPage } from "src/ui/obsidian-ui-components/content-container/settings-page/ui-preferences-page";
 import { UIManager } from "src/ui/ui-manager";
 
-/**
- * Represents a possible settings page type.
- *
- * @type {SettingsPageType}
- */
-export type SettingsPageType =
-    | "main-page"
-    | "flashcards-page"
-    | "speed-streak-page"
-    | "tts-page"
-    | "heatmap-page"
-    | "notes-page"
-    | "scheduling-page"
-    | "ui-preferences-page"
-    | "data-page"
-    | "statistics-page";
-
-/**
- * Represents an array of all available settings page types.
- *
- * @type {ReadonlyArray<SettingsPageType>}
- */
-export const SettingsPageTypesArray: ReadonlyArray<SettingsPageType> = [
-    "main-page",
-    "flashcards-page",
-    "speed-streak-page",
-    "tts-page",
-    "heatmap-page",
-    "notes-page",
-    "scheduling-page",
-    "ui-preferences-page",
-    "data-page",
-    "statistics-page",
-];
-
-/**
- * Gets the name of a settings page.
- *
- * @param {SettingsPageType} pageType - The settings page type.
- * @returns {string} The name of the settings page.
- */
-export function getPageName(pageType: SettingsPageType): string {
-    switch (pageType) {
-        case "main-page":
-            return t("MAIN_SETTINGS_PAGE");
-        case "flashcards-page":
-            return t("FLASHCARDS");
-        case "speed-streak-page":
-            return ss("PAGE_NAME");
-        case "tts-page":
-            return tt("PAGE_NAME");
-        case "heatmap-page":
-            return hm("PAGE_NAME");
-        case "notes-page":
-            return t("NOTES");
-        case "scheduling-page":
-            return t("SCHEDULING");
-        case "ui-preferences-page":
-            return t("UI");
-        case "data-page":
-            return t("DATA_PAGE_NAME");
-        case "statistics-page":
-            return t("STATS_TITLE");
-    }
-}
-
-/**
- * Gets the icon of a settings page.
- *
- * @param {SettingsPageType} pageType - The settings page type.
- * @returns {string} The icon of the settings page.
- */
-export function getPageIcon(pageType: SettingsPageType): string {
-    switch (pageType) {
-        case "main-page":
-            return "Settings";
-        case "flashcards-page":
-            return "SpacedRepIcon";
-        case "speed-streak-page":
-            return "zap";
-        case "tts-page":
-            return "volume-2";
-        case "heatmap-page":
-            return "calendar-days";
-        case "notes-page":
-            return "book-text";
-        case "scheduling-page":
-            return "calendar";
-        case "ui-preferences-page":
-            return "presentation";
-        case "data-page":
-            return "hard-drive";
-        case "statistics-page":
-            return "bar-chart-3";
-    }
-}
+export { getPageIcon, getPageName, SettingsPageTypesArray };
+export type { SettingsPageType };
 
 /**
  * Represents a settings page manager.

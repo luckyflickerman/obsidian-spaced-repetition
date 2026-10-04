@@ -7,7 +7,7 @@ import { t, tHTML } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
-import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 import { ConfirmationModal } from "src/ui/obsidian-ui-components/modals/confirmation-modal";
 import { DateUtil, globalDateProvider, IDayBoundary } from "src/utils/dates";
 

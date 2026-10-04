@@ -13,7 +13,7 @@ import {
     getPageName,
     SettingsPageType,
     SettingsPageTypesArray,
-} from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+} from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 
 /**
  * Represents the main settings page, from which all other settings pages are accessed.
