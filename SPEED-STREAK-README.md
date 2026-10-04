@@ -19,17 +19,93 @@ Port dodatku Anki **Speed Streak** wbudowany w plugin _Spaced Repetition_ (wersj
 - **Time Boost**: za co 10 kart dostajesz Boost (bank max 5, start 3). Boost dodaje +10 s do bieżącego timera. Klawisz **C**.
 - **Pauza**: klawisz **P**, przycisk lub kliknięcie w pierścień. Karta jest wtedy zasłonięta. Automatyczna pauza, gdy wychodzisz z Obsidiana, edytujesz kartę lub skaczesz do notatki.
 - **Pierwsza karta gratis**: rozgrzewka bez limitu po wejściu w powtórkę.
-- **Rekordy**: wszech czasów i dzisiejszy, „Czyste” serie (bez pauz i Boostów), top 5 / ostatnie 5 w ustawieniach.
+- **Rekordy**: wszech czasów i dzisiejszy, „Czyste” serie (bez pauz i Boostów), top 5 (więcej niżej).
 - **Ostrzeżenie „kończy się czas”**: pulsowanie (i tykanie) przez ostatnie 3 s.
 - **Dźwięki** (syntezowane, domyślnie wyłączone), **wibracje** na telefonie, **podsumowanie sesji** po wyjściu.
 - **Tryb Punkty** (klasyczny): punkty × mnożnik serii.
 
-## Motywy
+## Style wizualne
 
-Ustawienia → Speed Streak → Wygląd → **Motyw**. Do wyboru: Obsidian (jak motyw vaulta), Klasyczny, Jak karta, Grafit, Północ, Las, Żar, Fiolet, Ocean (8 ostatnich przeniesione z dodatku do Anki).
-Timer przechodzi płynnie przez kolory motywu: dobre → trudne → ponownie.
+Ustawienia → Speed Streak → Wygląd → **Styl wizualny**. Obok listy widać mały, animowany podgląd wybranego stylu w wybranych kolorach.
 
-**Nowy motyw**: dopisz jeden obiekt do listy `SPEED_STREAK_THEMES` w `src/speed-streak/speed-streak-themes.ts` (instrukcja na górze pliku). Wystarczy podać tylko kolory, które chcesz zmienić — reszta bierze się z motywu Obsidiana.
+- **Fusion Rings** (domyślny): świecąca kula z liczbą serii. Wokół niej są pierścienie, które wypełniają się kolorami Twoich ocen, a dookoła krążą satelity. Każda oceniona karta dokłada kawałek pierścienia i satelitę. Od 48 kart wszystkie pierścienie są pełne („scalają się”).
+- **Osobliwość (Singularity)**: ciemny środek ze świecącym pierścieniem. Cząstki są wciągane do środka, a siatka w tle wygina się ku niemu. Im dłuższa seria, tym więcej cząstek i jaśniejsza poświata.
+- **Reaktor kryształu (Crystal Reactor)**: kryształ, któremu z każdą oceną wyrasta nowy odłamek w kolorze tej oceny.
+- **Minimalny**: tylko pierścień timera i liczba. Zużywa najmniej baterii.
+
+Każdy styl pokazuje:
+
+- utratę serii po przekroczeniu czasu: satelity się rozpraszają, osobliwość się zapada, kryształ pęka,
+- impuls przy użyciu Boosta,
+- celebrację nowego rekordu (można ją wyłączyć w grupie Rekordy).
+
+## Układy
+
+Ustawienia → Speed Streak → Wygląd → **Układ**.
+
+- **Automatyczny** (domyślny): panel boczny, gdy widok powtórki ma co najmniej 900 px szerokości, w przeciwnym razie pasek. Przełącza się sam przy zmianie rozmiaru okna, obrocie iPada i w Split View.
+- **Kompaktowy pasek**: jeden wiersz nad kartą z timerem, małą sceną stylu, rekordem, Boostami i pauzą. Na telefon i iPada pionowo.
+- **Panel boczny (lewy albo prawy)**: od góry timer z fazą, Boosty i postęp do następnego, rekord i bieżąca seria, lista top 5, duża scena stylu, a na dole pauza i Boost. Przycisk ze strzałkami zwija panel do wąskiego paska i rozwija go z powrotem.
+
+Wszystkie przyciski mają co najmniej 44×44 px, więc łatwo w nie trafić palcem. Nic nie wymaga najechania myszą.
+
+## Rekordy
+
+Ustawienia → Speed Streak → **Rekordy**:
+
+- **Widok**: tylko rekord, pasek serii (jak blisko jesteś rekordu) albo top 5.
+- **Zakres**: wszech czasów albo dziś.
+- **Lista top 5**: ranking (najdłuższe serie) albo ostatnie serie.
+- **Filtr**: wszystkie serie albo tylko „Czyste”.
+- **Celebracja nowego rekordu**: animacja i dźwięk.
+
+Plakietki: **Czysta** oznacza serię bez ręcznych pauz i bez Boostów. **Przerwy** oznacza, że była pauza albo Boost. Pauza na czas czytania na głos się nie liczy.
+
+Dotknij rekordu albo wiersza listy, żeby zobaczyć szczegóły serii: datę, czas aktywny, liczbę kart, pauzy, Boosty, talię i to, jak się skończyła.
+
+## Pauza
+
+Po zatrzymaniu (klawisz **P**, przycisk albo dotknięcie timera) zasłona nad kartą pokazuje:
+
+- czas sesji,
+- liczbę kart,
+- **tempo** (karty na minutę i sekundy na kartę),
+- bieżącą serię,
+- sumę ocen (Ponownie / Trudne / Dobre / Łatwe) z kolorowym paskiem.
+
+Dotknij zasłony, żeby wrócić do nauki.
+
+## Wydajność
+
+Ustawienia → Speed Streak → Wygląd → **Wydajność**:
+
+- **Pełna**: 60 klatek na sekundę i wszystkie cząstki.
+- **Lekka**: 30 klatek na sekundę i ok. 40% cząstek. Dobra do sesji dłuższych niż 10 minut na telefonie.
+- **Minimalna**: bez ciągłej animacji. Scena rysuje się tylko wtedy, gdy coś się zmienia.
+- **Automatyczna** (domyślna): Pełna na komputerze, Lekka na telefonie i tablecie.
+
+Animacja w ogóle nie działa, gdy jest zbędna: kiedy scena jest niewidoczna (np. zwinięty panel), gdy aplikacja jest w tle i podczas pauzy.
+Opcja **Ogranicz animacje** wyłącza ruch, a plugin sam respektuje też systemowe ustawienie „ogranicz ruch”.
+
+## Motywy kolorów
+
+Ustawienia → Speed Streak → Wygląd → **Motyw**. Do wyboru:
+
+- **Domyślny dla stylu** (każdy styl ma swoje kolory),
+- Obsidian (jak motyw vaulta),
+- Klasyczny, Jak karta, Grafit, Północ, Las, Żar, Fiolet, Ocean.
+
+Każdy styl działa z każdym motywem, bo bierze kolory tylko z motywu. Timer przechodzi płynnie przez kolory motywu: dobre → trudne → ponownie.
+
+**Nowy motyw**: dopisz jeden obiekt do listy `SPEED_STREAK_THEMES` w `src/speed-streak/speed-streak-themes.ts` (instrukcja jest na górze pliku). Wystarczy podać tylko kolory, które chcesz zmienić. Reszta bierze się z motywu Obsidiana.
+
+**Nowy styl wizualny**:
+
+1. Utwórz plik `src/speed-streak/visuals/<nazwa>-visual.ts` z klasą dziedziczącą po `CanvasVisual` i napisz w niej `draw()`. Klasa bazowa sama zajmuje się rozmiarem płótna, pętlą animacji, poziomami wydajności i kolorami motywu.
+2. Dopisz identyfikator stylu do `SPEED_STREAK_VISUAL_IDS` w `speed-streak-settings.ts`.
+3. Dopisz jeden wpis do `SPEED_STREAK_VISUALS` w `src/speed-streak/visuals/visual-registry.ts`.
+
+Szczegółowa instrukcja krok po kroku jest na górze `visual-registry.ts`.
 
 ## Specjalne reguły timera
 
