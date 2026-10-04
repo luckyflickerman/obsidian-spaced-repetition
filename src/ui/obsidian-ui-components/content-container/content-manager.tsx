@@ -6,6 +6,7 @@ import { Card } from "src/data/data-structures/card/card";
 import { Question } from "src/data/data-structures/card/questions/question";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
+import { flushReviewLog, recordCardReview } from "src/heatmap/heatmap-view";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { Note } from "src/note/note";
@@ -108,6 +109,7 @@ export default class ContentManager {
 
         this.deckContainer = new DeckContainer(
             parentEl,
+            this.plugin,
             this._changeReviewMode.bind(this),
             this._startReviewOfDeck.bind(this),
             closeModal,
@@ -136,6 +138,7 @@ export default class ContentManager {
         this.deckContainer.closeList();
         this.cardContainer.closeSession();
         this.uiManager.setUIState(UIState.Closed);
+        void flushReviewLog(this.plugin);
     }
 
     public async open() {
@@ -490,7 +493,12 @@ export default class ContentManager {
         }
         this.lastPressedOnProcessReview = timeNow;
 
+        // Review calendar: count the card (a reset is not a review)
+        const isNew = !(this.reviewSequencer.currentCard?.hasSchedule ?? true);
+        const msOnCard = this.cardContainer.msOnCurrentCard();
+
         await this.reviewSequencer.processReview(response);
+        if (response !== ReviewResponse.Reset) recordCardReview(this.plugin, msOnCard, isNew);
         await this._showNextCard();
     }
 

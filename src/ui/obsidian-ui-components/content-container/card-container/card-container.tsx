@@ -47,6 +47,9 @@ export class CardContainer {
     /** Reads the answer aloud. */
     public tts: TtsController;
 
+    /** When the current card's question was shown (epoch ms, 0 = none). */
+    private cardShownAt = 0;
+
     private clozeInputs: NodeListOf<HTMLInputElement> | null = null;
     private clozeAnswers: NodeListOf<Element> | null = null;
 
@@ -192,9 +195,15 @@ export class CardContainer {
         }
     }
 
+    /** Time since the current card's question was shown (review calendar). */
+    public msOnCurrentCard(): number {
+        return this.cardShownAt > 0 ? Date.now() - this.cardShownAt : 0;
+    }
+
     public async drawCardFront(sessionData: SessionData, settings: SRSettings) {
         // Next card / skip / redraw: stop reading the previous answer at once
         this.tts.onQuestionShown();
+        this.cardShownAt = Date.now();
         this.toolbar.setResetButtonDisabled(true);
         // Update current deck info
         this.cardState = sessionData.cardData.currentCardState;

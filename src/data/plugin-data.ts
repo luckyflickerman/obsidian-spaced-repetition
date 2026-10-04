@@ -1,4 +1,5 @@
 import { DEFAULT_SETTINGS, SRSettings } from "src/data/settings";
+import { createDefaultReviewLog, ReviewLog } from "src/heatmap/heatmap-data";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
 import { ISerializedFSRSScheduleData } from "src/scheduling/algorithms/fsrs/serialized-schedule-data";
 import { ISerializedSM2ScheduleData } from "src/scheduling/algorithms/osr/serialized-schedule-data";
@@ -33,6 +34,8 @@ export interface PluginData {
     historyDeck: string | null;
     scheduleData: ISerializedScheduleData;
     speedStreak: SpeedStreakData;
+    /** Cards reviewed per day (for the review calendar) */
+    reviewLog: ReviewLog;
 }
 
 export const DEFAULT_DATA: PluginData = {
@@ -46,4 +49,5 @@ export const DEFAULT_DATA: PluginData = {
         cardSchedules: {},
     },
     speedStreak: createDefaultSpeedStreakData(),
+    reviewLog: createDefaultReviewLog(),
 };

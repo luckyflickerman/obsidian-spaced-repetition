@@ -1,4 +1,5 @@
 import { StorageType } from "src/data/data-store/base/data-store";
+import { DEFAULT_HEATMAP_SETTINGS, HeatmapSettings } from "src/heatmap/heatmap-data";
 import { t } from "src/lang/helpers";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
 import {
@@ -104,6 +105,9 @@ export interface SRSettings {
 
     // Read aloud (TTS) after the answer is revealed
     tts: TtsSettings;
+
+    // Review calendar (heatmap) below the deck list
+    heatmap: HeatmapSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -196,6 +200,7 @@ export const DEFAULT_SETTINGS: SRSettings = {
 
     speedStreak: { ...DEFAULT_SPEED_STREAK_SETTINGS },
     tts: { ...DEFAULT_TTS_SETTINGS, voices: {} },
+    heatmap: { ...DEFAULT_HEATMAP_SETTINGS },
 };
 
 export function upgradeSettings(settings: SRSettings) {

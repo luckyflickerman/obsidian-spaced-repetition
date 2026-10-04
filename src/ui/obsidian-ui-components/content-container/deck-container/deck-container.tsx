@@ -4,6 +4,8 @@ import h from "vhtml";
 
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
+import { getHeatmapSettings, HeatmapView } from "src/heatmap/heatmap-view";
+import type SRPlugin from "src/main";
 import {
     FlashcardReviewMode,
     IFlashcardReviewSequencer as IFlashcardReviewSequencer,
@@ -15,13 +17,17 @@ export class DeckContainer {
     private containerEl: HTMLDivElement;
     private deckList: DeckListComponent;
     private deckListHeader: DeckListHeaderComponent;
+    private plugin: SRPlugin;
+    private heatmap: HeatmapView;
 
     constructor(
         parentEl: HTMLElement,
+        plugin: SRPlugin,
         changeReviewMode: (reviewMode: FlashcardReviewMode) => void,
         startReviewOfDeck: (deck: Deck) => void,
         closeModal?: () => void,
     ) {
+        this.plugin = plugin;
         // Build ui
         this.containerEl = parentEl.createDiv();
         this.containerEl.addClasses(["sr-container", "sr-deck-container", "sr-is-hidden"]);
@@ -33,6 +39,27 @@ export class DeckContainer {
         );
 
         this.deckList = new DeckListComponent(this.containerEl, startReviewOfDeck);
+
+        // Review calendar below the deck tree
+        this.heatmap = new HeatmapView(this.deckList.contentEl, plugin);
+    }
+
+    private redrawHeatmap(reviewSequencer: IFlashcardReviewSequencer) {
+        try {
+            const visible = getHeatmapSettings(this.plugin).showInDeckList;
+            this.heatmap.show(visible);
+            if (!visible) return;
+            const stats = reviewSequencer.getDeckStats(
+                reviewSequencer.originalDeckTree.getTopicPath(),
+            );
+            this.heatmap.render({
+                due: stats.dueCount,
+                newCards: stats.newCount,
+                total: stats.totalCount,
+            });
+        } catch (e) {
+            console.error("[Review calendar] could not render", e);
+        }
     }
 
     /**
@@ -47,6 +74,7 @@ export class DeckContainer {
         this.deckListHeader.updateReviewMode(reviewMode);
 
         this.deckList.redraw(reviewSequencer, settings);
+        this.redrawHeatmap(reviewSequencer);
 
         if (this.containerEl.hasClass("sr-is-hidden")) {
             this.containerEl.removeClass("sr-is-hidden");
@@ -64,5 +92,6 @@ export class DeckContainer {
 
     redrawWithNewData(reviewSequencer: IFlashcardReviewSequencer, settings: SRSettings) {
         this.deckList.redraw(reviewSequencer, settings);
+        this.redrawHeatmap(reviewSequencer);
     }
 }

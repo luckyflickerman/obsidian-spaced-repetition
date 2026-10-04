@@ -58,6 +58,11 @@ export default {
         "src/tts/tts-controller.ts",
         "src/tts/tts-i18n.ts",
         "src/tts/tts.css",
+
+        // Review calendar UI glue
+        "src/heatmap/heatmap-view.ts",
+        "src/heatmap/heatmap-i18n.ts",
+        "src/heatmap/heatmap.css",
     ],
     coverageDirectory: "coverage",
     collectCoverage: true,

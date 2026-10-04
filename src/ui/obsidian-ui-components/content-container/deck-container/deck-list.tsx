@@ -103,6 +103,11 @@ export default class DeckListComponent {
         this.treeContainer = this.content.createDiv("sr-tree-container");
     }
 
+    /** Scrollable content (the review calendar is added below the tree). */
+    get contentEl(): HTMLDivElement {
+        return this.content;
+    }
+
     /**
      * Redraws the deck list.
      * @param startReviewOfDeck - Callback for starting the review of a deck.

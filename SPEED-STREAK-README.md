@@ -123,6 +123,16 @@ Po instalacji otwórz stronę „Czytanie na głos” jeszcze raz. Diagnostyka p
 Kod jest w `src/tts/`. Czysta logika (bez DOM, z testami) jest w `tts-text.ts` i `tts-settings.ts`. Głosy dostarcza „dostawca” (`TtsProvider`).
 Na górze `tts-provider.ts` jest instrukcja krok po kroku, jak dodać nowego dostawcę, np. głosy AI.
 
+## Kalendarz powtórek
+
+Pod listą talii jest kalendarz całego roku: jeden kwadrat to jeden dzień. Im więcej kart tego dnia powtórzysz, tym mocniejszy kolor.
+
+- **Kolor** (zielony, niebieski, czerwony) zmienisz kropkami obok kalendarza albo w Ustawieniach → **Kalendarz powtórek**.
+- Strzałki przełączają rok, kółko wraca do bieżącego roku. Po najechaniu na kwadrat (albo przytrzymaniu na telefonie) widać datę i liczbę kart.
+- Statystyki: karty i czas dzisiaj, średnie tempo (karty na minutę), szacowany czas na pozostałe karty, łączny czas nauki i czas z ostatniego tygodnia, średnio kart dziennie, procent dni z nauką, najdłuższa i obecna seria dni.
+- Historia zbiera się od pierwszej powtórki w tej wersji pluginu. Wcześniejszych dni nie da się odtworzyć, bo plugin zapisywał tylko termin następnej powtórki.
+- Czas jednej karty liczy się od pokazania pytania do oceny, maksymalnie 2 minuty (gdy odejdziesz od komputera, nie zawyża statystyk).
+
 ## Pominięte z oryginału (specyficzne dla Anki/Windows)
 
 Wizualizacje 3D (Fusion Rings, Crystal Reactor…), osobne okno, wibracje pada, flagi „Review Later”/„Time Drain”, cofanie (OSR nie ma undo), własne pliki dźwiękowe.
