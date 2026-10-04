@@ -25,7 +25,13 @@ export interface HeatmapSettings {
     weekStartsOnMonday: boolean;
     /** Folded to a small block: today's ring + this month */
     minimized: boolean;
+    /** Daily goal shown above the minimized calendar and in the day tooltips */
+    dailyGoalEnabled: boolean;
+    /** Cards to review per day */
+    dailyGoal: number;
 }
+
+export const MAX_DAILY_GOAL = 9999;
 
 export const DEFAULT_HEATMAP_SETTINGS: HeatmapSettings = {
     showInDeckList: true,
@@ -33,7 +39,18 @@ export const DEFAULT_HEATMAP_SETTINGS: HeatmapSettings = {
     showStats: true,
     weekStartsOnMonday: true,
     minimized: false,
+    dailyGoalEnabled: true,
+    dailyGoal: 50,
 };
+
+/** Goal from user input / stored data: a whole number 1–9999, otherwise `fallback`. */
+export function normalizeDailyGoal(value: unknown, fallback: number): number {
+    const n = typeof value === "string" ? Number(value.trim()) : value;
+    if (typeof n !== "number" || !Number.isFinite(n)) return fallback;
+    const rounded = Math.round(n);
+    if (rounded < 1) return fallback;
+    return Math.min(MAX_DAILY_GOAL, rounded);
+}
 
 export function normalizeHeatmapSettings(
     stored: Partial<HeatmapSettings> | null | undefined,
@@ -49,6 +66,8 @@ export function normalizeHeatmapSettings(
     merged.showStats = bool(merged.showStats, d.showStats);
     merged.weekStartsOnMonday = bool(merged.weekStartsOnMonday, d.weekStartsOnMonday);
     merged.minimized = bool(merged.minimized, d.minimized);
+    merged.dailyGoalEnabled = bool(merged.dailyGoalEnabled, d.dailyGoalEnabled);
+    merged.dailyGoal = normalizeDailyGoal(merged.dailyGoal, d.dailyGoal);
     if (!HEATMAP_COLORS.includes(merged.color)) merged.color = d.color;
     return merged;
 }
@@ -395,4 +414,27 @@ export function todayProgress(doneToday: number, dueLeft: number): TodayProgress
     const left = Math.max(0, Math.round(dueLeft));
     const planned = done + left;
     return { left, planned, fraction: planned > 0 ? done / planned : 1 };
+}
+
+export interface GoalProgress {
+    done: number;
+    goal: number;
+    /** Cards still needed to reach the goal */
+    left: number;
+    /** Share of the goal done (0–1, capped) */
+    fraction: number;
+    reached: boolean;
+}
+
+/** Daily goal: cards reviewed that day vs. the goal. */
+export function goalProgress(done: number, goal: number): GoalProgress {
+    const d = Math.max(0, Math.round(done));
+    const g = Math.max(1, Math.round(goal));
+    return {
+        done: d,
+        goal: g,
+        left: Math.max(0, g - d),
+        fraction: Math.min(1, d / g),
+        reached: d >= g,
+    };
 }

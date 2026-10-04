@@ -23,6 +23,7 @@ export type SettingsPageType =
     | "speed-streak-page"
     | "tts-page"
     | "heatmap-page"
+    | "daily-goal-page"
     | "card-authoring-page"
     | "notes-page"
     | "scheduling-page"
@@ -41,6 +42,7 @@ export const SettingsPageTypesArray: ReadonlyArray<SettingsPageType> = [
     "speed-streak-page",
     "tts-page",
     "heatmap-page",
+    "daily-goal-page",
     "card-authoring-page",
     "notes-page",
     "scheduling-page",
@@ -67,6 +69,8 @@ export function getPageName(pageType: SettingsPageType): string {
             return tt("PAGE_NAME");
         case "heatmap-page":
             return hm("PAGE_NAME");
+        case "daily-goal-page":
+            return hm("GOAL_LABEL");
         case "card-authoring-page":
             return ca("PAGE_NAME");
         case "notes-page":
@@ -100,6 +104,8 @@ export function getPageIcon(pageType: SettingsPageType): string {
             return "volume-2";
         case "heatmap-page":
             return "calendar-days";
+        case "daily-goal-page":
+            return "target";
         case "card-authoring-page":
             return "square-plus";
         case "notes-page":

@@ -6,7 +6,9 @@ import {
     buildYearGrid,
     computeStats,
     estimateMinutesLeft,
+    goalProgress,
     HEATMAP_COLORS,
+    HeatmapCell,
     HeatmapSettings,
     normalizeHeatmapSettings,
     normalizeReviewLog,
@@ -72,6 +74,28 @@ export function recordCardReview(plugin: SRPlugin, ms: number, isNew: boolean) {
     } catch (e) {
         console.error("[Review calendar] could not record the review", e);
     }
+}
+
+function cellDateFormat(): Intl.DateTimeFormat {
+    return new Intl.DateTimeFormat(isPolish() ? "pl-PL" : "en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+}
+
+/** Tooltip of a day square: the date, cards done and, if set, the daily goal. */
+function dayTooltip(date: string, cell: HeatmapCell, settings: HeatmapSettings): string {
+    if (cell.isFuture) return date;
+    const lines = [date, hm("CELL_DONE", { n: cell.cards })];
+    if (settings.dailyGoalEnabled) {
+        const goal = goalProgress(cell.cards, settings.dailyGoal);
+        lines.push(
+            hm("CELL_GOAL", { done: goal.done, goal: goal.goal }) + (goal.reached ? " ✓" : ""),
+        );
+    }
+    return lines.join("\n");
 }
 
 export interface HeatmapDeckCounts {
@@ -234,6 +258,7 @@ export class HeatmapView {
      * No text; tap to unfold.
      */
     private renderMini(log: ReviewLog, settings: HeatmapSettings, today: Date, doneToday: number) {
+        if (settings.dailyGoalEnabled) this.renderGoal(doneToday, settings.dailyGoal);
         const progress = todayProgress(doneToday, this.counts?.due ?? 0);
         const box = this.rootEl.createEl("button", { cls: "sr-hm-mini-box" });
         box.setAttr("aria-label", `${hm("MINI_LABEL", { n: progress.left })} · ${hm("EXPAND")}`);
@@ -265,6 +290,7 @@ export class HeatmapView {
         ring.toggleClass("is-done", progress.left === 0 && progress.planned > 0);
 
         const month = box.createDiv({ cls: "sr-hm-month-grid" });
+        const dateFormat = cellDateFormat();
         const weeks = buildMonthGrid(
             log,
             today.getFullYear(),
@@ -281,19 +307,33 @@ export class HeatmapView {
                 const el = month.createDiv({ cls: `sr-hm-mcell sr-hm-l${cell.level}` });
                 if (cell.isToday) el.addClass("is-today");
                 if (cell.isFuture) el.addClass("is-future");
+                el.setAttr("aria-label", dayTooltip(dateFormat.format(cell.date), cell, settings));
             }
         }
+    }
+
+    /** Daily goal above the minimized calendar: "Cel dzienny 32/50" and a bar. */
+    private renderGoal(doneToday: number, dailyGoal: number) {
+        const goal = goalProgress(doneToday, dailyGoal);
+        const el = this.rootEl.createDiv({ cls: "sr-hm-goal" });
+        el.toggleClass("is-reached", goal.reached);
+        el.setAttr("aria-label", hm("GOAL_ARIA", { done: goal.done, goal: goal.goal }));
+        const head = el.createDiv({ cls: "sr-hm-goal-head" });
+        head.createSpan({ cls: "sr-hm-goal-label", text: hm("GOAL_LABEL") });
+        head.createSpan({
+            cls: "sr-hm-goal-value",
+            text: `${goal.done}/${goal.goal}${goal.reached ? " ✓" : ""}`,
+        });
+        const bar = el.createDiv({ cls: "sr-hm-goal-bar" });
+        bar.createDiv({ cls: "sr-hm-goal-fill" }).setCssProps({
+            "--sr-hm-goal": `${Math.round(goal.fraction * 100)}%`,
+        });
     }
 
     private renderGrid(log: ReviewLog, settings: HeatmapSettings, today: Date) {
         const grid = buildYearGrid(log, this.year, today, settings.weekStartsOnMonday);
         const locale = isPolish() ? "pl-PL" : "en-GB";
-        const dateFormat = new Intl.DateTimeFormat(locale, {
-            weekday: "short",
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-        });
+        const dateFormat = cellDateFormat();
         const monthFormat = new Intl.DateTimeFormat(locale, { month: "short" });
 
         const scroller = this.rootEl.createDiv({ cls: "sr-hm-scroller" });
@@ -314,13 +354,7 @@ export class HeatmapView {
                 }
                 if (cell.isFuture) el.addClass("is-future");
                 if (cell.isToday) el.addClass("is-today");
-                const date = dateFormat.format(cell.date);
-                el.setAttr(
-                    "aria-label",
-                    cell.cards > 0
-                        ? hm("CELL", { date, cards: countOf(cell.cards, "cards") })
-                        : hm("CELL_NONE", { date }),
-                );
+                el.setAttr("aria-label", dayTooltip(dateFormat.format(cell.date), cell, settings));
             }
         });
         this.rootEl.createDiv({ cls: "sr-hm-year", text: String(this.year) });

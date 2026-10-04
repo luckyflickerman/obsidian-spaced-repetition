@@ -263,6 +263,46 @@
     padding: 0;
 }
 
+/* Daily goal above the minimized calendar */
+.sr-hm-goal {
+    padding: var(--size-4-1) var(--size-4-2) 0;
+}
+
+.sr-hm-goal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--size-4-2);
+    font-size: var(--font-smallest);
+    color: var(--text-muted);
+}
+
+.sr-hm-goal-value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-normal);
+}
+
+.sr-hm-goal.is-reached .sr-hm-goal-value {
+    color: var(--sr-hm-accent-color);
+}
+
+.sr-hm-goal-bar {
+    height: 6px;
+    margin-top: 3px;
+    border-radius: 3px;
+    background-color: var(--background-modifier-border);
+    overflow: hidden;
+}
+
+.sr-hm-goal-fill {
+    width: var(--sr-hm-goal, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--sr-hm-accent-color);
+    transition: width 400ms ease;
+}
+
 .sr-hm-toolbar-end {
     display: flex;
     justify-content: flex-end;

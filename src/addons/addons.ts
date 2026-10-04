@@ -16,9 +16,9 @@ import { normalizeHeatmapSettings } from "src/heatmap/heatmap-data";
 import { normalizeSpeedStreakSettings } from "src/speed-streak/speed-streak-settings";
 import { normalizeTtsSettings } from "src/tts/tts-settings";
 
-export type AddonId = "heatmap" | "tts" | "speed-streak";
+export type AddonId = "heatmap" | "daily-goal" | "tts" | "speed-streak";
 
-export type AddonPageType = "heatmap-page" | "tts-page" | "speed-streak-page";
+export type AddonPageType = "heatmap-page" | "daily-goal-page" | "tts-page" | "speed-streak-page";
 
 export interface AddonInfo {
     id: AddonId;
@@ -38,6 +38,15 @@ export const ADDONS: AddonInfo[] = [
         isEnabled: (s) => normalizeHeatmapSettings(s.heatmap).showInDeckList,
         setEnabled: (s, enabled) => {
             s.heatmap = { ...normalizeHeatmapSettings(s.heatmap), showInDeckList: enabled };
+        },
+    },
+    {
+        id: "daily-goal",
+        icon: "target",
+        pageType: "daily-goal-page",
+        isEnabled: (s) => normalizeHeatmapSettings(s.heatmap).dailyGoalEnabled,
+        setEnabled: (s, enabled) => {
+            s.heatmap = { ...normalizeHeatmapSettings(s.heatmap), dailyGoalEnabled: enabled };
         },
     },
     {

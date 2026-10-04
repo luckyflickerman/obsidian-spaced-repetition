@@ -6,6 +6,7 @@ import { ad, addonDescription, addonName } from "src/addons/addons-i18n";
 import type SRPlugin from "src/main";
 import { SpeedStreakController } from "src/speed-streak/speed-streak-controller";
 import { TtsController } from "src/tts/tts-controller";
+import { DailyGoalPage } from "src/ui/obsidian-ui-components/content-container/settings-page/daily-goal-page";
 import { HeatmapPage } from "src/ui/obsidian-ui-components/content-container/settings-page/heatmap-page";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SpeedStreakPage } from "src/ui/obsidian-ui-components/content-container/settings-page/speed-streak-page";
@@ -123,6 +124,8 @@ export class AddonsModal extends Modal {
         switch (addon.pageType) {
             case "heatmap-page":
                 return new HeatmapPage(...args);
+            case "daily-goal-page":
+                return new DailyGoalPage(...args);
             case "tts-page":
                 return new TtsPage(...args);
             case "speed-streak-page":

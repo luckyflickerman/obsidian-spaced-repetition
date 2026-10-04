@@ -7,10 +7,11 @@ function emptySettings(): SRSettings {
 }
 
 describe("add-ons", () => {
-    test("all three add-ons, each with its own settings page", () => {
-        expect(ADDONS.map((a) => a.id)).toEqual(["heatmap", "tts", "speed-streak"]);
+    test("all add-ons, each with its own settings page", () => {
+        expect(ADDONS.map((a) => a.id)).toEqual(["heatmap", "daily-goal", "tts", "speed-streak"]);
         expect(ADDONS.map((a) => a.pageType)).toEqual([
             "heatmap-page",
+            "daily-goal-page",
             "tts-page",
             "speed-streak-page",
         ]);
@@ -40,6 +41,11 @@ describe("add-ons", () => {
         expect(getAddon("speed-streak").isEnabled(settings)).toBe(true);
 
         getAddon("heatmap").setEnabled(settings, false);
+        expect(settings.heatmap.showInDeckList).toBe(false);
+        settings.heatmap.dailyGoal = 80;
+        getAddon("daily-goal").setEnabled(settings, false);
+        expect(settings.heatmap.dailyGoalEnabled).toBe(false);
+        expect(settings.heatmap.dailyGoal).toBe(80);
         expect(settings.heatmap.showInDeckList).toBe(false);
         getAddon("speed-streak").setEnabled(settings, false);
         expect(settings.speedStreak.enabled).toBe(false);

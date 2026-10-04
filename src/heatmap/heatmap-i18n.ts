@@ -21,8 +21,17 @@ const EN = {
     LONGEST_STREAK: "Longest streak:",
     CURRENT_STREAK: "Current streak:",
 
-    CELL: "${date}: ${cards}",
-    CELL_NONE: "${date}: no reviews",
+    CELL_DONE: "Cards done: ${n}",
+    CELL_GOAL: "Daily goal: ${done}/${goal}",
+    // Daily goal
+    GOAL_LABEL: "Daily goal",
+    GOAL_ARIA: "Daily goal: ${done} of ${goal} cards",
+    GOAL_ENABLED: "Show the daily goal",
+    GOAL_ENABLED_DESC:
+        "Above the minimized calendar: cards done today out of the goal. The goal is also shown in the day tooltips.",
+    GOAL_COUNT: "Cards per day",
+    GOAL_COUNT_DESC: "How many cards you want to review every day (1–9999).",
+    GOAL_TODAY: "Today: ${done}/${goal}",
     PREV_YEAR: "Previous year",
     NEXT_YEAR: "Next year",
     THIS_YEAR: "This year",
@@ -77,8 +86,16 @@ const PL: Record<Keys, string> = {
     LONGEST_STREAK: "Najdłuższa seria:",
     CURRENT_STREAK: "Obecna seria:",
 
-    CELL: "${date}: ${cards}",
-    CELL_NONE: "${date}: bez powtórek",
+    CELL_DONE: "Zrobione fiszki: ${n}",
+    CELL_GOAL: "Cel dzienny: ${done}/${goal}",
+    GOAL_LABEL: "Cel dzienny",
+    GOAL_ARIA: "Cel dzienny: ${done} z ${goal} fiszek",
+    GOAL_ENABLED: "Pokazuj cel dzienny",
+    GOAL_ENABLED_DESC:
+        "Nad zwiniętym kalendarzem: liczba fiszek zrobionych dziś względem celu. Cel widać też w dymku każdego dnia.",
+    GOAL_COUNT: "Fiszek dziennie",
+    GOAL_COUNT_DESC: "Ile fiszek chcesz powtarzać każdego dnia (1–9999).",
+    GOAL_TODAY: "Dziś: ${done}/${goal}",
     PREV_YEAR: "Poprzedni rok",
     NEXT_YEAR: "Następny rok",
     THIS_YEAR: "Bieżący rok",

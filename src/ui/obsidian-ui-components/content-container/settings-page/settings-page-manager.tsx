@@ -5,6 +5,7 @@ import { DataManager } from "src/data/data-manager";
 import { SettingsManager } from "src/data/settings-manager";
 import SRPlugin from "src/main";
 import { CardAuthoringPage } from "src/ui/obsidian-ui-components/content-container/settings-page/card-authoring-page";
+import { DailyGoalPage } from "src/ui/obsidian-ui-components/content-container/settings-page/daily-goal-page";
 import { DataPage } from "src/ui/obsidian-ui-components/content-container/settings-page/data-page";
 import { FlashcardsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/flashcards-page";
 import { HeatmapPage } from "src/ui/obsidian-ui-components/content-container/settings-page/heatmap-page";
@@ -150,6 +151,21 @@ export class SettingsPageManager {
                 case "card-authoring-page":
                     this.pages.push(
                         new CardAuthoringPage(
+                            newPageContainerEl,
+                            this.plugin,
+                            this.settingsManager,
+                            this.dataManager,
+                            pageType,
+                            this.applySettingsUpdate.bind(this),
+                            this.display,
+                            this.openPage.bind(this),
+                            this.scrollListener.bind(this),
+                        ),
+                    );
+                    break;
+                case "daily-goal-page":
+                    this.pages.push(
+                        new DailyGoalPage(
                             newPageContainerEl,
                             this.plugin,
                             this.settingsManager,
