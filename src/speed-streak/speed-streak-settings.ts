@@ -191,7 +191,8 @@ export function normalizeSpeedStreakSettings(
     // Old data: "today" in the former "Record to beat" setting means today's scope
     const scopeFallback: SpeedStreakRecordScope =
         source.recordDisplay === "today" ? "today" : "all_time";
-    merged.recordScope = oneOf(merged.recordScope, ["all_time", "today"] as const, scopeFallback);
+    // read the saved value: `merged` already holds the default
+    merged.recordScope = oneOf(source.recordScope, ["all_time", "today"] as const, scopeFallback);
     merged.recordsList = oneOf(merged.recordsList, ["ranking", "recent"] as const, "ranking");
     merged.recordsFilter = oneOf(merged.recordsFilter, ["all", "pure"] as const, "all");
     merged.celebrateNewBest = bool(merged.celebrateNewBest, true);
