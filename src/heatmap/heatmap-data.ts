@@ -23,6 +23,8 @@ export interface HeatmapSettings {
     showStats: boolean;
     /** Weeks start on Monday (otherwise Sunday) */
     weekStartsOnMonday: boolean;
+    /** Folded to a small block: today's ring + this month */
+    minimized: boolean;
 }
 
 export const DEFAULT_HEATMAP_SETTINGS: HeatmapSettings = {
@@ -30,6 +32,7 @@ export const DEFAULT_HEATMAP_SETTINGS: HeatmapSettings = {
     color: "green",
     showStats: true,
     weekStartsOnMonday: true,
+    minimized: false,
 };
 
 export function normalizeHeatmapSettings(
@@ -45,6 +48,7 @@ export function normalizeHeatmapSettings(
     merged.showInDeckList = bool(merged.showInDeckList, d.showInDeckList);
     merged.showStats = bool(merged.showStats, d.showStats);
     merged.weekStartsOnMonday = bool(merged.weekStartsOnMonday, d.weekStartsOnMonday);
+    merged.minimized = bool(merged.minimized, d.minimized);
     if (!HEATMAP_COLORS.includes(merged.color)) merged.color = d.color;
     return merged;
 }
@@ -325,4 +329,70 @@ export function yearRange(log: ReviewLog, today: Date): { min: number; max: numb
         if (Number.isFinite(y) && y < min) min = y;
     }
     return { min, max };
+}
+
+// MARK: Minimized calendar
+
+/**
+ * One month as rows of weeks (7 cells each, first day of the week first).
+ * Days of other months are `null`. Colors use the same scale as the year view.
+ */
+export function buildMonthGrid(
+    log: ReviewLog,
+    year: number,
+    month: number,
+    today: Date,
+    weekStartsOnMonday: boolean = true,
+): Array<Array<HeatmapCell | null>> {
+    const yearCounts: number[] = [];
+    for (const [key, day] of Object.entries(log.days)) {
+        if (key.startsWith(`${year}-`)) yearCounts.push(day.cards);
+    }
+    const reference = levelReference(yearCounts);
+    const todayKey = dayKey(today);
+    const first = new Date(year, month, 1);
+    const offset = (first.getDay() - (weekStartsOnMonday ? 1 : 0) + 7) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const weeks: Array<Array<HeatmapCell | null>> = [];
+    let week: Array<HeatmapCell | null> = new Array<HeatmapCell | null>(offset).fill(null);
+    for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(year, month, d);
+        const key = dayKey(date);
+        const cards = log.days[key]?.cards ?? 0;
+        week.push({
+            key,
+            date,
+            cards,
+            level: heatmapLevel(cards, reference),
+            outside: false,
+            isFuture: key > todayKey,
+            isToday: key === todayKey,
+        });
+        if (week.length === 7) {
+            weeks.push(week);
+            week = [];
+        }
+    }
+    if (week.length > 0) {
+        while (week.length < 7) week.push(null);
+        weeks.push(week);
+    }
+    return weeks;
+}
+
+export interface TodayProgress {
+    /** Cards still due today */
+    left: number;
+    /** Done today + still due */
+    planned: number;
+    /** Share done (0–1); 1 when nothing is planned */
+    fraction: number;
+}
+
+/** Progress ring of the minimized calendar: done today vs. planned for today. */
+export function todayProgress(doneToday: number, dueLeft: number): TodayProgress {
+    const done = Math.max(0, Math.round(doneToday));
+    const left = Math.max(0, Math.round(dueLeft));
+    const planned = done + left;
+    return { left, planned, fraction: planned > 0 ? done / planned : 1 };
 }

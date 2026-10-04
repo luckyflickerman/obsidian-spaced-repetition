@@ -27,6 +27,12 @@ const EN = {
     NEXT_YEAR: "Next year",
     THIS_YEAR: "This year",
     COLOR: "Color",
+    MINIMIZE: "Minimize calendar",
+    EXPAND: "Expand calendar",
+    MINI_LABEL: "${n} cards left for today",
+    MINIMIZED: "Minimized calendar",
+    MINIMIZED_DESC:
+        "Only a ring with the cards left for today and this month, on the right below the deck list.",
     EMPTY_HINT: "The calendar fills in as you review cards.",
     // Colors
     COLOR_GREEN: "Green",
@@ -77,6 +83,12 @@ const PL: Record<Keys, string> = {
     NEXT_YEAR: "Następny rok",
     THIS_YEAR: "Bieżący rok",
     COLOR: "Kolor",
+    MINIMIZE: "Zwiń kalendarz",
+    EXPAND: "Rozwiń kalendarz",
+    MINI_LABEL: "Zostało na dziś: ${n}",
+    MINIMIZED: "Zwinięty kalendarz",
+    MINIMIZED_DESC:
+        "Tylko koło z liczbą kart pozostałych na dziś i bieżący miesiąc, po prawej pod listą talii.",
     EMPTY_HINT: "Kalendarz będzie się wypełniał, gdy będziesz powtarzać karty.",
     COLOR_GREEN: "Zielony",
     COLOR_BLUE: "Niebieski",

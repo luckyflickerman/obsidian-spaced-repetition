@@ -1,5 +1,6 @@
 import {
     addDays,
+    buildMonthGrid,
     buildYearGrid,
     computeStats,
     createDefaultReviewLog,
@@ -16,6 +17,7 @@ import {
     polishPluralForm,
     recordReview,
     ReviewLog,
+    todayProgress,
     yearRange,
 } from "src/heatmap/heatmap-data";
 
@@ -291,5 +293,55 @@ describe("addDays", () => {
         const start = new Date(2026, 9, 24);
         expect(dayKey(addDays(start, 7))).toBe("2026-10-31");
         expect(dayKey(addDays(start, 8))).toBe("2026-11-01");
+    });
+});
+
+describe("minimized calendar", () => {
+    test("setting is off by default and survives normalization", () => {
+        expect(DEFAULT_HEATMAP_SETTINGS.minimized).toBe(false);
+        expect(normalizeHeatmapSettings({ minimized: true }).minimized).toBe(true);
+        expect(normalizeHeatmapSettings({ minimized: "yes" as unknown as boolean }).minimized).toBe(
+            false,
+        );
+    });
+
+    test("month grid: weeks of 7, padding, today and future", () => {
+        const log = logOf({ "2026-10-04": [50], "2026-10-02": [5] });
+        const today = new Date(2026, 9, 4);
+        // October 2026 starts on a Thursday → 3 empty cells (Mon–Wed)
+        const weeks = buildMonthGrid(log, 2026, 9, today, true);
+        expect(weeks).toHaveLength(5);
+        for (const w of weeks) expect(w).toHaveLength(7);
+        expect(weeks[0].slice(0, 3)).toEqual([null, null, null]);
+        expect(weeks[0][3]?.key).toBe("2026-10-01");
+        const cells = weeks.flat().filter((c) => c !== null);
+        expect(cells).toHaveLength(31);
+        expect(cells.find((c) => c?.isToday)?.key).toBe("2026-10-04");
+        expect(cells.find((c) => c?.key === "2026-10-04")?.level).toBe(5);
+        expect(cells.find((c) => c?.key === "2026-10-02")?.level).toBe(1);
+        expect(cells.find((c) => c?.key === "2026-10-05")?.isFuture).toBe(true);
+        expect(weeks[4][5]?.key).toBe("2026-10-31"); // Saturday
+        expect(weeks[4][6]).toBeNull(); // Sunday after the month
+    });
+
+    test("month grid with Sunday as the first day", () => {
+        const weeks = buildMonthGrid(
+            createDefaultReviewLog(),
+            2026,
+            1,
+            new Date(2026, 1, 10),
+            false,
+        );
+        // 1 Feb 2026 is a Sunday → no padding
+        expect(weeks[0][0]?.key).toBe("2026-02-01");
+        expect(weeks).toHaveLength(4);
+    });
+
+    test("today's progress ring", () => {
+        expect(todayProgress(30, 10)).toEqual({ left: 10, planned: 40, fraction: 0.75 });
+        expect(todayProgress(0, 20)).toEqual({ left: 20, planned: 20, fraction: 0 });
+        expect(todayProgress(12, 0)).toEqual({ left: 0, planned: 12, fraction: 1 });
+        expect(todayProgress(0, 0)).toEqual({ left: 0, planned: 0, fraction: 1 });
+        expect(todayProgress(-3, -1).left).toBe(0);
     });
 });

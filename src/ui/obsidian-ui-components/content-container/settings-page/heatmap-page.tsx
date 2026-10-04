@@ -103,6 +103,7 @@ export class HeatmapPage extends SettingsPage {
                     });
                 }),
         );
+        this.addToggle(general, "minimized", hm("MINIMIZED"), hm("MINIMIZED_DESC"));
         this.addToggle(general, "showStats", hm("STATS"), hm("STATS_DESC"));
         this.addToggle(general, "weekStartsOnMonday", hm("MONDAY"));
 

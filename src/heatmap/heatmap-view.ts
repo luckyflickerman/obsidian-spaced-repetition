@@ -2,6 +2,7 @@ import "src/heatmap/heatmap.css";
 import { setIcon } from "obsidian";
 
 import {
+    buildMonthGrid,
     buildYearGrid,
     computeStats,
     estimateMinutesLeft,
@@ -11,6 +12,7 @@ import {
     normalizeReviewLog,
     recordReview,
     ReviewLog,
+    todayProgress,
     yearRange,
 } from "src/heatmap/heatmap-data";
 import { countOf, formatNumber, hm } from "src/heatmap/heatmap-i18n";
@@ -108,6 +110,11 @@ export class HeatmapView {
         this.rootEl.addClass(`sr-hm-color-${settings.color}`);
 
         const stats = computeStats(log, today);
+        this.rootEl.toggleClass("sr-hm-mini", settings.minimized);
+        if (settings.minimized) {
+            this.renderMini(log, settings, today, stats.today.cards);
+            return;
+        }
         if (settings.showStats) this.renderTopStats(stats);
         this.renderToolbar(range);
         this.renderGrid(log, settings, today);
@@ -201,7 +208,81 @@ export class HeatmapView {
             this.year++;
             this.render();
         });
-        bar.createDiv({ cls: "sr-hm-toolbar-spacer" });
+        const side = bar.createDiv({ cls: "sr-hm-toolbar-spacer sr-hm-toolbar-end" });
+        const fold = side.createEl("button", { cls: "sr-hm-nav-btn clickable-icon" });
+        setIcon(fold, "minimize-2");
+        fold.setAttr("aria-label", hm("MINIMIZE"));
+        fold.addEventListener("click", (ev) => {
+            ev.preventDefault();
+            void this.setMinimized(true);
+        });
+    }
+
+    private async setMinimized(minimized: boolean) {
+        getHeatmapSettings(this.plugin).minimized = minimized;
+        this.render();
+        try {
+            await this.plugin.dataManager.settingsManager.save();
+        } catch (e) {
+            console.error("[Review calendar] could not save", e);
+        }
+    }
+
+    /**
+     * Folded calendar: a ring in the calendar color (share of today's planned
+     * cards already done, with the number still due inside) and this month.
+     * No text; tap to unfold.
+     */
+    private renderMini(log: ReviewLog, settings: HeatmapSettings, today: Date, doneToday: number) {
+        const progress = todayProgress(doneToday, this.counts?.due ?? 0);
+        const box = this.rootEl.createEl("button", { cls: "sr-hm-mini-box" });
+        box.setAttr("aria-label", `${hm("MINI_LABEL", { n: progress.left })} · ${hm("EXPAND")}`);
+        box.addEventListener("click", (ev) => {
+            ev.preventDefault();
+            void this.setMinimized(false);
+        });
+
+        const radius = 26;
+        const circumference = 2 * Math.PI * radius;
+        const ring = box.createDiv({ cls: "sr-hm-ring" });
+        const svg = activeDocument.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("viewBox", "0 0 64 64");
+        const circle = (cls: string) => {
+            const c = activeDocument.createElementNS("http://www.w3.org/2000/svg", "circle");
+            c.setAttribute("cx", "32");
+            c.setAttribute("cy", "32");
+            c.setAttribute("r", String(radius));
+            c.classList.add(cls);
+            svg.appendChild(c);
+            return c;
+        };
+        circle("sr-hm-ring-track");
+        const arc = circle("sr-hm-ring-arc");
+        arc.setAttribute("stroke-dasharray", String(circumference));
+        arc.setAttribute("stroke-dashoffset", String(circumference * (1 - progress.fraction)));
+        ring.appendChild(svg);
+        ring.createDiv({ cls: "sr-hm-ring-value", text: String(progress.left) });
+        ring.toggleClass("is-done", progress.left === 0 && progress.planned > 0);
+
+        const month = box.createDiv({ cls: "sr-hm-month-grid" });
+        const weeks = buildMonthGrid(
+            log,
+            today.getFullYear(),
+            today.getMonth(),
+            today,
+            settings.weekStartsOnMonday,
+        );
+        for (const week of weeks) {
+            for (const cell of week) {
+                if (!cell) {
+                    month.createDiv({ cls: "sr-hm-mcell is-empty" });
+                    continue;
+                }
+                const el = month.createDiv({ cls: `sr-hm-mcell sr-hm-l${cell.level}` });
+                if (cell.isToday) el.addClass("is-today");
+                if (cell.isFuture) el.addClass("is-future");
+            }
+        }
     }
 
     private renderGrid(log: ReviewLog, settings: HeatmapSettings, today: Date) {
