@@ -53,6 +53,10 @@ export default {
         "src/speed-streak/speed-streak-audio.ts",
         "src/speed-streak/speed-streak-i18n.ts",
         "src/speed-streak/speed-streak.css",
+        // drawing (Canvas 2D) and HUD DOM
+        "src/speed-streak/visuals/canvas-visual.ts",
+        "src/speed-streak/visuals/.*-visual.ts",
+        "src/speed-streak/layouts/",
 
         // Read aloud (TTS) UI glue
         "src/tts/tts-controller.ts",

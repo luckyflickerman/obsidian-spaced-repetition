@@ -1197,3 +1197,8 @@ button.sr-ss-details-back {
     flex-basis: 160px;
     min-height: 160px;
 }
+
+.sr-ss-pure-badge.is-breaks {
+    background: color-mix(in srgb, var(--text-muted) 18%, transparent);
+    color: var(--text-muted);
+}

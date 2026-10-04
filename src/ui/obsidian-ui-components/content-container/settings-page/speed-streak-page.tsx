@@ -1,4 +1,4 @@
-import { Notice, Setting, SettingGroup } from "obsidian";
+import { DropdownComponent, Notice, Platform, Setting, SettingGroup } from "obsidian";
 
 import { DataManager } from "src/data/data-manager";
 import { SettingsManager } from "src/data/settings-manager";
@@ -9,13 +9,21 @@ import {
     saveSpeedStreakData,
     SpeedStreakController,
 } from "src/speed-streak/speed-streak-controller";
+import type { SpeedStreakRating } from "src/speed-streak/speed-streak-engine";
 import { isPolish, ss } from "src/speed-streak/speed-streak-i18n";
+import {
+    formatRunDate,
+    rankRuns,
+    recentRuns,
+    runBadge,
+} from "src/speed-streak/speed-streak-records";
 import {
     DEFAULT_SPEED_STREAK_SETTINGS,
     normalizeSpeedStreakSettings,
+    resolvePerformance,
     SpeedStreakRunRecord,
     SpeedStreakSettings,
-    topRuns,
+    STYLE_DEFAULT_THEME,
 } from "src/speed-streak/speed-streak-settings";
 import {
     applySpeedStreakTheme,
@@ -23,6 +31,13 @@ import {
     SPEED_STREAK_THEMES,
     themeDisplayName,
 } from "src/speed-streak/speed-streak-themes";
+import {
+    getSpeedStreakVisual,
+    resolveThemeId,
+    SPEED_STREAK_VISUALS,
+    visualDisplayName,
+} from "src/speed-streak/visuals/visual-registry";
+import type { SpeedStreakVisual } from "src/speed-streak/visuals/visual-types";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 
@@ -33,13 +48,40 @@ type BoolKey = {
     [K in keyof SpeedStreakSettings]: SpeedStreakSettings[K] extends boolean ? K : never;
 }[keyof SpeedStreakSettings];
 
+const PREVIEW_RATINGS: SpeedStreakRating[] = [
+    "good",
+    "good",
+    "easy",
+    "hard",
+    "good",
+    "easy",
+    "again",
+    "good",
+];
+
 /**
- * Settings page for the Speed Streak game.
+ * Settings page for the Speed Streak game, grouped as: General, Timers,
+ * Time Boost, Focus rules, Display (with a live preview), Records, Feedback,
+ * Shortcuts.
  */
 export class SpeedStreakPage extends SettingsPage {
     private recordsEl: HTMLElement;
     private audio = new SpeedStreakAudio();
     private resetArmed = false;
+
+    // Live preview of the visual style
+    private previewHost: HTMLElement | null = null;
+    private previewVisual: SpeedStreakVisual | null = null;
+    private previewTimer: number | null = null;
+    private previewStreak = 0;
+    private previewTrail: SpeedStreakRating[] = [];
+    private previewCounts: Record<SpeedStreakRating, number> = {
+        again: 0,
+        hard: 0,
+        good: 0,
+        easy: 0,
+    };
+    private themeSwatchRender: (() => void) | null = null;
 
     constructor(
         pageContainerEl: HTMLElement,
@@ -88,6 +130,7 @@ export class SpeedStreakPage extends SettingsPage {
                 toggle.setValue(this.ssSettings[key]).onChange(async (value) => {
                     this.ssSettings[key] = value;
                     await this.save();
+                    if (key === "reducedMotion") this.restartPreview();
                 }),
             );
         });
@@ -130,29 +173,47 @@ export class SpeedStreakPage extends SettingsPage {
         });
     }
 
+    /** Dropdown bound to a string setting. */
+    private addChoice<K extends keyof SpeedStreakSettings>(
+        group: SettingGroup,
+        key: K,
+        name: string,
+        options: Record<string, string>,
+        desc?: string,
+        after?: () => void,
+    ) {
+        group.addSetting((setting: Setting) => {
+            setting.setName(name);
+            if (desc) setting.setDesc(desc);
+            setting.addDropdown((dropdown: DropdownComponent) =>
+                dropdown
+                    .addOptions(options)
+                    .setValue(String(this.ssSettings[key]))
+                    .onChange(async (value) => {
+                        (this.ssSettings as unknown as Record<string, unknown>)[key] = value;
+                        await this.save();
+                        after?.();
+                    }),
+            );
+        });
+    }
+
     private build() {
         const s = () => this.ssSettings;
 
         // General
         const general = new SettingGroup(this.containerEl).setHeading(ss("G_GENERAL"));
         this.addToggle(general, "enabled", ss("ENABLED"), ss("ENABLED_DESC"));
-        general.addSetting((setting: Setting) =>
-            setting
-                .setName(ss("MODE"))
-                .setDesc(ss("MODE_DESC"))
-                .addDropdown((dropdown) =>
-                    dropdown
-                        .addOptions({
-                            // eslint-disable-next-line camelcase -- stored setting value
-                            time_boost: ss("MODE_BOOST"),
-                            points: ss("MODE_POINTS"),
-                        })
-                        .setValue(s().gameplayMode)
-                        .onChange(async (value) => {
-                            s().gameplayMode = value === "points" ? "points" : "time_boost";
-                            await this.save();
-                        }),
-                ),
+        this.addChoice(
+            general,
+            "gameplayMode",
+            ss("MODE"),
+            {
+                // eslint-disable-next-line camelcase -- stored setting value
+                time_boost: ss("MODE_BOOST"),
+                points: ss("MODE_POINTS"),
+            },
+            ss("MODE_DESC"),
         );
 
         // Timers
@@ -194,51 +255,43 @@ export class SpeedStreakPage extends SettingsPage {
         this.addToggle(focus, "noPauseMode", ss("NO_PAUSE"), ss("NO_PAUSE_DESC"));
         this.addToggle(focus, "autoPauseOnLeave", ss("AUTO_PAUSE"), ss("AUTO_PAUSE_DESC"));
 
-        // Feedback
-        const feedback = new SettingGroup(this.containerEl).setHeading(ss("G_FEEDBACK"));
-        this.addNumber(
-            feedback,
-            "countdownWarningSeconds",
-            ss("WARNING_SECONDS"),
-            ss("WARNING_SECONDS_DESC"),
-        );
-        this.addToggle(feedback, "soundEnabled", ss("SOUND"), ss("SOUND_DESC"));
-        feedback.addSetting((setting: Setting) =>
-            setting
-                .setName(ss("VOLUME"))
-                .addSlider((slider) =>
-                    slider
-                        .setLimits(0, 100, 5)
-                        .setValue(s().soundVolume)
-                        .setDynamicTooltip()
-                        .onChange((value) => {
-                            this.applySettingsUpdate(async () => {
-                                s().soundVolume = value;
-                                await this.save();
-                            });
-                        }),
-                )
-                .addButton((button) =>
-                    button.setButtonText(ss("TEST_SOUND")).onClick(() => {
-                        this.audio.volume = s().soundVolume / 100;
-                        this.audio.play("good", true);
-                        window.setTimeout(() => this.audio.play("boost", true), 250);
-                        window.setTimeout(() => this.audio.play("timeout", true), 650);
-                    }),
-                ),
-        );
-        this.addToggle(feedback, "countdownSound", ss("COUNTDOWN_SOUND"));
-        this.addToggle(feedback, "vibrationEnabled", ss("VIBRATION"));
-
         // Display
         const display = new SettingGroup(this.containerEl).setHeading(ss("G_DISPLAY"));
+        const polish = isPolish();
+        display.addSetting((setting: Setting) => {
+            setting.setName(ss("VISUAL")).setDesc(ss("VISUAL_DESC"));
+            this.previewHost = setting.descEl.createDiv({ cls: "sr-ss-visual-preview" });
+            setting.addDropdown((dropdown) => {
+                for (const visual of SPEED_STREAK_VISUALS) {
+                    dropdown.addOption(visual.id, visualDisplayName(visual, polish));
+                }
+                dropdown.setValue(s().visualStyle).onChange(async (value) => {
+                    s().visualStyle = getSpeedStreakVisual(value).id;
+                    await this.save();
+                    this.themeSwatchRender?.();
+                    this.restartPreview();
+                });
+            });
+        });
+        this.addChoice(
+            display,
+            "layout",
+            ss("LAYOUT"),
+            {
+                auto: ss("LAYOUT_AUTO"),
+                compact: ss("LAYOUT_COMPACT"),
+                "side-left": ss("LAYOUT_LEFT"),
+                "side-right": ss("LAYOUT_RIGHT"),
+            },
+            ss("LAYOUT_DESC"),
+        );
         display.addSetting((setting: Setting) => {
             setting.setName(ss("THEME")).setDesc(ss("THEME_DESC"));
-            const preview = setting.descEl.createDiv({ cls: "sr-ss-theme-preview" });
-            const renderPreview = () => {
-                preview.empty();
-                applySpeedStreakTheme(preview, getSpeedStreakTheme(s().theme));
-                const panel = preview.createDiv({ cls: "sr-ss-swatch-panel" });
+            const swatches = setting.descEl.createDiv({ cls: "sr-ss-theme-preview" });
+            const renderSwatches = () => {
+                swatches.empty();
+                applySpeedStreakTheme(swatches, this.previewTheme());
+                const panel = swatches.createDiv({ cls: "sr-ss-swatch-panel" });
                 panel.createSpan({ text: "⚡ 12" });
                 for (const v of [
                     "--ss-good",
@@ -252,76 +305,60 @@ export class SpeedStreakPage extends SettingsPage {
                         .setCssProps({ background: `var(${v})` });
                 }
             };
-            renderPreview();
+            this.themeSwatchRender = renderSwatches;
+            renderSwatches();
             setting.addDropdown((dropdown) => {
-                const polish = isPolish();
+                dropdown.addOption(STYLE_DEFAULT_THEME, ss("THEME_AUTO"));
                 for (const theme of SPEED_STREAK_THEMES) {
                     dropdown.addOption(theme.id, themeDisplayName(theme, polish));
                 }
                 dropdown.setValue(s().theme).onChange(async (value) => {
                     s().theme = value;
-                    renderPreview();
+                    renderSwatches();
                     await this.save();
+                    this.restartPreview();
                 });
             });
         });
-        display.addSetting((setting: Setting) =>
-            setting.setName(ss("HUD_POSITION")).addDropdown((dropdown) =>
-                dropdown
-                    .addOptions({ top: ss("HUD_TOP"), bottom: ss("HUD_BOTTOM") })
-                    .setValue(s().hudPosition)
-                    .onChange(async (value) => {
-                        s().hudPosition = value === "bottom" ? "bottom" : "top";
-                        await this.save();
-                    }),
-            ),
+        this.addChoice(
+            display,
+            "performance",
+            ss("PERFORMANCE"),
+            {
+                auto: ss("PERF_AUTO"),
+                full: ss("PERF_FULL"),
+                light: ss("PERF_LIGHT"),
+                minimal: ss("PERF_MINIMAL"),
+            },
+            ss("PERFORMANCE_DESC"),
+            () => this.restartPreview(),
         );
-        display.addSetting((setting: Setting) =>
-            setting.setName(ss("RECORD_DISPLAY")).addDropdown((dropdown) =>
-                dropdown
-                    .addOptions({
-                        both: ss("RECORD_BOTH"),
-                        // eslint-disable-next-line camelcase -- stored setting value
-                        all_time: ss("RECORD_ALL"),
-                        today: ss("RECORD_TODAY"),
-                        none: ss("RECORD_NONE"),
-                    })
-                    .setValue(s().recordDisplay)
-                    .onChange(async (value) => {
-                        s().recordDisplay = value as SpeedStreakSettings["recordDisplay"];
-                        await this.save();
-                    }),
-            ),
-        );
+        this.addToggle(display, "reducedMotion", ss("REDUCED_MOTION"), ss("REDUCED_MOTION_DESC"));
         this.addToggle(display, "showRatingTrail", ss("TRAIL"), ss("TRAIL_DESC"));
-        this.addToggle(display, "showSessionSummary", ss("SUMMARY"), ss("SUMMARY_DESC"));
-        this.addToggle(display, "reducedMotion", ss("REDUCED_MOTION"));
-
-        // Shortcuts
-        const keys = new SettingGroup(this.containerEl).setHeading(ss("G_SHORTCUTS"));
-        for (const [key, name] of [
-            ["pauseHotkey", ss("PAUSE_KEY")],
-            ["boostHotkey", ss("BOOST_KEY")],
-        ] as const) {
-            keys.addSetting((setting: Setting) =>
-                setting
-                    .setName(name)
-                    .setDesc(ss("KEYS_DESC"))
-                    .addText((text) => {
-                        text.inputEl.maxLength = 1;
-                        text.inputEl.addClass("sr-ss-key-input");
-                        text.setValue(s()[key].toUpperCase()).onChange((value) => {
-                            this.applySettingsUpdate(async () => {
-                                s()[key] = value.trim().slice(0, 1).toLowerCase();
-                                await this.save();
-                            });
-                        });
-                    }),
-            );
-        }
 
         // Records
         const records = new SettingGroup(this.containerEl).setHeading(ss("G_RECORDS"));
+        this.addChoice(
+            records,
+            "recordsView",
+            ss("RECORDS_VIEW"),
+            { record: ss("VIEW_RECORD"), bar: ss("VIEW_BAR"), top5: ss("VIEW_TOP5") },
+            ss("RECORDS_VIEW_DESC"),
+        );
+        this.addChoice(records, "recordScope", ss("RECORD_SCOPE"), {
+            // eslint-disable-next-line camelcase -- stored setting value
+            all_time: ss("SCOPE_ALL"),
+            today: ss("SCOPE_TODAY"),
+        });
+        this.addChoice(records, "recordsList", ss("RECORDS_LIST"), {
+            ranking: ss("LIST_RANKING"),
+            recent: ss("LIST_RECENT"),
+        });
+        this.addChoice(records, "recordsFilter", ss("RECORDS_FILTER"), {
+            all: ss("FILTER_ALL"),
+            pure: ss("FILTER_PURE"),
+        });
+        this.addToggle(records, "celebrateNewBest", ss("CELEBRATE"), ss("CELEBRATE_DESC"));
         records.addSetting((setting: Setting) => {
             setting.settingEl.addClass("sr-ss-records-setting");
             this.recordsEl = setting.descEl;
@@ -356,12 +393,159 @@ export class SpeedStreakPage extends SettingsPage {
                     }),
             );
         });
+
+        // Feedback
+        const feedback = new SettingGroup(this.containerEl).setHeading(ss("G_FEEDBACK"));
+        this.addToggle(feedback, "soundEnabled", ss("SOUND"), ss("SOUND_DESC"));
+        feedback.addSetting((setting: Setting) =>
+            setting
+                .setName(ss("VOLUME"))
+                .addSlider((slider) =>
+                    slider
+                        .setLimits(0, 100, 5)
+                        .setValue(s().soundVolume)
+                        .setDynamicTooltip()
+                        .onChange((value) => {
+                            this.applySettingsUpdate(async () => {
+                                s().soundVolume = value;
+                                await this.save();
+                            });
+                        }),
+                )
+                .addButton((button) =>
+                    button.setButtonText(ss("TEST_SOUND")).onClick(() => {
+                        this.audio.volume = s().soundVolume / 100;
+                        this.audio.play("good", true);
+                        window.setTimeout(() => this.audio.play("boost", true), 250);
+                        window.setTimeout(() => this.audio.play("new-best", true), 650);
+                    }),
+                ),
+        );
+        this.addNumber(
+            feedback,
+            "countdownWarningSeconds",
+            ss("WARNING_SECONDS"),
+            ss("WARNING_SECONDS_DESC"),
+        );
+        this.addToggle(feedback, "countdownSound", ss("COUNTDOWN_SOUND"));
+        this.addToggle(feedback, "vibrationEnabled", ss("VIBRATION"));
+        this.addToggle(feedback, "showSessionSummary", ss("SUMMARY"), ss("SUMMARY_DESC"));
+
+        // Shortcuts
+        const keys = new SettingGroup(this.containerEl).setHeading(ss("G_SHORTCUTS"));
+        for (const [key, name] of [
+            ["pauseHotkey", ss("PAUSE_KEY")],
+            ["boostHotkey", ss("BOOST_KEY")],
+        ] as const) {
+            keys.addSetting((setting: Setting) =>
+                setting
+                    .setName(name)
+                    .setDesc(ss("KEYS_DESC"))
+                    .addText((text) => {
+                        text.inputEl.maxLength = 1;
+                        text.inputEl.addClass("sr-ss-key-input");
+                        text.setValue(s()[key].toUpperCase()).onChange((value) => {
+                            this.applySettingsUpdate(async () => {
+                                s()[key] = value.trim().slice(0, 1).toLowerCase();
+                                await this.save();
+                            });
+                        });
+                    }),
+            );
+        }
+
         this.renderRecords();
     }
 
     public render(): void {
         this.renderRecords();
+        this.restartPreview();
     }
+
+    public hide(): void {
+        this.stopPreview();
+        super.hide();
+    }
+
+    public destroy(): void {
+        this.stopPreview();
+        this.audio.dispose();
+        super.destroy();
+    }
+
+    // MARK: Live preview
+
+    private previewTheme() {
+        const s = this.ssSettings;
+        return getSpeedStreakTheme(resolveThemeId(s.theme, s.visualStyle));
+    }
+
+    private stopPreview() {
+        if (this.previewTimer !== null) window.clearInterval(this.previewTimer);
+        this.previewTimer = null;
+        this.previewVisual?.destroy();
+        this.previewVisual = null;
+    }
+
+    /** A small animated scene: a streak that grows, with a Boost and a timeout now and then. */
+    private restartPreview() {
+        this.stopPreview();
+        const host = this.previewHost;
+        if (!host || this.pageContainerEl.hasClass("sr-is-hidden")) return;
+        const s = this.ssSettings;
+        applySpeedStreakTheme(host, this.previewTheme());
+        const visual = getSpeedStreakVisual(s.visualStyle).create();
+        let reducedMotion = s.reducedMotion;
+        try {
+            reducedMotion ||= window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+        } catch {
+            /* ignore */
+        }
+        visual.mount(host, {
+            performance: resolvePerformance(s.performance, Platform.isMobile),
+            reducedMotion,
+            size: "large",
+        });
+        this.previewVisual = visual;
+        this.previewStreak = 23;
+        this.previewCounts = { again: 1, hard: 4, good: 12, easy: 6 };
+        this.previewTrail = Array.from(
+            { length: 23 },
+            (_, i) => PREVIEW_RATINGS[i % PREVIEW_RATINGS.length],
+        );
+        const push = () =>
+            visual.update({
+                streak: this.previewStreak,
+                ratingTrail: this.previewTrail,
+                streakRatings: { ...this.previewCounts },
+                fraction: 0.7,
+                phase: "question",
+                paused: false,
+                timedOut: false,
+                isNewBest: false,
+            });
+        push();
+        let tick = 0;
+        this.previewTimer = window.setInterval(() => {
+            tick++;
+            if (tick % 14 === 0) {
+                visual.onEvent({ type: "timeout" });
+                this.previewStreak = 0;
+                this.previewTrail = [];
+                this.previewCounts = { again: 0, hard: 0, good: 0, easy: 0 };
+            } else {
+                const rating = PREVIEW_RATINGS[tick % PREVIEW_RATINGS.length];
+                this.previewStreak++;
+                this.previewCounts[rating]++;
+                this.previewTrail = [...this.previewTrail, rating].slice(-40);
+                visual.onEvent({ type: "rate", rating });
+                if (tick % 9 === 0) visual.onEvent({ type: "boost" });
+            }
+            push();
+        }, 1300);
+    }
+
+    // MARK: Records list
 
     private renderRecords() {
         if (!this.recordsEl) return;
@@ -382,33 +566,34 @@ export class SpeedStreakPage extends SettingsPage {
                 hours: (t.activeMs / 3_600_000).toFixed(1),
             }),
         });
-        if (data.runs.length === 0) {
+        const runs = data.runs.filter((r) => r.streak > 0);
+        if (runs.length === 0) {
             this.recordsEl.createDiv({ text: ss("RECORDS_EMPTY") });
             return;
         }
+        const now = Date.now();
+        const polish = isPolish();
         const grid = this.recordsEl.createDiv({ cls: "sr-ss-records" });
-        const renderList = (title: string, runs: SpeedStreakRunRecord[]) => {
+        const renderList = (title: string, list: SpeedStreakRunRecord[]) => {
             const col = grid.createDiv();
             col.createEl("h4", { text: title });
             const ol = col.createEl("ol");
-            for (const run of runs) {
+            for (const run of list) {
                 const li = ol.createEl("li");
                 li.createEl("strong", { text: `${run.streak}` });
                 const secs = run.cards > 0 ? (run.activeMs / run.cards / 1000).toFixed(1) : "-";
                 li.createSpan({
                     cls: "sr-ss-run-meta",
-                    text: `  ${run.day} · ${secs}s/card${run.deck ? " · " + run.deck : ""}`,
+                    text: `  ${formatRunDate(run.endedAt, now, polish)} · ${secs}s/card${run.deck ? " · " + run.deck : ""}`,
                 });
-                if (run.pure) li.createSpan({ cls: "sr-ss-pure-badge", text: ss("PURE") });
+                const badge = runBadge(run);
+                li.createSpan({
+                    cls: `sr-ss-pure-badge ${badge === "pure" ? "" : "is-breaks"}`,
+                    text: badge === "pure" ? ss("PURE_BADGE") : ss("BREAKS_BADGE"),
+                });
             }
         };
-        renderList(ss("TOP_RUNS"), topRuns(data.runs, 5));
-        renderList(
-            ss("RECENT_RUNS"),
-            [...data.runs]
-                .filter((r) => r.streak > 0)
-                .slice(-5)
-                .reverse(),
-        );
+        renderList(ss("TOP_RUNS"), rankRuns(runs, 5));
+        renderList(ss("RECENT_RUNS"), recentRuns(runs, 5));
     }
 }
