@@ -140,11 +140,12 @@ el gato::Este es un <u>gato</u>
 - Kilka podkreśleń w jednej karcie jest czytanych po kolei.
 - Pojedynczemu słowu możesz nadać inny język: `<u lang="en">computer</u>`.
 - Nie używaj `==…==`, bo plugin zamienia je w luki.
-- Gdy w odpowiedzi nic nie jest podkreślone, czytana jest cała odpowiedź, bez formatowania, linków, obrazków i tagów. Możesz to wyłączyć.
+- Podkreślenia są szukane w pytaniu i w odpowiedzi.
+- Gdy nic nie jest podkreślone, czytane jest **pytanie** (np. w `#ENG forestalled:: uprzedzić` lektor czyta
 
-Najprościej jest zaznaczyć słowo i użyć komendy **„Oznacz do czytania na głos”**:
+Oznacz„Oznacz do czytania na głos”**:
 
-- na komputerze: skrót **Ctrl+Shift+U** (na Macu Cmd+Shift+U) albo prawy przycisk myszy → „Oznacz do czytania na głos”,
+- na komputerze: skrót **Ctrl+Shift+U** (na Macu Cmd+Shift+U) Oznacz„Oznacz do czytania na głos”,
 - na telefonie: paleta komend albo przycisk na pasku narzędzi edytora (Ustawienia → Pasek narzędzi mobilnych → dodaj komendę).
 
 Ponowne użycie komendy na podkreślonym słowie zdejmuje podkreślenie.
@@ -224,6 +225,62 @@ Pod listą talii jest kalendarz całego roku: jeden kwadrat to jeden dzień. Im 
 - Statystyki: karty i czas dzisiaj, średnie tempo (karty na minutę), szacowany czas na pozostałe karty, łączny czas nauki i czas z ostatniego tygodnia, średnio kart dziennie, procent dni z nauką, najdłuższa i obecna seria dni.
 - Historia zbiera się od pierwszej powtórki w tej wersji pluginu. Wcześniejszych dni nie da się odtworzyć, bo plugin zapisywał tylko termin następnej powtórki.
 - Czas jednej karty liczy się od pokazania pytania do oceny, maksymalnie 2 minuty (gdy odejdziesz od komputera, nie zawyża statystyk).
+
+## Tworzenie fiszek
+
+Dodawanie słówek z książki ma zajmować kilka sekund. Wszystko dzieje się w notatce, bez dodatkowych okienek.
+
+### Skróty
+
+- **Ctrl+Shift+N** (na Macu Cmd+Shift+N): **nowa fiszka**. Gdy jesteś w pliku talii, na końcu pliku pojawia się szablon `#ENG |::: `, a kursor stoi przed separatorem. Gdy jesteś w innej notatce, plugin otwiera plik talii (albo go tworzy) i wstawia szablon na końcu.
+- Wpisz słowo i naciśnij **Tab**: kursor przeskakuje do tłumaczenia. Tab działa tak tylko w linii niedokończonej fiszki. Działa też w starych liniach typu `#ENG ushering`: dopisuje separator.
+- Wpisz tłumaczenie i naciśnij **Ctrl+Enter** (Cmd+Enter): **zakończ fiszkę**. Plugin:
+    1. sprawdza, czy jest słowo i tłumaczenie,
+    2. ostrzega o duplikacie (przycisk „Pokaż” przenosi do oryginału),
+    3. czyta słowo na głos,
+    4. podbija licznik dnia,
+    5. wstawia w następnej linii kolejny pusty szablon.
+- **Ctrl+Shift+U**: podkreśl zaznaczony fragment do czytania (`<u>…</u>`), też pod prawym przyciskiem myszy.
+- Inne komendy z palety: „Nowa fiszka ze zdaniem” (wersja wieloliniowa ze zdaniem i `?`), „Nowa fiszka: zmień język”, „Dodaj obrazek do fiszki”, „Pokaż duplikaty w talii”.
+- Na telefonie i iPadzie wszystkie komendy są w palecie komend. Możesz je też dodać do paska narzędzi edytora. Przycisk „Nowa fiszka” jest też na wstążce.
+
+### Talie
+
+Ustawienia → Spaced Repetition → **Tworzenie fiszek** → **Talie fiszek**. Każda talia to tag, plik i język czytania, np. `#ENG → Fiszki/Angielski.md → en-GB`.
+
+- Nowe fiszki trafiają na koniec pliku talii. Plugin tylko dopisuje: istniejące linie i ich komentarze `<!--SR:…-->` się nie zmieniają.
+- Ostatnio używana talia jest zapamiętywana. Zmienisz ją komendą „Nowa fiszka: zmień język”.
+- Język talii działa jak reguła czytania na głos, więc nie trzeba go wpisywać drugi raz.
+- Plugin czyta tylko notatki z tagiem fiszek (np. `#flashcards`). Jeśli tagu talii nie ma na tej liście, nowy plik talii zaczyna się od `#flashcards`.
+- **Od razu drugi kierunek** (domyślnie włączone): nowe fiszki mają separator `:::`, więc słowo jest odpytywane w obie strony. Twoje stare fiszki z `::` zostają bez zmian.
+
+### Podgląd
+
+Przy każdej fiszce w edytorze jest ikonka 🃏, a przy niedokończonej ⚠ i żółte podkreślenie. Dotknij ikonki, żeby zobaczyć:
+
+- fiszkę wyglądającą tak jak w powtórce,
+- przycisk 🔊,
+- status (nowa albo data następnej powtórki), talię i język,
+- ostrzeżenie o możliwym duplikacie z linkiem,
+- dla `:::` zakładki w obie strony.
+
+Na komputerze podgląd otwiera się obok ikonki, a na telefonie w okienku. Ikonki wyłączysz w ustawieniach.
+
+### Licznik
+
+„**Nowe dziś: 4/10**” widać na pasku stanu, a na telefonie w podglądzie i po zakończeniu fiszki.
+
+- Liczą się wszystkie nowe fiszki, także dopisane ręcznie, w dniu, w którym plugin pierwszy raz je zobaczył.
+- Fiszki istniejące przed aktualizacją nie są liczone.
+- Dzień zaczyna się o godzinie z ustawienia „Początek dnia”, tak jak powtórki.
+- Cel dzienny ustawisz w ustawieniach (domyślnie 10).
+
+### Obrazki
+
+- „**Dodaj obrazek do fiszki**”: na komputerze wkleja obraz ze schowka (a gdy schowek jest pusty, otwiera wybór pliku). Na telefonie i iPadzie otwiera galerię albo aparat.
+- Plik dostaje nazwę od słowa, np. `forestalled.png`. Embed `![[forestalled.png]]` trafia na koniec odpowiedzi.
+- Gdy sama wkleisz obraz (Ctrl+V) w linii fiszki, „Pasted image …” dostaje nazwę od słowa. Można to wyłączyć.
+- Duże zdjęcia są zmniejszane do 800 px szerokości, żeby vault nie puchł. Też można to wyłączyć.
 
 ## Pominięte z oryginału (specyficzne dla Anki/Windows)
 
