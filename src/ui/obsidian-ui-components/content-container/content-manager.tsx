@@ -10,6 +10,7 @@ import { flushReviewLog, recordCardReview } from "src/heatmap/heatmap-view";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { Note } from "src/note/note";
+import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import {
@@ -97,6 +98,7 @@ export default class ContentManager {
         settings: SRSettings,
         parentEl: HTMLElement,
         closeModal?: () => void,
+        windowControls?: ReviewWindowControls,
     ) {
         this.app = app;
         this.plugin = plugin;
@@ -113,6 +115,7 @@ export default class ContentManager {
             this._changeReviewMode.bind(this),
             this._startReviewOfDeck.bind(this),
             closeModal,
+            windowControls,
         );
 
         this.cardContainer = new CardContainer(
@@ -129,6 +132,7 @@ export default class ContentManager {
             this._jumpToCurrentCard.bind(this),
             this._displayCurrentCardInfoNotice.bind(this),
             closeModal,
+            windowControls,
         );
     }
 

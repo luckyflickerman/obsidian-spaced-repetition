@@ -123,6 +123,13 @@ Po instalacji otwórz stronę „Czytanie na głos” jeszcze raz. Diagnostyka p
 Kod jest w `src/tts/`. Czysta logika (bez DOM, z testami) jest w `tts-text.ts` i `tts-settings.ts`. Głosy dostarcza „dostawca” (`TtsProvider`).
 Na górze `tts-provider.ts` jest instrukcja krok po kroku, jak dodać nowego dostawcę, np. głosy AI.
 
+## Okno powtórek: pełny ekran i przesuwanie
+
+- Przycisk **⛶** w nagłówku (na liście talii i podczas powtórki) włącza i wyłącza pełny ekran. Możesz też przypisać skrót do komendy „Okno powtórek: pełny ekran wł. / wył.”.
+- Okno przesuwasz, chwytając pasek u góry (nagłówek listy talii albo pasek karty) i przeciągając je w dowolne miejsce. Przyciski na pasku działają normalnie.
+- Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
+- Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
+
 ## Dodatki (przycisk z puzzlem)
 
 W nagłówku listy talii, obok X, jest przycisk **Dodatki** (ikona puzzla). Pokazuje wszystkie dodatki do zwykłego Spaced Repetition: kalendarz powtórek, czytanie na głos i Speed Streak.

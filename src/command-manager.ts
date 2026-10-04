@@ -3,6 +3,8 @@ import { Editor, Menu, Notice, Platform, TFile } from "obsidian";
 import { SettingsManager } from "src/data/settings-manager";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
+import { ReviewWindowController } from "src/review-window/review-window-controller";
+import { rw } from "src/review-window/review-window-i18n";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
 import {
@@ -347,6 +349,19 @@ export class CommandManager {
                 const controller = TtsController.active;
                 if (!controller || !controller.canReplay) return false;
                 if (!checking) controller.replay();
+                return true;
+            },
+        });
+
+        // Review window
+        this.plugin.addCommand({
+            id: "srs-review-window-fullscreen",
+            name: rw("CMD_FULLSCREEN"),
+            icon: "maximize-2",
+            checkCallback: (checking: boolean) => {
+                const controller = ReviewWindowController.active;
+                if (!controller) return false;
+                if (!checking) controller.toggleFullscreen();
                 return true;
             },
         });

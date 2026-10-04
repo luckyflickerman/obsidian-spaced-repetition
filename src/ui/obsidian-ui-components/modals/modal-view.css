@@ -18,6 +18,42 @@
     display: none;
 }
 
+/* MARK: Moving the window & full screen */
+
+/* Moved by the user: placed at a saved spot instead of centered */
+#sr-modal-view.sr-is-placed:not(.sr-is-fullscreen) {
+    position: absolute;
+    left: var(--sr-window-left);
+    top: var(--sr-window-top);
+    margin: 0;
+}
+
+/* The header bars are the grab handles */
+#sr-modal-view.sr-movable:not(.sr-is-fullscreen) :is(.sr-deck-list-header, .sr-card-toolbar) {
+    cursor: grab;
+    touch-action: none;
+}
+
+#sr-modal-view.sr-is-dragging,
+#sr-modal-view.sr-is-dragging * {
+    cursor: grabbing !important;
+    user-select: none;
+}
+
+/* Inline size / radius come from the saved window size: override them */
+#sr-modal-view.sr-is-fullscreen {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    border-radius: 0 !important;
+    border: none;
+    resize: none !important;
+}
+
 body:not(.is-mobile) #sr-modal-view {
     resize: both;
 }

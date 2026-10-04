@@ -66,6 +66,10 @@ export default {
 
         // Add-ons window texts
         "src/addons/addons-i18n.ts",
+
+        // Review window DOM glue
+        "src/review-window/review-window-controller.ts",
+        "src/review-window/review-window-i18n.ts",
     ],
     coverageDirectory: "coverage",
     collectCoverage: true,

@@ -2,6 +2,7 @@ import "src/ui/obsidian-ui-components/content-container/card-container/toolbar/t
 import { Platform } from "obsidian";
 
 import { Deck } from "src/data/data-structures/deck/deck";
+import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import { DeckStats } from "src/scheduling/flashcard-review-sequencer";
 import DeckInfoComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/deck-info/deck-info";
 import BackButtonComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/toolbar-buttons/back-button";
@@ -9,6 +10,7 @@ import CardMenuButtonComponent from "src/ui/obsidian-ui-components/content-conta
 import EditButtonComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/toolbar-buttons/edit-button";
 import ResetButtonComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/toolbar-buttons/reset-button";
 import SkipButtonComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/toolbar-buttons/skip-button";
+import FullscreenButtonComponent from "src/ui/obsidian-ui-components/content-container/fullscreen-button";
 import ModalCloseButtonComponent from "src/ui/obsidian-ui-components/content-container/modal-close-button";
 import EmulatedPlatform from "src/utils/platform-detector";
 
@@ -30,6 +32,7 @@ export default class CardToolbarComponent {
         skipCurrentCard: () => void,
         onOpenResetModalClick: () => void,
         closeModal?: () => void,
+        windowControls?: ReviewWindowControls,
     ) {
         // Build ui
         this.toolbar = parentEl.createDiv();
@@ -106,6 +109,13 @@ export default class CardToolbarComponent {
                 ? ["mod-raised", "sr-extended-menu-button"]
                 : ["clickable-icon", "sr-extended-menu-button"],
         );
+
+        // Full screen (review window only), left of the close button
+        if (windowControls !== undefined) {
+            new FullscreenButtonComponent(this.toolbar, windowControls, [
+                EmulatedPlatform().isPhone || Platform.isPhone ? "mod-raised" : "clickable-icon",
+            ]);
+        }
 
         // If we don't have a close modal, we don't need the close button
         if (closeModal === undefined) return;

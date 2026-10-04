@@ -3,6 +3,7 @@ import { App, Modal, Platform } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
 import type SRPlugin from "src/main";
+import { ReviewWindowController } from "src/review-window/review-window-controller";
 import ContentManager from "src/ui/obsidian-ui-components/content-container/content-manager";
 import { ReviewQueueLoader } from "src/ui/review-queue-loader";
 import EmulatedPlatform from "src/utils/platform-detector";
@@ -12,6 +13,7 @@ export class SRModalView extends Modal {
     private plugin: SRPlugin;
     private settingsManager: SettingsManager;
     private resizeObserver: ResizeObserver | null = null;
+    private windowController: ReviewWindowController;
 
     constructor(
         app: App,
@@ -46,6 +48,9 @@ export class SRModalView extends Modal {
 
         this.contentEl.addClass("sr-modal-content");
 
+        // Full screen + moving the window by its header
+        this.windowController = new ReviewWindowController(plugin, this.modalEl);
+
         // Init static elements in views
         this.contentManager = new ContentManager(
             app,
@@ -56,19 +61,24 @@ export class SRModalView extends Modal {
             () => {
                 this.close();
             },
+            this.windowController,
         );
         this.plugin.uiManager.setContentManager(this.contentManager);
     }
 
     onOpen(): void {
+        this.windowController.attach();
         void this.contentManager.open();
     }
 
     onClose(): void {
+        this.windowController.detach();
         this.contentManager.close();
     }
 
     private async onResize(entries: ResizeObserverEntry[]) {
+        // Full screen is temporary: keep the user's normal window size
+        if (this.windowController.isFullscreen()) return;
         const modalEl = entries[0].target as HTMLElement;
         const parent = modalEl.parentElement;
 

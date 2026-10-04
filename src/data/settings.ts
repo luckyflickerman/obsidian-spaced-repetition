@@ -1,6 +1,10 @@
 import { StorageType } from "src/data/data-store/base/data-store";
 import { DEFAULT_HEATMAP_SETTINGS, HeatmapSettings } from "src/heatmap/heatmap-data";
 import { t } from "src/lang/helpers";
+import {
+    DEFAULT_REVIEW_WINDOW_SETTINGS,
+    ReviewWindowSettings,
+} from "src/review-window/review-window";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
 import {
     DEFAULT_SPEED_STREAK_SETTINGS,
@@ -108,6 +112,9 @@ export interface SRSettings {
 
     // Review calendar (heatmap) below the deck list
     heatmap: HeatmapSettings;
+
+    // Review window: full screen and position
+    reviewWindow: ReviewWindowSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -201,6 +208,7 @@ export const DEFAULT_SETTINGS: SRSettings = {
     speedStreak: { ...DEFAULT_SPEED_STREAK_SETTINGS },
     tts: { ...DEFAULT_TTS_SETTINGS, voices: {} },
     heatmap: { ...DEFAULT_HEATMAP_SETTINGS },
+    reviewWindow: { ...DEFAULT_REVIEW_WINDOW_SETTINGS },
 };
 
 export function upgradeSettings(settings: SRSettings) {

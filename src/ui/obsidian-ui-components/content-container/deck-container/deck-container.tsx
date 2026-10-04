@@ -6,6 +6,7 @@ import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
 import { getHeatmapSettings, HeatmapView } from "src/heatmap/heatmap-view";
 import type SRPlugin from "src/main";
+import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import {
     FlashcardReviewMode,
     IFlashcardReviewSequencer as IFlashcardReviewSequencer,
@@ -28,6 +29,7 @@ export class DeckContainer {
         changeReviewMode: (reviewMode: FlashcardReviewMode) => void,
         startReviewOfDeck: (deck: Deck) => void,
         closeModal?: () => void,
+        windowControls?: ReviewWindowControls,
     ) {
         this.plugin = plugin;
         // Build ui
@@ -39,6 +41,7 @@ export class DeckContainer {
             changeReviewMode,
             closeModal,
             () => new AddonsModal(plugin, () => this.onAddonsChanged()).open(),
+            windowControls,
         );
 
         this.deckList = new DeckListComponent(this.containerEl, startReviewOfDeck);

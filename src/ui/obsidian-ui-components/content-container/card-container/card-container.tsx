@@ -6,6 +6,7 @@ import { CardType } from "src/data/data-structures/card/questions/question";
 import { SRSettings } from "src/data/settings";
 import { t } from "src/lang/helpers";
 import type SRPlugin from "src/main";
+import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
@@ -72,6 +73,7 @@ export class CardContainer {
         jumpToCurrentCardHandler: () => Promise<void>,
         displayCurrentCardInfoNoticeHandler: () => void,
         closeModal?: () => void,
+        windowControls?: ReviewWindowControls,
     ) {
         // Init properties
         this.app = app;
@@ -118,6 +120,7 @@ export class CardContainer {
                 ).open();
             },
             closeModal,
+            windowControls,
         );
 
         this.scrollWrapper = this.view.createDiv();

@@ -3,7 +3,9 @@ import { DropdownComponent, Platform, setIcon } from "obsidian";
 
 import { ad } from "src/addons/addons-i18n";
 import { t } from "src/lang/helpers";
+import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
+import FullscreenButtonComponent from "src/ui/obsidian-ui-components/content-container/fullscreen-button";
 import ModalCloseButtonComponent from "src/ui/obsidian-ui-components/content-container/modal-close-button";
 import SRButtonComponent from "src/ui/sr-button";
 import EmulatedPlatform from "src/utils/platform-detector";
@@ -19,6 +21,7 @@ export default class DeckListHeaderComponent {
         changeReviewMode: (reviewMode: FlashcardReviewMode) => void,
         closeModal?: () => void,
         openAddons?: () => void,
+        windowControls?: ReviewWindowControls,
     ) {
         this.header = parentEl.createDiv();
         this.header.addClass("sr-deck-list-header");
@@ -48,6 +51,13 @@ export default class DeckListHeaderComponent {
         });
 
         const isPhone = EmulatedPlatform().isPhone || Platform.isPhone;
+
+        // Full screen (review window only)
+        if (windowControls !== undefined) {
+            new FullscreenButtonComponent(this.header, windowControls, [
+                isPhone ? "mod-raised" : "clickable-icon",
+            ]);
+        }
 
         // Add-ons (review calendar, read aloud, Speed Streak): left of the close button
         if (openAddons !== undefined) {
