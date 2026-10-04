@@ -143,6 +143,7 @@ export class SpeedStreakPage extends SettingsPage {
                 .addDropdown((dropdown) =>
                     dropdown
                         .addOptions({
+                            // eslint-disable-next-line camelcase -- stored setting value
                             time_boost: ss("MODE_BOOST"),
                             points: ss("MODE_POINTS"),
                         })
@@ -246,7 +247,9 @@ export class SpeedStreakPage extends SettingsPage {
                     "--ss-easy",
                     "--ss-boost",
                 ]) {
-                    panel.createSpan({ cls: "sr-ss-swatch" }).style.background = `var(${v})`;
+                    panel
+                        .createSpan({ cls: "sr-ss-swatch" })
+                        .setCssProps({ background: `var(${v})` });
                 }
             };
             renderPreview();
@@ -278,6 +281,7 @@ export class SpeedStreakPage extends SettingsPage {
                 dropdown
                     .addOptions({
                         both: ss("RECORD_BOTH"),
+                        // eslint-disable-next-line camelcase -- stored setting value
                         all_time: ss("RECORD_ALL"),
                         today: ss("RECORD_TODAY"),
                         none: ss("RECORD_NONE"),

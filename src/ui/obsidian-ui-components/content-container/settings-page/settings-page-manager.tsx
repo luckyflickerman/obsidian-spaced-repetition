@@ -6,6 +6,7 @@ import { SettingsManager } from "src/data/settings-manager";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { ss } from "src/speed-streak/speed-streak-i18n";
+import { tt } from "src/tts/tts-i18n";
 import { DataPage } from "src/ui/obsidian-ui-components/content-container/settings-page/data-page";
 import { FlashcardsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/flashcards-page";
 import { MainPage } from "src/ui/obsidian-ui-components/content-container/settings-page/main-page";
@@ -14,6 +15,7 @@ import { SchedulingPage } from "src/ui/obsidian-ui-components/content-container/
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SpeedStreakPage } from "src/ui/obsidian-ui-components/content-container/settings-page/speed-streak-page";
 import { StatisticsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/statistics-page/statistics-page";
+import { TtsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/tts-page";
 import { UIPreferencesPage } from "src/ui/obsidian-ui-components/content-container/settings-page/ui-preferences-page";
 import { UIManager } from "src/ui/ui-manager";
 
@@ -26,6 +28,7 @@ export type SettingsPageType =
     | "main-page"
     | "flashcards-page"
     | "speed-streak-page"
+    | "tts-page"
     | "notes-page"
     | "scheduling-page"
     | "ui-preferences-page"
@@ -41,6 +44,7 @@ export const SettingsPageTypesArray: ReadonlyArray<SettingsPageType> = [
     "main-page",
     "flashcards-page",
     "speed-streak-page",
+    "tts-page",
     "notes-page",
     "scheduling-page",
     "ui-preferences-page",
@@ -62,6 +66,8 @@ export function getPageName(pageType: SettingsPageType): string {
             return t("FLASHCARDS");
         case "speed-streak-page":
             return ss("PAGE_NAME");
+        case "tts-page":
+            return tt("PAGE_NAME");
         case "notes-page":
             return t("NOTES");
         case "scheduling-page":
@@ -89,6 +95,8 @@ export function getPageIcon(pageType: SettingsPageType): string {
             return "SpacedRepIcon";
         case "speed-streak-page":
             return "zap";
+        case "tts-page":
+            return "volume-2";
         case "notes-page":
             return "book-text";
         case "scheduling-page":
@@ -210,6 +218,21 @@ export class SettingsPageManager {
                 case "speed-streak-page":
                     this.pages.push(
                         new SpeedStreakPage(
+                            newPageContainerEl,
+                            this.plugin,
+                            this.settingsManager,
+                            this.dataManager,
+                            pageType,
+                            this.applySettingsUpdate.bind(this),
+                            this.display,
+                            this.openPage.bind(this),
+                            this.scrollListener.bind(this),
+                        ),
+                    );
+                    break;
+                case "tts-page":
+                    this.pages.push(
+                        new TtsPage(
                             newPageContainerEl,
                             this.plugin,
                             this.settingsManager,

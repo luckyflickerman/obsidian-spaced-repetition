@@ -1,4 +1,4 @@
-import { Notice, Platform, TFile } from "obsidian";
+import { Editor, Menu, Notice, Platform, TFile } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
 import { t } from "src/lang/helpers";
@@ -10,8 +10,25 @@ import {
     SpeedStreakController,
 } from "src/speed-streak/speed-streak-controller";
 import { ss } from "src/speed-streak/speed-streak-i18n";
+import { TtsController } from "src/tts/tts-controller";
+import { tt } from "src/tts/tts-i18n";
+import { toggleUnderline } from "src/tts/tts-text";
 import { UIManager, UIState } from "src/ui/ui-manager";
 import EmulatedPlatform from "src/utils/platform-detector";
+
+/** Wraps the selection in `<u>…</u>` (or unwraps it) — "Mark for reading aloud". */
+function toggleTtsMark(editor: Editor) {
+    const doc = editor.getValue();
+    const from = editor.posToOffset(editor.getCursor("from"));
+    const to = editor.posToOffset(editor.getCursor("to"));
+    const edit = toggleUnderline(doc, from, to);
+    editor.replaceRange(edit.insert, editor.offsetToPos(edit.from), editor.offsetToPos(edit.to));
+    editor.setSelection(
+        editor.offsetToPos(edit.selectionFrom),
+        editor.offsetToPos(edit.selectionTo),
+    );
+    editor.focus();
+}
 
 export class CommandManager {
     private plugin: SRPlugin;
@@ -304,6 +321,36 @@ export class CommandManager {
      * add all the plugin commands
      */
     private addPluginCommands() {
+        // Read aloud: editorCallback → also in the mobile command palette & toolbar
+        this.plugin.addCommand({
+            id: "srs-tts-mark",
+            name: tt("CMD_MARK"),
+            icon: "volume-2",
+            hotkeys: [{ modifiers: ["Mod", "Shift"], key: "U" }],
+            editorCallback: (editor: Editor) => toggleTtsMark(editor),
+        });
+        this.plugin.registerEvent(
+            this.plugin.app.workspace.on("editor-menu", (menu: Menu, editor: Editor) => {
+                menu.addItem((item) =>
+                    item
+                        .setTitle(tt("CMD_MARK"))
+                        .setIcon("volume-2")
+                        .onClick(() => toggleTtsMark(editor)),
+                );
+            }),
+        );
+        this.plugin.addCommand({
+            id: "srs-tts-replay",
+            name: tt("CMD_REPLAY"),
+            icon: "volume-2",
+            checkCallback: (checking: boolean) => {
+                const controller = TtsController.active;
+                if (!controller || !controller.canReplay) return false;
+                if (!checking) controller.replay();
+                return true;
+            },
+        });
+
         // Speed Streak
         this.plugin.addCommand({
             id: "srs-speed-streak-boost",

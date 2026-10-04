@@ -10,6 +10,7 @@ import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-sch
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
 import { SpeedStreakController } from "src/speed-streak/speed-streak-controller";
+import { TtsController } from "src/tts/tts-controller";
 import ContextSectionComponent from "src/ui/obsidian-ui-components/content-container/card-container/context-section/context-section";
 import ResponseSectionComponent from "src/ui/obsidian-ui-components/content-container/card-container/response-section/response-section";
 import CardToolbarComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/toolbar";
@@ -43,6 +44,9 @@ export class CardContainer {
     /** Speed Streak timer/streak game. */
     public speedStreak: SpeedStreakController;
 
+    /** Reads the answer aloud. */
+    public tts: TtsController;
+
     private clozeInputs: NodeListOf<HTMLInputElement> | null = null;
     private clozeAnswers: NodeListOf<Element> | null = null;
 
@@ -73,10 +77,12 @@ export class CardContainer {
         // Speed Streak hooks: notify the game before the review continues
         this.processReviewHandler = async (response: ReviewResponse) => {
             if (this.cardState === CardState.Back) this.speedStreak?.onRate(response);
+            this.tts?.cancel();
             await processReviewHandler(response);
         };
         this.skipCardHandler = () => {
             if (this.cardState !== CardState.Closed) this.speedStreak?.onSkip();
+            this.tts?.cancel();
             skipCardHandler();
         };
         this.showAnswerHandler = showAnswerHandler;
@@ -130,6 +136,8 @@ export class CardContainer {
             this.scrollWrapper,
             this.response.responseEl,
         );
+
+        this.tts = new TtsController(plugin, this.view, () => this.speedStreak ?? null);
     }
 
     // #region -> public methods
@@ -144,6 +152,7 @@ export class CardContainer {
         }
 
         this.speedStreak.startSession(sessionData.deckData.chosenDeck?.deckName ?? "");
+        this.tts.startSession();
         await this.drawCardFront(sessionData, settings);
 
         this.view.removeClass("sr-is-hidden");
@@ -164,6 +173,7 @@ export class CardContainer {
             this.pendingResumeTimeout = null;
         }
         this.cardState = CardState.Closed;
+        this.tts.endSession();
         this.speedStreak.endSession();
         activeDocument.removeEventListener("keydown", this._keydownHandler);
         this.view.addClass("sr-is-hidden");
@@ -183,6 +193,8 @@ export class CardContainer {
     }
 
     public async drawCardFront(sessionData: SessionData, settings: SRSettings) {
+        // Next card / skip / redraw: stop reading the previous answer at once
+        this.tts.onQuestionShown();
         this.toolbar.setResetButtonDisabled(true);
         // Update current deck info
         this.cardState = sessionData.cardData.currentCardState;
@@ -227,7 +239,7 @@ export class CardContainer {
         } catch {
             /* no topic paths */
         }
-        let deckPath = "";
+        let deckPath: string;
         try {
             deckPath = sessionData.deckData.currentDeck?.getTopicPath()?.formatAsTag() ?? "";
         } catch {
@@ -272,6 +284,7 @@ export class CardContainer {
     }
 
     public drawPendingState(nextPendingDueUnix: number): void {
+        this.tts.onQuestionShown();
         this.toolbar.setResetButtonDisabled(true);
         this.cardState = CardState.Front;
         this.content.empty();
@@ -424,6 +437,13 @@ export class CardContainer {
         // Switch Speed Streak to the answer timer
         this.speedStreak.onAnswerShown();
 
+        // Read the answer aloud (holds the Speed Streak answer timer while speaking)
+        this.tts.onAnswerShown(
+            sessionData.cardData.currentCard.back,
+            this._speedStreakCardContext(sessionData),
+            this.content,
+        );
+
         // Show response buttons
         this.response.showRatingButtons(
             reviewMode,
@@ -464,6 +484,12 @@ export class CardContainer {
 
         // Speed Streak shortcuts (pause / boost)
         if (this.speedStreak.handleKey(e)) {
+            consumeKeyEvent();
+            return;
+        }
+
+        // Read aloud again
+        if (this.cardState === CardState.Back && this.tts.handleKey(e)) {
             consumeKeyEvent();
             return;
         }

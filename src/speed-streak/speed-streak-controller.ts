@@ -1,5 +1,4 @@
 import "src/speed-streak/speed-streak.css";
-
 import { Notice, Platform, setIcon } from "obsidian";
 
 import type SRPlugin from "src/main";
@@ -13,13 +12,6 @@ import {
 } from "src/speed-streak/speed-streak-engine";
 import { ss } from "src/speed-streak/speed-streak-i18n";
 import {
-    applySpeedStreakTheme,
-    getSpeedStreakTheme,
-    parseColor,
-    RGB,
-    timerColor,
-} from "src/speed-streak/speed-streak-themes";
-import {
     bestRun,
     localDayKey,
     MAX_STORED_RUNS,
@@ -32,6 +24,13 @@ import {
     SpeedStreakSettings,
     SpeedStreakTimerRule,
 } from "src/speed-streak/speed-streak-settings";
+import {
+    applySpeedStreakTheme,
+    getSpeedStreakTheme,
+    parseColor,
+    RGB,
+    timerColor,
+} from "src/speed-streak/speed-streak-themes";
 
 const RING_RADIUS = 26;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
@@ -95,6 +94,9 @@ export class SpeedStreakController {
     private loopHandle: number | null = null;
     private interrupted = false;
     private interruptPausedByUs = false;
+    /** Active `holdTimerWhile` calls (e.g. reading aloud). */
+    private holdCount = 0;
+    private holdPausedByUs = false;
     private bestAllTime = 0;
     private bestToday = 0;
     private newRecordThisSession = false;
@@ -151,6 +153,8 @@ export class SpeedStreakController {
         }
         this.loadRecords();
         this.newRecordThisSession = false;
+        this.holdCount = 0;
+        this.holdPausedByUs = false;
         this.engine.bestToBeat = this.recordTarget();
         this.engine.startSession(deckName);
         SpeedStreakController.active = this;
@@ -220,6 +224,38 @@ export class SpeedStreakController {
         if (this.engine.pause("auto")) this.render();
     }
 
+    /**
+     * Freezes the timer until `work` settles (e.g. while a card is read aloud).
+     * Uses the automatic pause, so it doesn't count as a pause and keeps the run
+     * Pure. Overlapping holds are counted; the timer resumes after the last one.
+     */
+    holdTimerWhile(work: Promise<unknown>): void {
+        if (!this.engine.sessionActive || !this.settings.enabled) return;
+        this.holdCount++;
+        if (this.holdCount === 1) {
+            this.holdPausedByUs = !this.interrupted && this.engine.pause("auto");
+        }
+        this.render();
+        const release = () => {
+            this.holdCount = Math.max(0, this.holdCount - 1);
+            if (this.holdCount > 0) return;
+            const resume =
+                this.holdPausedByUs &&
+                !this.interrupted &&
+                this.engine.paused &&
+                this.engine.pauseOrigin === "auto" &&
+                !(this.settings.autoPauseOnLeave && activeDocument.hidden);
+            this.holdPausedByUs = false;
+            if (resume) this.engine.resume();
+            this.render();
+        };
+        work.then(release, release);
+    }
+
+    get isHoldingTimer(): boolean {
+        return this.holdCount > 0;
+    }
+
     /** Returns true when the key was consumed. */
     handleKey(e: KeyboardEvent): boolean {
         if (!this.engine.sessionActive || !this.settings.enabled) return false;
@@ -245,6 +281,14 @@ export class SpeedStreakController {
 
     togglePause() {
         this.audio.prime();
+        if (this.holdCount > 0 && this.engine.paused && this.engine.pauseOrigin === "auto") {
+            // Timer only held by reading aloud: the user asks for a real pause
+            this.engine.resume(true);
+            if (this.engine.pause("manual")) this.holdPausedByUs = false;
+            else this.holdPausedByUs = this.engine.pause("auto");
+            this.render();
+            return;
+        }
         this.engine.togglePause();
         this.render();
     }
@@ -472,7 +516,7 @@ export class SpeedStreakController {
     };
 
     private onWindowFocus = () => {
-        if (this.interrupted) return;
+        if (this.interrupted || this.holdCount > 0) return;
         if (this.engine.paused && this.engine.pauseOrigin === "auto") {
             this.engine.resume();
             this.render();
@@ -499,11 +543,8 @@ export class SpeedStreakController {
     // MARK: HUD
 
     private placeHud() {
-        if (this.settings.hudPosition === "bottom") {
-            this.bottomAnchor.insertAdjacentElement("beforebegin", this.hud);
-        } else {
-            this.topAnchor.insertAdjacentElement("beforebegin", this.hud);
-        }
+        const anchor = this.settings.hudPosition === "bottom" ? this.bottomAnchor : this.topAnchor;
+        anchor.parentElement?.insertBefore(this.hud, anchor);
         this.hud.toggleClass("sr-ss-at-bottom", this.settings.hudPosition === "bottom");
     }
 
@@ -518,8 +559,7 @@ export class SpeedStreakController {
     /** Resolves a theme CSS variable (which may reference Obsidian variables) to RGB. */
     private resolveVar(cssVar: string): RGB | null {
         const probe = this.hud.createSpan();
-        probe.style.color = `var(${cssVar})`;
-        probe.style.display = "none";
+        probe.setCssProps({ color: `var(${cssVar})`, display: "none" });
         const computed = getComputedStyle(probe).color;
         probe.remove();
         return parseColor(computed);
@@ -623,8 +663,11 @@ export class SpeedStreakController {
         const warnMs = s.countdownWarningSeconds * 1000;
         const warning = remaining !== null && remaining > 0 && warnMs > 0 && remaining <= warnMs;
 
-        this.hud.toggleClass("is-paused", e.paused);
-        this.pausedOverlay.toggleClass("is-visible", e.paused);
+        // A hold (reading aloud) freezes the timer without the "paused" overlay
+        const held = this.holdCount > 0 && e.paused && e.pauseOrigin === "auto";
+        this.hud.toggleClass("is-paused", e.paused && !held);
+        this.hud.toggleClass("is-held", held);
+        this.pausedOverlay.toggleClass("is-visible", e.paused && !held);
         this.hud.toggleClass("is-auto-paused", e.paused && e.pauseOrigin === "auto");
         this.hud.toggleClass("is-warning", warning && !e.paused);
         this.hud.toggleClass("is-timeout", timedOut);
@@ -651,11 +694,12 @@ export class SpeedStreakController {
             "stroke-dashoffset",
             String(RING_CIRCUMFERENCE * (1 - fraction)),
         );
-        this.barFill.style.transform = `scaleX(${fraction})`;
+        this.barFill.setCssProps({ transform: `scaleX(${fraction})` });
         this.hud.style.setProperty("--sr-ss-time-color", this.timeColor(fraction, untimed));
 
         let label = "";
-        if (e.paused) label = ss("PAUSED");
+        if (held) label = "🔊";
+        else if (e.paused) label = ss("PAUSED");
         else if (e.cardIsFree && e.phase !== "idle") label = ss("FREE");
         else if (untimed) label = ss("UNTIMED");
         else if (e.phase === "question") label = ss("QUESTION");
@@ -723,7 +767,7 @@ export class SpeedStreakController {
             }
             const full = e.boostCharges >= s.maxBoostCharges;
             const progressFraction = full ? 1 : e.boostProgress / s.cardsPerBoostCharge;
-            this.boostProgressFill.style.transform = `scaleX(${progressFraction})`;
+            this.boostProgressFill.setCssProps({ transform: `scaleX(${progressFraction})` });
             this.pipsEl.parentElement?.setAttr(
                 "title",
                 full
@@ -733,12 +777,12 @@ export class SpeedStreakController {
         }
 
         // Pause button
-        const pauseIcon = e.paused ? "play" : "pause";
+        const pauseIcon = e.paused && !held ? "play" : "pause";
         if (this.pauseBtn.dataset.icon !== pauseIcon) {
             this.pauseBtn.dataset.icon = pauseIcon;
             setIcon(this.pauseBtn, pauseIcon);
         }
-        this.pauseBtn.toggleClass("sr-is-hidden", s.noPauseMode && !e.paused);
+        this.pauseBtn.toggleClass("sr-is-hidden", s.noPauseMode && (!e.paused || held));
         this.pauseBtn.setAttr(
             "aria-label",
             ss("PAUSE_TOOLTIP", { key: (s.pauseHotkey || "-").toUpperCase() }),

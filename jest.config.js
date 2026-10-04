@@ -53,6 +53,11 @@ export default {
         "src/speed-streak/speed-streak-audio.ts",
         "src/speed-streak/speed-streak-i18n.ts",
         "src/speed-streak/speed-streak.css",
+
+        // Read aloud (TTS) UI glue
+        "src/tts/tts-controller.ts",
+        "src/tts/tts-i18n.ts",
+        "src/tts/tts.css",
     ],
     coverageDirectory: "coverage",
     collectCoverage: true,

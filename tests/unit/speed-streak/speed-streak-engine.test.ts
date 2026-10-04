@@ -91,6 +91,26 @@ describe("SpeedStreakEngine", () => {
         expect(engine.streak).toBe(2);
     });
 
+    test("auto pause (reading aloud) freezes the answer timer and keeps the run Pure", () => {
+        const { engine, card, events, advance, policy } = setup();
+        card(1000, 1000);
+        engine.onQuestionShown(policy);
+        advance(1000);
+        engine.onAnswerShown();
+        expect(engine.pause("auto")).toBe(true);
+        advance(30000); // reading takes longer than the 8 s answer limit
+        expect(engine.remainingMs()).toBe(8000);
+        engine.resume();
+        advance(1000);
+        engine.onRate("good");
+        expect(engine.streak).toBe(2);
+        expect(events.some((e) => e.type === "timeout")).toBe(false);
+        const summary = engine.endSession();
+        const run = summary?.runs[summary.runs.length - 1];
+        expect(run?.pauses).toBe(0);
+        expect(run?.pure).toBe(true);
+    });
+
     test("answer timeout breaks the streak by default", () => {
         const { engine, card } = setup();
         card(1000, 1000);

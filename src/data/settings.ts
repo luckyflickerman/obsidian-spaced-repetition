@@ -5,6 +5,7 @@ import {
     DEFAULT_SPEED_STREAK_SETTINGS,
     SpeedStreakSettings,
 } from "src/speed-streak/speed-streak-settings";
+import { DEFAULT_TTS_SETTINGS, TtsSettings } from "src/tts/tts-settings";
 import { pathMatchesPattern } from "src/utils/fs";
 
 export interface SRSettings {
@@ -100,6 +101,9 @@ export interface SRSettings {
 
     // Speed Streak (timer + streak game during review)
     speedStreak: SpeedStreakSettings;
+
+    // Read aloud (TTS) after the answer is revealed
+    tts: TtsSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -191,6 +195,7 @@ export const DEFAULT_SETTINGS: SRSettings = {
     preferredLocale: "-",
 
     speedStreak: { ...DEFAULT_SPEED_STREAK_SETTINGS },
+    tts: { ...DEFAULT_TTS_SETTINGS, voices: {} },
 };
 
 export function upgradeSettings(settings: SRSettings) {

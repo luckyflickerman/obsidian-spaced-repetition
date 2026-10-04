@@ -240,7 +240,7 @@ const PL: Record<Keys, string> = {
 };
 
 export function isPolish(): boolean {
-    let locale = "";
+    let locale: string;
     try {
         locale = LocaleManagerInstance.getInstance().currentLocale ?? "";
     } catch {

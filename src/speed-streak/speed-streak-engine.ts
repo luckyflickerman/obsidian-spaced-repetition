@@ -13,10 +13,10 @@
  */
 
 import {
+    localDayKey,
     SpeedStreakRunRecord,
     SpeedStreakSettings,
     TimerPolicy,
-    localDayKey,
 } from "src/speed-streak/speed-streak-settings";
 
 export type SpeedStreakPhase = "idle" | "question" | "answer";
