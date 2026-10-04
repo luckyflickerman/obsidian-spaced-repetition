@@ -13,6 +13,7 @@ import {
     normalizeHeatmapSettings,
     normalizeReviewLog,
     parseDayKey,
+    polishPluralForm,
     recordReview,
     ReviewLog,
     yearRange,
@@ -118,6 +119,17 @@ describe("computeStats", () => {
         expect(stats.daysLearnedRatio).toBeCloseTo(4 / 15);
         expect(stats.longestStreak).toBe(2);
         expect(stats.currentStreak).toBe(1);
+    });
+
+    test("the time of day does not change the days learned (first day = 100%)", () => {
+        const first = logOf({ "2026-10-04": [13, 23_000] });
+        for (const hour of [0, 13, 23]) {
+            const stats = computeStats(first, new Date(2026, 9, 4, hour, 59));
+            expect(stats.daysLearnedRatio).toBe(1);
+        }
+        expect(computeStats(log, new Date(2026, 9, 4, 23, 59)).daysLearnedRatio).toBeCloseTo(
+            4 / 15,
+        );
     });
 
     test("the current streak continues from yesterday until today is studied", () => {
@@ -237,6 +249,27 @@ describe("buildYearGrid", () => {
         expect(past.weeks.flat().find((c) => c.key === "2025-12-31")?.cards).toBe(7);
         const future = buildYearGrid(log, 2027, today);
         expect(future.weeks.flat().every((c) => c.outside || c.isFuture)).toBe(true);
+    });
+});
+
+describe("polishPluralForm", () => {
+    test.each([
+        [1, 0],
+        [2, 1],
+        [4, 1],
+        [22, 1],
+        [104, 1],
+        [0, 2],
+        [5, 2],
+        [11, 2],
+        [12, 2],
+        [13, 2],
+        [14, 2],
+        [21, 2],
+        [25, 2],
+        [112, 2],
+    ])("%i → form %i", (n, form) => {
+        expect(polishPluralForm(n)).toBe(form);
     });
 });
 

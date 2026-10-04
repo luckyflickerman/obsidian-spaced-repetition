@@ -12,6 +12,8 @@
 }
 
 #sr-modal-view .modal-close-button,
+/* Obsidian 1.13+: the modal's own close button (the plugin has its own) */
+#sr-modal-view > .modal-header-button,
 #sr-modal-view .modal-header {
     display: none;
 }

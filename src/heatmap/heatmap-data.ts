@@ -151,7 +151,9 @@ function daysBetween(a: Date, b: Date): number {
     return Math.round((b.getTime() - a.getTime()) / 86_400_000);
 }
 
-export function computeStats(log: ReviewLog, today: Date): HeatmapStats {
+export function computeStats(log: ReviewLog, now: Date): HeatmapStats {
+    // Whole days only: the time of day must not count as part of a day
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const todayKey = dayKey(today);
     const keys = Object.keys(log.days)
         .filter((k) => log.days[k].cards > 0)
@@ -209,6 +211,19 @@ export function computeStats(log: ReviewLog, today: Date): HeatmapStats {
 export function estimateMinutesLeft(stats: HeatmapStats, cardsLeft: number): number {
     if (cardsLeft <= 0 || stats.secondsPerCard <= 0) return 0;
     return Math.round((cardsLeft * stats.secondsPerCard) / 60);
+}
+
+/**
+ * Polish plural form of a count: 0 = one ("1 karta"), 1 = few ("2–4, 22–24 karty"),
+ * 2 = many ("0, 5–21, 25 kart", also "12–14 kart").
+ */
+export function polishPluralForm(n: number): 0 | 1 | 2 {
+    const abs = Math.abs(Math.round(n));
+    if (abs === 1) return 0;
+    const lastDigit = abs % 10;
+    const lastTwo = abs % 100;
+    if (lastDigit >= 2 && lastDigit <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return 1;
+    return 2;
 }
 
 // MARK: Calendar grid

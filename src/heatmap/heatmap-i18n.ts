@@ -1,12 +1,14 @@
+import { polishPluralForm } from "src/heatmap/heatmap-data";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
 
 const EN = {
     // Calendar
-    TODAY_LINE: "Studied ${cards} cards in ${minutes} minutes today (${seconds}s/card)",
+    TODAY_LINE: "Studied ${cards} in ${minutes} minutes today (${seconds}s/card)",
     TODAY_NONE: "No cards studied today yet",
     AVERAGE: "Average:",
     PER_MINUTE: "${n} cards/minute",
     MINUTES_MORE: "${n} minutes more",
+    MINUTES_LESS: "Less than a minute more",
     NEW: "New",
     DUE: "Due",
     TOTAL: "Total",
@@ -14,12 +16,12 @@ const EN = {
     PAST_WEEK: "Past week",
     HOURS: "${n} hrs",
     DAILY_AVERAGE: "Daily average:",
-    CARDS: "${n} cards",
+
     DAYS_LEARNED: "Days learned:",
     LONGEST_STREAK: "Longest streak:",
     CURRENT_STREAK: "Current streak:",
-    DAYS: "${n} days",
-    CELL: "${date}: ${n} cards",
+
+    CELL: "${date}: ${cards}",
     CELL_NONE: "${date}: no reviews",
     PREV_YEAR: "Previous year",
     NEXT_YEAR: "Next year",
@@ -51,11 +53,12 @@ const EN = {
 type Keys = keyof typeof EN;
 
 const PL: Record<Keys, string> = {
-    TODAY_LINE: "Dziś: ${cards} kart w ${minutes} min (${seconds} s/kartę)",
+    TODAY_LINE: "Dziś: ${cards} w ${minutes} min (${seconds} s/kartę)",
     TODAY_NONE: "Dziś jeszcze bez powtórek",
     AVERAGE: "Średnio:",
     PER_MINUTE: "${n} kart/min",
     MINUTES_MORE: "Zostało ok. ${n} min",
+    MINUTES_LESS: "Została mniej niż minuta",
     NEW: "Nowe",
     DUE: "Do powtórki",
     TOTAL: "Razem",
@@ -63,12 +66,12 @@ const PL: Record<Keys, string> = {
     PAST_WEEK: "Ostatni tydzień",
     HOURS: "${n} h",
     DAILY_AVERAGE: "Średnio dziennie:",
-    CARDS: "${n} kart",
+
     DAYS_LEARNED: "Dni nauki:",
     LONGEST_STREAK: "Najdłuższa seria:",
     CURRENT_STREAK: "Obecna seria:",
-    DAYS: "${n} dni",
-    CELL: "${date}: ${n} kart",
+
+    CELL: "${date}: ${cards}",
     CELL_NONE: "${date}: bez powtórek",
     PREV_YEAR: "Poprzedni rok",
     NEXT_YEAR: "Następny rok",
@@ -109,4 +112,16 @@ export function hm(key: Keys, params?: Record<string, string | number>): string 
 export function formatNumber(n: number, decimals: number): string {
     const text = n.toFixed(decimals);
     return isPolish() ? text.replace(".", ",") : text;
+}
+
+const WORDS = {
+    cards: { en: ["card", "cards"], pl: ["karta", "karty", "kart"] },
+    days: { en: ["day", "days"], pl: ["dzień", "dni", "dni"] },
+};
+
+/** "1 karta", "3 karty", "13 kart" / "1 card", "13 cards". */
+export function countOf(n: number, what: keyof typeof WORDS): string {
+    const words = WORDS[what];
+    const word = isPolish() ? words.pl[polishPluralForm(n)] : words.en[n === 1 ? 0 : 1];
+    return `${n} ${word}`;
 }

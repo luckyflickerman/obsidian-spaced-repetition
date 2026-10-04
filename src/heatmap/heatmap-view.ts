@@ -14,7 +14,7 @@ import {
     ReviewLog,
     yearRange,
 } from "src/heatmap/heatmap-data";
-import { formatNumber, hm } from "src/heatmap/heatmap-i18n";
+import { countOf, formatNumber, hm } from "src/heatmap/heatmap-i18n";
 import type SRPlugin from "src/main";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
 
@@ -142,7 +142,7 @@ export class HeatmapView {
             text:
                 t.cards > 0
                     ? hm("TODAY_LINE", {
-                          cards: t.cards,
+                          cards: countOf(t.cards, "cards"),
                           minutes: formatNumber(t.ms / 60_000, 2),
                           seconds: formatNumber(t.ms / t.cards / 1000, 2),
                       })
@@ -179,9 +179,10 @@ export class HeatmapView {
             text: hm("PER_MINUTE", { n: formatNumber(stats.cardsPerMinute, 1) }),
         });
         if (this.counts && this.counts.due > 0 && stats.secondsPerCard > 0) {
+            const minutesLeft = estimateMinutesLeft(stats, this.counts.due);
             right.createDiv({
                 cls: "sr-hm-minutes-more",
-                text: hm("MINUTES_MORE", { n: estimateMinutesLeft(stats, this.counts.due) }),
+                text: minutesLeft > 0 ? hm("MINUTES_MORE", { n: minutesLeft }) : hm("MINUTES_LESS"),
             });
         }
     }
@@ -271,7 +272,7 @@ export class HeatmapView {
                 el.setAttr(
                     "aria-label",
                     cell.cards > 0
-                        ? hm("CELL", { date, n: cell.cards })
+                        ? hm("CELL", { date, cards: countOf(cell.cards, "cards") })
                         : hm("CELL_NONE", { date }),
                 );
             }
@@ -293,11 +294,11 @@ export class HeatmapView {
         };
         item(
             hm("DAILY_AVERAGE"),
-            hm("CARDS", { n: Math.round(stats.dailyAverage) }),
+            countOf(Math.round(stats.dailyAverage), "cards"),
             "sr-hm-accent-strong",
         );
         item(hm("DAYS_LEARNED"), `${Math.round(stats.daysLearnedRatio * 100)}%`, "sr-hm-accent");
-        item(hm("LONGEST_STREAK"), hm("DAYS", { n: stats.longestStreak }));
-        item(hm("CURRENT_STREAK"), hm("DAYS", { n: stats.currentStreak }));
+        item(hm("LONGEST_STREAK"), countOf(stats.longestStreak, "days"));
+        item(hm("CURRENT_STREAK"), countOf(stats.currentStreak, "days"));
     }
 }
