@@ -105,6 +105,8 @@ export class SpeedStreakEngine {
     boostCharges = 0;
     boostProgress = 0;
     ratingTrail: SpeedStreakRating[] = [];
+    /** Ratings in the current streak (whole streak, unlike the capped trail) */
+    streakRatings: Record<SpeedStreakRating, number> = { again: 0, hard: 0, good: 0, easy: 0 };
 
     // Current run (streak sequence)
     private runStartedAt = 0;
@@ -112,6 +114,16 @@ export class SpeedStreakEngine {
     private runPauses = 0;
     private runBoosts = 0;
     private runScore = 0;
+
+    /** Manual pauses in the running streak ("Breaks" badge) */
+    get livePauses(): number {
+        return this.runPauses;
+    }
+
+    /** Boosts used in the running streak ("Breaks" badge) */
+    get liveBoosts(): number {
+        return this.runBoosts;
+    }
 
     // Session stats
     summary: SpeedStreakSessionSummary = SpeedStreakEngine.emptySummary();
@@ -177,6 +189,7 @@ export class SpeedStreakEngine {
         this.streak = 0;
         this.score = 0;
         this.ratingTrail = [];
+        this.streakRatings = { again: 0, hard: 0, good: 0, easy: 0 };
         this.boostCharges = Math.min(
             this.settings.startingBoostCharges,
             this.settings.maxBoostCharges,
@@ -242,6 +255,7 @@ export class SpeedStreakEngine {
             this.emit({ type: "rate", rating });
         } else {
             this.streak++;
+            this.streakRatings[rating]++;
             this.ratingTrail.push(rating);
             if (this.ratingTrail.length > 40) this.ratingTrail.shift();
             this.summary.bestStreakInSession = Math.max(
@@ -448,6 +462,7 @@ export class SpeedStreakEngine {
     private breakStreak(reason: "timeout" | "again") {
         const run = this.streak > 0 ? this.closeRun(reason) : null;
         this.streak = 0;
+        this.streakRatings = { again: 0, hard: 0, good: 0, easy: 0 };
         this.announcedNewBest = false;
         if (run) this.emit({ type: "streak-lost", run });
         else this.resetRun(this.clock());

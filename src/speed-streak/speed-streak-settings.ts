@@ -5,14 +5,34 @@
  * for the Obsidian Spaced Repetition plugin.
  */
 
-import {
-    DEFAULT_SPEED_STREAK_THEME_ID,
-    getSpeedStreakTheme,
-} from "src/speed-streak/speed-streak-themes";
+import { getSpeedStreakTheme } from "src/speed-streak/speed-streak-themes";
 
 export type SpeedStreakGameplayMode = "time_boost" | "points";
 export type SpeedStreakRecordDisplay = "all_time" | "today" | "both" | "none";
 export type SpeedStreakHudPosition = "top" | "bottom";
+
+/** Visual styles ("scenes"), see visuals/visual-registry.ts. Unknown → "fusion". */
+export const SPEED_STREAK_VISUAL_IDS = ["fusion", "singularity", "crystal", "minimal"] as const;
+export type SpeedStreakVisualId = (typeof SPEED_STREAK_VISUAL_IDS)[number];
+export const DEFAULT_SPEED_STREAK_VISUAL: SpeedStreakVisualId = "fusion";
+
+/** Layout of the HUD. "auto": side panel when the view is wide enough, else compact bar. */
+export type SpeedStreakLayoutSetting = "auto" | "compact" | "side-left" | "side-right";
+export type SpeedStreakLayout = "compact" | "side-left" | "side-right";
+/** Minimum width of the review view (px) for the side panel in "auto". */
+export const SIDE_PANEL_MIN_WIDTH = 900;
+
+/** "auto" = Full on computers, Light on phones / tablets. */
+export type SpeedStreakPerformanceSetting = "auto" | "full" | "light" | "minimal";
+export type SpeedStreakPerformance = "full" | "light" | "minimal";
+
+/** Theme id meaning "the default theme of the chosen visual style". */
+export const STYLE_DEFAULT_THEME = "auto";
+
+export type SpeedStreakRecordsView = "record" | "bar" | "top5";
+export type SpeedStreakRecordScope = "all_time" | "today";
+export type SpeedStreakRecordsList = "ranking" | "recent";
+export type SpeedStreakRecordsFilter = "all" | "pure";
 
 export interface SpeedStreakSettings {
     enabled: boolean;
@@ -45,13 +65,28 @@ export interface SpeedStreakSettings {
     vibrationEnabled: boolean;
 
     // Display
+    /** Visual style (scene), see visuals/visual-registry.ts */
+    visualStyle: SpeedStreakVisualId;
+    layout: SpeedStreakLayoutSetting;
+    /** Side panel folded to a narrow strip */
+    sidePanelCollapsed: boolean;
+    /** Compact bar: above the card or above the buttons */
     hudPosition: SpeedStreakHudPosition;
-    /** Theme id, see speed-streak-themes.ts */
+    /** Theme id, see speed-streak-themes.ts; "auto" = default theme of the visual style */
     theme: string;
-    recordDisplay: SpeedStreakRecordDisplay;
+    performance: SpeedStreakPerformanceSetting;
     showRatingTrail: boolean;
     showSessionSummary: boolean;
     reducedMotion: boolean;
+
+    // Records
+    recordsView: SpeedStreakRecordsView;
+    recordScope: SpeedStreakRecordScope;
+    recordsList: SpeedStreakRecordsList;
+    recordsFilter: SpeedStreakRecordsFilter;
+    celebrateNewBest: boolean;
+    /** @deprecated replaced by recordScope / recordsView; kept so old data still loads */
+    recordDisplay: SpeedStreakRecordDisplay;
 
     // Shortcuts (single key, case-insensitive)
     pauseHotkey: string;
@@ -83,12 +118,22 @@ export const DEFAULT_SPEED_STREAK_SETTINGS: SpeedStreakSettings = {
     countdownSound: true,
     vibrationEnabled: true,
 
+    visualStyle: DEFAULT_SPEED_STREAK_VISUAL,
+    layout: "auto",
+    sidePanelCollapsed: false,
     hudPosition: "top",
-    theme: DEFAULT_SPEED_STREAK_THEME_ID,
-    recordDisplay: "both",
+    theme: STYLE_DEFAULT_THEME,
+    performance: "auto",
     showRatingTrail: true,
     showSessionSummary: true,
     reducedMotion: false,
+
+    recordsView: "top5",
+    recordScope: "all_time",
+    recordsList: "ranking",
+    recordsFilter: "all",
+    celebrateNewBest: true,
+    recordDisplay: "both",
 
     pauseHotkey: "p",
     boostHotkey: "c",
@@ -98,11 +143,8 @@ export const DEFAULT_SPEED_STREAK_SETTINGS: SpeedStreakSettings = {
 export function normalizeSpeedStreakSettings(
     stored: Partial<SpeedStreakSettings> | null | undefined,
 ): SpeedStreakSettings {
-    const merged: SpeedStreakSettings = Object.assign(
-        {},
-        DEFAULT_SPEED_STREAK_SETTINGS,
-        stored ?? {},
-    );
+    const source: Partial<SpeedStreakSettings> = stored && typeof stored === "object" ? stored : {};
+    const merged: SpeedStreakSettings = Object.assign({}, DEFAULT_SPEED_STREAK_SETTINGS, source);
     const num = (v: unknown, def: number, min: number, max: number) => {
         const n = typeof v === "number" ? v : parseFloat(String(v));
         if (!Number.isFinite(n)) return def;
@@ -127,7 +169,33 @@ export function normalizeSpeedStreakSettings(
     if (!["all_time", "today", "both", "none"].includes(merged.recordDisplay))
         merged.recordDisplay = d.recordDisplay;
     if (merged.hudPosition !== "bottom") merged.hudPosition = "top";
-    merged.theme = getSpeedStreakTheme(merged.theme).id;
+    merged.theme =
+        merged.theme === STYLE_DEFAULT_THEME
+            ? STYLE_DEFAULT_THEME
+            : getSpeedStreakTheme(merged.theme).id;
+    const oneOf = <T extends string>(value: unknown, allowed: readonly T[], def: T): T =>
+        allowed.includes(value as T) ? (value as T) : def;
+    const bool = (v: unknown, def: boolean) => (typeof v === "boolean" ? v : def);
+    merged.visualStyle = oneOf(merged.visualStyle, SPEED_STREAK_VISUAL_IDS, d.visualStyle);
+    merged.layout = oneOf(
+        merged.layout,
+        ["auto", "compact", "side-left", "side-right"] as const,
+        "auto",
+    );
+    merged.performance = oneOf(
+        merged.performance,
+        ["auto", "full", "light", "minimal"] as const,
+        "auto",
+    );
+    merged.recordsView = oneOf(merged.recordsView, ["record", "bar", "top5"] as const, "top5");
+    // Old data: "today" in the former "Record to beat" setting means today's scope
+    const scopeFallback: SpeedStreakRecordScope =
+        source.recordDisplay === "today" ? "today" : "all_time";
+    merged.recordScope = oneOf(merged.recordScope, ["all_time", "today"] as const, scopeFallback);
+    merged.recordsList = oneOf(merged.recordsList, ["ranking", "recent"] as const, "ranking");
+    merged.recordsFilter = oneOf(merged.recordsFilter, ["all", "pure"] as const, "all");
+    merged.celebrateNewBest = bool(merged.celebrateNewBest, true);
+    merged.sidePanelCollapsed = bool(merged.sidePanelCollapsed, false);
     merged.pauseHotkey = String(merged.pauseHotkey ?? "").slice(0, 1);
     merged.boostHotkey = String(merged.boostHotkey ?? "").slice(0, 1);
     merged.specialTimerRules = String(merged.specialTimerRules ?? "");
@@ -323,4 +391,42 @@ export function resolveTimerPolicy(
         answerMs: apply(rule.answer, baseA),
         source: rule.matcher,
     };
+}
+
+// MARK: Layout & performance
+
+/** Which layout to use for a review view of the given width (px). */
+export function resolveLayout(
+    setting: SpeedStreakLayoutSetting,
+    viewWidth: number,
+): SpeedStreakLayout {
+    if (setting !== "auto") return setting;
+    return viewWidth >= SIDE_PANEL_MIN_WIDTH ? "side-right" : "compact";
+}
+
+/** Effective performance level ("auto": Full on computers, Light on mobile). */
+export function resolvePerformance(
+    setting: SpeedStreakPerformanceSetting,
+    isMobile: boolean,
+): SpeedStreakPerformance {
+    if (setting !== "auto") return setting;
+    return isMobile ? "light" : "full";
+}
+
+export interface PerformanceProfile {
+    /** Frames per second of the animation loop; 0 = no loop (draw on change only) */
+    fps: number;
+    /** Share of the particles / satellites drawn (0–1) */
+    particles: number;
+}
+
+export function performanceProfile(level: SpeedStreakPerformance): PerformanceProfile {
+    switch (level) {
+        case "full":
+            return { fps: 60, particles: 1 };
+        case "light":
+            return { fps: 30, particles: 0.4 };
+        default:
+            return { fps: 0, particles: 0.25 };
+    }
 }
