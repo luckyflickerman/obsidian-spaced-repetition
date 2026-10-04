@@ -71,6 +71,13 @@ export default {
         // Add-ons window texts
         "src/addons/addons-i18n.ts",
 
+        // Card authoring UI glue (CodeMirror, Obsidian commands, preview)
+        "src/card-authoring/card-authoring-controller.ts",
+        "src/card-authoring/editor-extension.ts",
+        "src/card-authoring/card-preview.ts",
+        "src/card-authoring/card-authoring-i18n.ts",
+        "src/card-authoring/card-authoring.css",
+
         // Review window DOM glue
         "src/review-window/review-window-controller.ts",
         "src/review-window/review-window-i18n.ts",

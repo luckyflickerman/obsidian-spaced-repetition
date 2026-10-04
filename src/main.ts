@@ -1,5 +1,6 @@
 import { Plugin } from "obsidian";
 
+import { CardAuthoringController } from "src/card-authoring/card-authoring-controller";
 import { CommandManager } from "src/command-manager";
 import { DataManager } from "src/data/data-manager";
 import { DebugLoggerInstance } from "src/data/debug-logger";
@@ -21,6 +22,8 @@ export default class SRPlugin extends Plugin {
     private _nextNoteReviewHandler: NextNoteReviewHandler | null = null;
     private _commandManager: CommandManager | null = null;
     private _reminderManager: ReminderManager | null = null;
+    /** Card authoring (templates, editor icons, counter…), set up after the layout is ready */
+    public cardAuthoring: CardAuthoringController | null = null;
     public isInitialized: boolean = false;
 
     async onload(): Promise<void> {
@@ -63,6 +66,8 @@ export default class SRPlugin extends Plugin {
 
                 await this.uiManager.onLayoutReady();
                 this.commandManager.onLayoutReady();
+                this.cardAuthoring = new CardAuthoringController(this);
+                this.cardAuthoring.load();
                 this._reminderManager = new ReminderManager(this, this.uiManager, this.dataManager);
 
                 this.isInitialized = true;
@@ -157,6 +162,7 @@ export default class SRPlugin extends Plugin {
      */
     private async onOsrVaultDataChanged() {
         await this.uiManager.updateStatusBar();
+        this.cardAuthoring?.onVaultSynced();
         if (this.dataManager.data.settings.enableNoteReviewPaneOnStartup) {
             this.uiManager.sidebarManager.redraw();
         }

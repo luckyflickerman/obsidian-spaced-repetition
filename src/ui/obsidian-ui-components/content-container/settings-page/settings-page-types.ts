@@ -6,6 +6,7 @@
  * an import cycle and a page class can be defined before SettingsPage.
  */
 
+import { ca } from "src/card-authoring/card-authoring-i18n";
 import { hm } from "src/heatmap/heatmap-i18n";
 import { t } from "src/lang/helpers";
 import { ss } from "src/speed-streak/speed-streak-i18n";
@@ -22,6 +23,7 @@ export type SettingsPageType =
     | "speed-streak-page"
     | "tts-page"
     | "heatmap-page"
+    | "card-authoring-page"
     | "notes-page"
     | "scheduling-page"
     | "ui-preferences-page"
@@ -39,6 +41,7 @@ export const SettingsPageTypesArray: ReadonlyArray<SettingsPageType> = [
     "speed-streak-page",
     "tts-page",
     "heatmap-page",
+    "card-authoring-page",
     "notes-page",
     "scheduling-page",
     "ui-preferences-page",
@@ -64,6 +67,8 @@ export function getPageName(pageType: SettingsPageType): string {
             return tt("PAGE_NAME");
         case "heatmap-page":
             return hm("PAGE_NAME");
+        case "card-authoring-page":
+            return ca("PAGE_NAME");
         case "notes-page":
             return t("NOTES");
         case "scheduling-page":
@@ -95,6 +100,8 @@ export function getPageIcon(pageType: SettingsPageType): string {
             return "volume-2";
         case "heatmap-page":
             return "calendar-days";
+        case "card-authoring-page":
+            return "square-plus";
         case "notes-page":
             return "book-text";
         case "scheduling-page":

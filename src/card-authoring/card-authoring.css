@@ -1,0 +1,204 @@
+/* MARK: Card authoring — editor icons */
+
+.sr-ca-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.6em;
+    margin-left: 0.35em;
+    padding: 0 0.15em;
+    border-radius: var(--radius-s);
+    font-size: 0.9em;
+    line-height: 1.4;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0.7;
+    vertical-align: baseline;
+}
+
+.sr-ca-icon:hover {
+    opacity: 1;
+    background: var(--background-modifier-hover);
+}
+
+/* bigger tap target on touch screens, without moving the text */
+.is-mobile .sr-ca-icon {
+    position: relative;
+    opacity: 0.85;
+}
+
+.is-mobile .sr-ca-icon::after {
+    content: "";
+    position: absolute;
+    inset: -12px -10px;
+}
+
+.sr-ca-icon-warn {
+    color: var(--color-yellow);
+    opacity: 1;
+}
+
+.sr-ca-unfinished-line {
+    text-decoration: underline wavy color-mix(in srgb, var(--color-yellow) 70%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+}
+
+/* MARK: Preview (popover on computers, modal on phones) */
+
+.sr-ca-popover {
+    position: fixed;
+    left: var(--sr-ca-left);
+    top: var(--sr-ca-top);
+    width: var(--sr-ca-width);
+    max-height: min(70vh, 560px);
+    overflow-y: auto;
+    z-index: var(--layer-popover);
+    padding: var(--size-4-3);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--background-modifier-border);
+    background: var(--background-primary);
+    box-shadow: var(--shadow-l);
+}
+
+.sr-ca-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-2);
+}
+
+.sr-ca-preview-head {
+    display: flex;
+    align-items: center;
+    gap: var(--size-4-2);
+    font-size: var(--font-ui-small);
+    color: var(--text-muted);
+}
+
+.sr-ca-preview-deck {
+    font-weight: var(--font-semibold);
+    color: var(--text-accent);
+}
+
+.sr-ca-preview-lang {
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--background-modifier-hover);
+}
+
+.sr-ca-preview-counter {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+.sr-ca-preview-tabs {
+    display: flex;
+    gap: var(--size-4-1);
+}
+
+button.sr-ca-preview-tab {
+    flex: 1;
+    min-height: 44px;
+    font-weight: var(--font-semibold);
+}
+
+button.sr-ca-preview-tab.is-active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.sr-ca-preview-side {
+    text-align: center;
+}
+
+.sr-ca-preview-sides hr {
+    margin: var(--size-4-2) 0;
+}
+
+button.sr-ca-preview-listen {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--size-4-2);
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 var(--size-4-4);
+}
+
+.sr-ca-preview-status {
+    font-size: var(--font-ui-small);
+    color: var(--text-muted);
+}
+
+.sr-ca-preview-label {
+    font-weight: var(--font-semibold);
+}
+
+.sr-ca-preview-warn {
+    color: var(--text-warning, var(--color-yellow));
+    font-size: var(--font-ui-small);
+}
+
+.sr-ca-preview-dups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-1);
+}
+
+button.sr-ca-preview-link {
+    justify-content: flex-start;
+    min-height: 44px;
+    height: auto;
+    text-align: left;
+    white-space: normal;
+}
+
+/* MARK: Duplicates window, notices, suggestions */
+
+.sr-ca-duplicates {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-3);
+}
+
+.sr-ca-dup-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-1);
+    padding: var(--size-4-2);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--background-modifier-border);
+}
+
+.sr-ca-dup-word {
+    font-weight: var(--font-semibold);
+}
+
+.sr-ca-muted {
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+}
+
+button.sr-ca-notice-btn {
+    margin-left: var(--size-4-1);
+    min-height: 32px;
+}
+
+/* MARK: Settings page: decks */
+
+.sr-ca-deck-row .setting-item-control {
+    flex-wrap: wrap;
+    gap: var(--size-4-1);
+}
+
+.sr-ca-deck-tag {
+    width: 7em;
+}
+
+.sr-ca-deck-file {
+    width: 14em;
+}
+
+.sr-ca-deck-lang {
+    width: 6em;
+}

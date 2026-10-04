@@ -162,9 +162,16 @@ function noteLevelTags(
 }
 
 /** Finds the cards (and unfinished card lines) in a note's text. */
-export function detectCards(text: string, settings: CardDetectSettings): DetectResult {
+export function detectCards(
+    text: string,
+    settings: CardDetectSettings,
+    options: {
+        /** The caller already knows the whole note has a flashcard tag (e.g. a slice of it) */
+        assumeFlashcardNote?: boolean;
+    } = {},
+): DetectResult {
     const source = (text ?? "").replace(/\r\n/g, "\n");
-    if (!isFlashcardNote(source, settings))
+    if (!options.assumeFlashcardNote && !isFlashcardNote(source, settings))
         return { isFlashcardNote: false, cards: [], unfinished: [] };
 
     const [frontmatter, content] = splitNoteIntoFrontmatterAndContent(source);
