@@ -218,7 +218,7 @@ W nagłówku listy talii, obok X, jest przycisk **Dodatki** (ikona puzzla). Poka
 
 Pod listą talii jest kalendarz całego roku: jeden kwadrat to jeden dzień. Im więcej kart tego dnia powtórzysz, tym mocniejszy kolor.
 
-- **Kolor** (zielony, niebieski, czerwony) zmienisz kropkami obok kalendarza albo w Ustawieniach → **Kalendarz powtórek**.
+- **Kolor** (zielony, niebieski, czerwony) wybierasz w Ustawieniach → **Kalendarz powtórek** albo w oknie Dodatki (koło zębate przy kalendarzu).
 - Strzałki przełączają rok, kółko wraca do bieżącego roku. Po najechaniu na kwadrat (albo przytrzymaniu na telefonie) widać datę i liczbę kart.
 - Statystyki: karty i czas dzisiaj, średnie tempo (karty na minutę), szacowany czas na pozostałe karty, łączny czas nauki i czas z ostatniego tygodnia, średnio kart dziennie, procent dni z nauką, najdłuższa i obecna seria dni.
 - Historia zbiera się od pierwszej powtórki w tej wersji pluginu. Wcześniejszych dni nie da się odtworzyć, bo plugin zapisywał tylko termin następnej powtórki.

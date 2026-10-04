@@ -6,7 +6,6 @@ import {
     computeStats,
     estimateMinutesLeft,
     HEATMAP_COLORS,
-    HeatmapColor,
     HeatmapSettings,
     normalizeHeatmapSettings,
     normalizeReviewLog,
@@ -79,30 +78,18 @@ export interface HeatmapDeckCounts {
     total: number;
 }
 
-const COLOR_NAMES: Record<HeatmapColor, () => string> = {
-    green: () => hm("COLOR_GREEN"),
-    blue: () => hm("COLOR_BLUE"),
-    red: () => hm("COLOR_RED"),
-};
-
 /**
- * The review calendar: statistics, a year of colored day squares, year
- * navigation and the color switch.
+ * The review calendar: statistics, a year of colored day squares and year
+ * navigation. The color is chosen in the calendar's settings.
  */
 export class HeatmapView {
     private plugin: SRPlugin;
     private rootEl: HTMLElement;
     private year: number;
     private counts: HeatmapDeckCounts | null = null;
-    private onSettingsChanged: (() => Promise<void>) | null;
 
-    constructor(
-        parentEl: HTMLElement,
-        plugin: SRPlugin,
-        onSettingsChanged: (() => Promise<void>) | null = null,
-    ) {
+    constructor(parentEl: HTMLElement, plugin: SRPlugin) {
         this.plugin = plugin;
-        this.onSettingsChanged = onSettingsChanged;
         this.rootEl = parentEl.createDiv({ cls: "sr-hm" });
         this.year = new Date().getFullYear();
     }
@@ -122,7 +109,7 @@ export class HeatmapView {
 
         const stats = computeStats(log, today);
         if (settings.showStats) this.renderTopStats(stats);
-        this.renderToolbar(settings, range);
+        this.renderToolbar(range);
         this.renderGrid(log, settings, today);
         if (settings.showStats) this.renderBottomStats(stats);
         if (stats.totalCards === 0)
@@ -187,7 +174,7 @@ export class HeatmapView {
         }
     }
 
-    private renderToolbar(settings: HeatmapSettings, range: { min: number; max: number }) {
+    private renderToolbar(range: { min: number; max: number }) {
         const bar = this.rootEl.createDiv({ cls: "sr-hm-toolbar" });
         bar.createDiv({ cls: "sr-hm-toolbar-spacer" });
 
@@ -214,29 +201,7 @@ export class HeatmapView {
             this.year++;
             this.render();
         });
-
-        const colors = bar.createDiv({ cls: "sr-hm-colors" });
-        colors.setAttr("aria-label", hm("COLOR"));
-        for (const color of HEATMAP_COLORS) {
-            const dot = colors.createEl("button", {
-                cls: `sr-hm-color-dot sr-hm-dot-${color}`,
-            });
-            dot.setAttr("aria-label", COLOR_NAMES[color]());
-            dot.toggleClass("is-active", settings.color === color);
-            dot.addEventListener("click", (ev) => {
-                ev.preventDefault();
-                void this.setColor(color);
-            });
-        }
-    }
-
-    private async setColor(color: HeatmapColor) {
-        const settings = getHeatmapSettings(this.plugin);
-        if (settings.color === color) return;
-        settings.color = color;
-        this.render();
-        if (this.onSettingsChanged) await this.onSettingsChanged();
-        else await saveReviewLog(this.plugin);
+        bar.createDiv({ cls: "sr-hm-toolbar-spacer" });
     }
 
     private renderGrid(log: ReviewLog, settings: HeatmapSettings, today: Date) {

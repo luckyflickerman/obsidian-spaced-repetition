@@ -130,15 +130,14 @@
     color: var(--sr-hm-4);
 }
 
-/* Toolbar: year navigation + colors */
+/* Toolbar: year navigation (centered) */
 .sr-hm-toolbar {
     display: flex;
     align-items: center;
     margin-bottom: var(--size-4-2);
 }
 
-.sr-hm-toolbar-spacer,
-.sr-hm-colors {
+.sr-hm-toolbar-spacer {
     flex: 1 1 0;
 }
 
@@ -160,47 +159,6 @@
 .sr-hm-nav-btn:disabled {
     opacity: 0.35;
     cursor: default;
-}
-
-.sr-hm-colors {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--size-4-2);
-}
-
-/* 22 px dot with a larger invisible touch area (~38 px) */
-.sr-hm-color-dot {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    padding: 0;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    box-shadow: none;
-    cursor: pointer;
-    position: relative;
-}
-
-.sr-hm-color-dot::after {
-    content: "";
-    position: absolute;
-    inset: -8px;
-}
-
-.sr-hm-color-dot.is-active {
-    border-color: var(--text-normal);
-}
-
-.sr-hm-dot-green {
-    background-color: #2fb352 !important;
-}
-
-.sr-hm-dot-blue {
-    background-color: #3a86e8 !important;
-}
-
-.sr-hm-dot-red {
-    background-color: #e0453a !important;
 }
 
 /* Calendar grid */

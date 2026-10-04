@@ -32,7 +32,6 @@ const COLOR_LABELS: Record<HeatmapColor, () => string> = {
 export class HeatmapPage extends SettingsPage {
     private preview: HeatmapView;
     private summaryEl: HTMLElement;
-    private colorDropdownSync: ((color: HeatmapColor) => void) | null = null;
     private resetArmed = false;
 
     constructor(
@@ -102,17 +101,13 @@ export class HeatmapPage extends SettingsPage {
                         this.hmSettings.color = value as HeatmapColor;
                         await this.save();
                     });
-                    this.colorDropdownSync = (color) => dropdown.setValue(color);
                 }),
         );
         this.addToggle(general, "showStats", hm("STATS"), hm("STATS_DESC"));
         this.addToggle(general, "weekStartsOnMonday", hm("MONDAY"));
 
         // Preview (the same calendar as below the deck list)
-        this.preview = new HeatmapView(this.containerEl, this.plugin, async () => {
-            await this.settingsManager.save();
-            this.colorDropdownSync?.(this.hmSettings.color);
-        });
+        this.preview = new HeatmapView(this.containerEl, this.plugin);
 
         const history = new SettingGroup(this.containerEl).setHeading(hm("G_HISTORY"));
         history.addSetting((setting: Setting) => {
