@@ -123,6 +123,14 @@ Po instalacji otwórz stronę „Czytanie na głos” jeszcze raz. Diagnostyka p
 Kod jest w `src/tts/`. Czysta logika (bez DOM, z testami) jest w `tts-text.ts` i `tts-settings.ts`. Głosy dostarcza „dostawca” (`TtsProvider`).
 Na górze `tts-provider.ts` jest instrukcja krok po kroku, jak dodać nowego dostawcę, np. głosy AI.
 
+## Dodatki (przycisk z puzzlem)
+
+W nagłówku listy talii, obok X, jest przycisk **Dodatki** (ikona puzzla). Pokazuje wszystkie dodatki do zwykłego Spaced Repetition: kalendarz powtórek, czytanie na głos i Speed Streak.
+
+- Przełącznik przy dodatku włącza go i wyłącza.
+- Koło zębate otwiera wszystkie ustawienia dodatku, te same co w Ustawieniach → Spaced Repetition. Strzałka w lewo wraca do listy.
+- Wyłączony kalendarz dalej zapisuje historię w tle, więc po ponownym włączeniu nie ma w nim dziur.
+
 ## Kalendarz powtórek
 
 Pod listą talii jest kalendarz całego roku: jeden kwadrat to jeden dzień. Im więcej kart tego dnia powtórzysz, tym mocniejszy kolor.

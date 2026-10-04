@@ -63,6 +63,9 @@ export default {
         "src/heatmap/heatmap-view.ts",
         "src/heatmap/heatmap-i18n.ts",
         "src/heatmap/heatmap.css",
+
+        // Add-ons window texts
+        "src/addons/addons-i18n.ts",
     ],
     coverageDirectory: "coverage",
     collectCoverage: true,

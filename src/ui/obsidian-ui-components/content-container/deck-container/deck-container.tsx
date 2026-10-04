@@ -12,6 +12,7 @@ import {
 } from "src/scheduling/flashcard-review-sequencer";
 import DeckListComponent from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list";
 import DeckListHeaderComponent from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list-header";
+import { AddonsModal } from "src/ui/obsidian-ui-components/modals/addons-modal";
 
 export class DeckContainer {
     private containerEl: HTMLDivElement;
@@ -19,6 +20,7 @@ export class DeckContainer {
     private deckListHeader: DeckListHeaderComponent;
     private plugin: SRPlugin;
     private heatmap: HeatmapView;
+    private lastReviewSequencer: IFlashcardReviewSequencer | null = null;
 
     constructor(
         parentEl: HTMLElement,
@@ -36,6 +38,7 @@ export class DeckContainer {
             this.containerEl,
             changeReviewMode,
             closeModal,
+            () => new AddonsModal(plugin, () => this.onAddonsChanged()).open(),
         );
 
         this.deckList = new DeckListComponent(this.containerEl, startReviewOfDeck);
@@ -44,7 +47,13 @@ export class DeckContainer {
         this.heatmap = new HeatmapView(this.deckList.contentEl, plugin);
     }
 
+    /** Add-on switched on/off or its settings changed: redraw what depends on it. */
+    private onAddonsChanged() {
+        if (this.lastReviewSequencer) this.redrawHeatmap(this.lastReviewSequencer);
+    }
+
     private redrawHeatmap(reviewSequencer: IFlashcardReviewSequencer) {
+        this.lastReviewSequencer = reviewSequencer;
         try {
             const visible = getHeatmapSettings(this.plugin).showInDeckList;
             this.heatmap.show(visible);

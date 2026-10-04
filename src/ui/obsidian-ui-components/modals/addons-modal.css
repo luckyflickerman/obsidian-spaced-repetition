@@ -1,0 +1,38 @@
+/* MARK: Add-ons window */
+
+.sr-addons-modal {
+    width: min(640px, 100%);
+}
+
+.sr-addons-intro {
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+    margin-bottom: var(--size-4-3);
+}
+
+.sr-addons-item .setting-item-name {
+    display: flex;
+    align-items: center;
+    gap: var(--size-4-2);
+    font-weight: var(--font-semibold);
+}
+
+.sr-addons-icon {
+    display: flex;
+    color: var(--text-accent);
+}
+
+/* A settings page inside the window scrolls in a fixed-height box */
+.sr-addons-modal.is-page .modal-content {
+    height: min(70vh, 640px);
+    overflow: hidden;
+}
+
+.sr-addons-page {
+    height: 100%;
+}
+
+/* The window title already names the add-on */
+.sr-addons-page .sr-settings-page-title-wrapper {
+    display: none;
+}

@@ -1,9 +1,11 @@
 import "src/ui/obsidian-ui-components/content-container/deck-container/deck-list-header.css";
 import { DropdownComponent, Platform, setIcon } from "obsidian";
 
+import { ad } from "src/addons/addons-i18n";
 import { t } from "src/lang/helpers";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
 import ModalCloseButtonComponent from "src/ui/obsidian-ui-components/content-container/modal-close-button";
+import SRButtonComponent from "src/ui/sr-button";
 import EmulatedPlatform from "src/utils/platform-detector";
 
 export default class DeckListHeaderComponent {
@@ -16,6 +18,7 @@ export default class DeckListHeaderComponent {
         parentEl: HTMLElement,
         changeReviewMode: (reviewMode: FlashcardReviewMode) => void,
         closeModal?: () => void,
+        openAddons?: () => void,
     ) {
         this.header = parentEl.createDiv();
         this.header.addClass("sr-deck-list-header");
@@ -44,17 +47,27 @@ export default class DeckListHeaderComponent {
             if (value === "Cram") changeReviewMode(FlashcardReviewMode.Cram);
         });
 
-        // TODO: Add a menu button here, if there are any more actions we want to add
+        const isPhone = EmulatedPlatform().isPhone || Platform.isPhone;
+
+        // Add-ons (review calendar, read aloud, Speed Streak): left of the close button
+        if (openAddons !== undefined) {
+            new SRButtonComponent(this.header, {
+                classNames: ["sr-addons-button", isPhone ? "mod-raised" : "clickable-icon"],
+                icon: "puzzle",
+                tooltip: ad("BUTTON"),
+                onClick: () => openAddons(),
+            });
+        }
 
         // If we don't have a close modal, we don't need the close button
         if (closeModal === undefined) return;
 
         const closeButtonClasses = [
             "sr-modal-close-button",
-            EmulatedPlatform().isPhone || Platform.isPhone ? "mod-raised" : "clickable-icon",
+            isPhone ? "mod-raised" : "clickable-icon",
         ];
 
-        if (EmulatedPlatform().isPhone || Platform.isPhone) {
+        if (isPhone) {
             closeButtonClasses.push("mod-raised");
             closeButtonClasses.push("clickable-icon");
         }
