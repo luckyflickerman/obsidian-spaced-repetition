@@ -179,7 +179,10 @@ const touch = document.body.classList.contains('is-mobile');
 const small = []; const seen = new Set();
 for (const root of roots) for (const e of root.querySelectorAll('button, [role=button], .clickable-icon, input, select, .sr-response-button, [class*=-btn]')) {
     if (!vis(e) || seen.has(e)) continue; seen.add(e); const r = e.getBoundingClientRect();
-    if (touch && (r.width < 44 || r.height < 44)) small.push(label(e) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height)); }
+    // a bigger invisible tap area drawn by ::after counts too
+    const pa = getComputedStyle(e, '::after'); const big = pa.position === 'absolute';
+    const w = Math.max(r.width, big ? parseFloat(pa.width) || 0 : 0), h = Math.max(r.height, big ? parseFloat(pa.height) || 0 : 0);
+    if (touch && (w < 44 || h < 44)) small.push(label(e) + ' ' + Math.round(w) + 'x' + Math.round(h)); }
 const low = []; const seenT = new Set();
 for (const root of roots) { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
     while ((n = w.nextNode())) { const e = n.parentElement; if (!e || seenT.has(e) || !n.textContent.trim() || !vis(e)) continue; seenT.add(e);

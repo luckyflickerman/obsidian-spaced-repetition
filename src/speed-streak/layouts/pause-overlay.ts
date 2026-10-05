@@ -30,7 +30,7 @@ export class PauseOverlay {
         this.stats = this.root.createDiv({ cls: "sr-ss-pause-stats" });
         // A clear "Resume" button; tapping anywhere else on the curtain still resumes too
         this.root.createEl("button", {
-            cls: "sr-ss-paused-resume mod-cta",
+            cls: "sr-ss-paused-resume sr-bg-accent",
             text: ss("RESUME"),
             attr: { type: "button" },
         });

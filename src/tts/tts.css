@@ -15,6 +15,21 @@
     outline: none;
 }
 
+/* Touch: a 44 px area to tap around a short word (the text does not move) */
+.is-mobile .sr-tts-word {
+    position: relative;
+}
+
+.is-mobile .sr-tts-word::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+}
+
 .sr-tts-bar {
     display: flex;
     justify-content: flex-end;

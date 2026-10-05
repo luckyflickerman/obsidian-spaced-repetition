@@ -5,6 +5,12 @@
     gap: var(--size-4-2);
 }
 
+/* Touch: the chevron is a 44 px target too (the whole row is tappable anyway) */
+.is-mobile .sr-page-link .setting-item-control button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
 /* Built-in plugins (Options window and the main Settings page) */
 
 .sr-plugin-item .setting-item-name {

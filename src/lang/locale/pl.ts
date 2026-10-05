@@ -159,9 +159,9 @@ const pl: IBaseLocale = {
         "Po wyłączeniu tej opcji notatki są uporządkowane według istotności (PageRank).",
     AUTO_NEXT_NOTE: "Automatycznie otwierać następną notatkę po przeglądzie",
     ENABLE_FILE_MENU_REVIEW_OPTIONS:
-        "Wyłączyć opcje przeglądu w menu pliku, tj. Przeglądaj: Łatwe Dobrze Trudne",
+        "Opcje przeglądu w menu pliku (np. Przegląd: Łatwe, Dobre, Trudne)",
     ENABLE_FILE_MENU_REVIEW_OPTIONS_DESC:
-        "Jeśli wyłączysz opcje przeglądu w menu Plik, możesz przeglądać swoje notatki za pomocą poleceń wtyczki i, jeśli je zdefiniowałeś, przypisanych skrótów klawiszowych.",
+        "Gdy je wyłączysz, notatki przeglądasz poleceniami pluginu albo przypisanymi do nich skrótami klawiszowymi.",
     MAX_N_DAYS_REVIEW_QUEUE: "Maksymalna liczba dni do wyświetlenia w panelu prawym",
     MIN_ONE_DAY: "Liczba dni musi wynosić co najmniej 1.",
     VALID_NUMBER_WARNING: "Podaj prawidłową liczbę.",

@@ -3,6 +3,7 @@ import { ButtonComponent, setIcon } from "obsidian";
 
 import { DataManager } from "src/data/data-manager";
 import { SettingsManager } from "src/data/settings-manager";
+import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import {
     getPageIcon,
@@ -68,6 +69,8 @@ export abstract class SettingsPage {
         this.backButton.setClass("sr-settings-page-back-button");
         this.backButton.setClass("clickable-icon");
         this.backButton.setIcon("chevron-left");
+        // screen readers: an icon-only button needs a name
+        this.backButton.setTooltip(t("BACK"));
         this.backButton.onClick(() => {
             this.backToMainPage();
         });

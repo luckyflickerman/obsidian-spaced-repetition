@@ -9,6 +9,8 @@
     --sr-hm-4: #2a9a45;
     --sr-hm-5: #176b2e;
     --sr-hm-accent-color: #2a9a45;
+    /* text on the page: at least 4.5:1 */
+    --sr-hm-text-color: #2e7d32;
 }
 
 .sr-hm.sr-hm-color-blue {
@@ -18,6 +20,7 @@
     --sr-hm-4: #2f6fd6;
     --sr-hm-5: #1b3f8f;
     --sr-hm-accent-color: #2f6fd6;
+    --sr-hm-text-color: #1e66b8;
 }
 
 .sr-hm.sr-hm-color-red {
@@ -27,6 +30,7 @@
     --sr-hm-4: #d0302a;
     --sr-hm-5: #8c1717;
     --sr-hm-accent-color: #d0302a;
+    --sr-hm-text-color: #c62828;
 }
 
 .theme-dark .sr-hm.sr-hm-color-green {
@@ -36,6 +40,7 @@
     --sr-hm-4: #3fd26c;
     --sr-hm-5: #9cf0b2;
     --sr-hm-accent-color: #3fd26c;
+    --sr-hm-text-color: #3fd26c;
 }
 
 .theme-dark .sr-hm.sr-hm-color-blue {
@@ -45,6 +50,7 @@
     --sr-hm-4: #5ea3f5;
     --sr-hm-5: #b5d6fc;
     --sr-hm-accent-color: #5ea3f5;
+    --sr-hm-text-color: #5ea3f5;
 }
 
 .theme-dark .sr-hm.sr-hm-color-red {
@@ -54,6 +60,7 @@
     --sr-hm-4: #f26b4f;
     --sr-hm-5: #fdbf9a;
     --sr-hm-accent-color: #f26b4f;
+    --sr-hm-text-color: #f26b4f;
 }
 
 .sr-hm {
@@ -120,7 +127,7 @@
 }
 
 .sr-hm-accent {
-    color: var(--sr-hm-accent-color);
+    color: var(--sr-hm-text-color, var(--sr-hm-accent-color));
 }
 
 .sr-hm-accent-strong {
@@ -340,7 +347,7 @@ button.sr-hm-mini-box:hover {
 }
 
 .sr-hm-ring.is-done .sr-hm-ring-value {
-    color: var(--sr-hm-accent-color);
+    color: var(--sr-hm-text-color, var(--sr-hm-accent-color));
 }
 
 .sr-hm-month-grid {
