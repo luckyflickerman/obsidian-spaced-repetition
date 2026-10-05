@@ -30,16 +30,16 @@ Plugin musi działać na **Windows, iPadzie, iPhonie i Androidzie**.
 
 Oryginalny kod pluginu: `src/data`, `src/note`, `src/scheduling` (algorytmy SM-2 i FSRS), `src/ui`, `src/parser.ts`. Zmieniaj go tylko gdy trzeba; nowe funkcje jako osobne moduły:
 
-| Moduł                  | Co robi                                                                                                             |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `src/speed-streak/`    | gra z timerem i serią (silnik, rekordy, motywy `speed-streak-themes.ts`, style `visuals/`, układy `layouts/`)       |
-| `src/tts/`             | czytanie na głos (Web Speech API, dostawcy w `providers/`)                                                          |
-| `src/card-authoring/`  | tworzenie fiszek: szablony, wykrywanie, podgląd w edytorze (CodeMirror 6), duplikaty, licznik, obrazki, cel dzienny |
-| `src/heatmap/`         | kalendarz aktywności                                                                                                |
-| `src/review-window/`   | okno powtórek                                                                                                       |
-| `src/addons/addons.ts` | rejestr „wbudowanych wtyczek” (przełączniki w oknie „Opcje” i na głównej stronie Ustawień)                          |
-| `src/endless/`         | tryb Endless: wybrane talie bez końca w rundach (kolejka, sekwencer bez zapisu harmonogramu, wybór talii)           |
-| `src/migration/`       | jednorazowy import danych z oryginalnego pluginu (okno Tak/Nie/Później + komenda)                                   |
+| Moduł                  | Co robi                                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `src/speed-streak/`    | gra z timerem i serią (silnik, rekordy, motywy `speed-streak-themes.ts`, style `visuals/`, układy `layouts/`)                  |
+| `src/tts/`             | czytanie na głos (Web Speech API, dostawcy w `providers/`)                                                                     |
+| `src/card-authoring/`  | tworzenie fiszek: szablony, wykrywanie, podgląd w edytorze (CodeMirror 6), duplikaty, licznik, obrazki, cel dzienny            |
+| `src/heatmap/`         | kalendarz aktywności                                                                                                           |
+| `src/review-window/`   | okno powtórek                                                                                                                  |
+| `src/addons/addons.ts` | rejestr „wbudowanych wtyczek” (przełączniki w oknie „Opcje” i na głównej stronie Ustawień)                                     |
+| `src/endless/`         | tryb Endless: kolejka z rozsuwaniem kart jednej fiszki, wynik i rekordy (`endless.records`), sekwencer bez zapisu harmonogramu |
+| `src/migration/`       | jednorazowy import danych z oryginalnego pluginu (okno Tak/Nie/Później + komenda)                                              |
 
 Wzorzec każdego modułu:
 

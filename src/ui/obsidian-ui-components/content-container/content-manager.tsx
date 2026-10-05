@@ -566,9 +566,7 @@ export default class ContentManager {
             if (!answer.start) return;
         }
 
-        const decksName = decks
-            .map((d) => (d.isRootDeck ? t("ALL_DECKS") : d.deckName))
-            .join(", ");
+        const decksName = decks.map((d) => (d.isRootDeck ? t("ALL_DECKS") : d.deckName)).join(", ");
         const records = getEndlessRecords(this.plugin);
         const endless = new EndlessReviewSequencer(
             this.reviewSequencer,

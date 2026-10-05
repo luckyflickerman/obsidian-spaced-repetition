@@ -53,7 +53,13 @@ export const TOP_RUNS = 5;
 export const RECENT_SESSIONS = 5;
 
 export function createEndlessRecords(): EndlessRecords {
-    return { best: null, bestToday: null, top: [], recent: [], totals: { ratings: 0, sessions: 0 } };
+    return {
+        best: null,
+        bestToday: null,
+        top: [],
+        recent: [],
+        totals: { ratings: 0, sessions: 0 },
+    };
 }
 
 export function createEndlessData(): EndlessData {
@@ -189,7 +195,12 @@ export function normalizeEndlessRecords(stored: unknown): EndlessRecords {
     if (!stored || typeof stored !== "object") return def;
     const s = stored as Partial<EndlessRecords>;
     const list = <T>(v: unknown, f: (x: unknown) => T | null, max: number): T[] =>
-        Array.isArray(v) ? v.map(f).filter((x): x is T => x !== null).slice(0, max) : [];
+        Array.isArray(v)
+            ? v
+                  .map(f)
+                  .filter((x): x is T => x !== null)
+                  .slice(0, max)
+            : [];
     const totals = (s.totals ?? {}) as Partial<EndlessRecords["totals"]>;
     return {
         best: normalizeRun(s.best),

@@ -3,6 +3,17 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.4
+
+Endless, part 2.
+
+- **"Error" instead of "Again" in Endless**: the red button says "Error · resets score". The card comes back after 3 cards and the Endless score drops to 0. The normal review still shows "Again".
+- **Endless score and records**: the score counts answers without an error in a row (also with Speed Streak off). Its own records: all-time and today's best, top 5 runs, last 5 sessions and totals. Shown above the deck list ("🏆 Record: 112 · Today: 37", tap for details), in the badge above the card ("Score 37" with 🏆 on a new record) and as a summary when the session ends.
+- **Cards of one note are kept apart**: the two directions of a `:::` / `??` card are at least 5 % of the pool apart (100 cards → 5, 400 → 20), also across rounds and after "Error" / "Hard". The last card of a round rated "Error" / "Hard" no longer comes back right away.
+- **Warning below 100 cards** before an Endless session, with "Start anyway", "Back to the decks" and "Don't show again".
+- **New Speed Streak style "Hourglass"**, the default in Endless (Settings → Speed Streak → Display → "Style in Endless mode"): a grain for each correct answer, a turn-over every 100 (the score stays, a gold star is added), the sand pours out on "Error".
+- **Phone**: the Speed Streak bar shows "Session: 27" on one line.
+
 ## 0.9.3
 
 - **Endless mode** (new item in the mode menu of the deck list, also a command): tick the decks you want, press **Start Endless**, and their cards repeat without end in shuffled rounds. "Again" brings a card back after 3 cards, "Hard" after 7, "Good" / "Easy" finish it for the round. **Nothing is scheduled and the notes are never changed.** Ticked decks are remembered.

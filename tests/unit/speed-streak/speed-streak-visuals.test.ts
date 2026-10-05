@@ -17,13 +17,15 @@ describe("visual style registry", () => {
         expect([...ids].sort()).toEqual([...SPEED_STREAK_VISUAL_IDS].sort());
     });
 
-    test("the four styles, Fusion first (default)", () => {
+    test("the five styles, Fusion first (default), Hourglass for Endless", () => {
         expect(SPEED_STREAK_VISUALS.map((v) => v.id)).toEqual([
             "fusion",
             "singularity",
             "crystal",
             "minimal",
+            "hourglass",
         ]);
+        expect(visualDisplayName(getSpeedStreakVisual("hourglass"), true)).toBe("Klepsydra");
     });
 
     test("every default theme exists in the theme registry", () => {

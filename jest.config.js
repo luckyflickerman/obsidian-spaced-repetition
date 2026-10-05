@@ -84,6 +84,15 @@ export default {
         "src/review-window/review-window-controller.ts",
         "src/review-window/review-window-i18n.ts",
 
+        // Endless mode UI glue (review view, windows, plugin data, texts);
+        // its logic (queue, records, settings) is tested
+        "src/endless/endless-sequencer.ts",
+        "src/endless/endless-store.ts",
+        "src/endless/endless-records-modal.ts",
+        "src/endless/few-cards-modal.ts",
+        "src/endless/endless-i18n.ts",
+        "src/endless/endless.css",
+
         // Import from the original plugin: window, command and texts
         "src/migration/legacy-import-controller.ts",
         "src/migration/legacy-import-i18n.ts",

@@ -233,18 +233,43 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 2. Przy każdej talii pojawia się kwadrat. Zaznacz talie, które chcesz ćwiczyć: dotknij wiersza albo kwadratu. Zaznaczenie talii obejmuje też jej podtalie. „Wszystkie talie” zaznacza wszystko. Plugin pamięta wybór na następny raz.
 3. Naciśnij **Zacznij Endless**. Na przycisku widać, ile fiszek jest w wybranych taliach.
 
+**Mało fiszek:** gdy wybrane talie mają mniej niż **100 fiszek**, plugin najpierw pokazuje ostrzeżenie. Przy małej liczbie te same karty wracają bardzo często i łatwo zapamiętać ich kolejność zamiast słów. Możesz zacząć mimo to albo wrócić do wyboru talii. Opcja „Nie pokazuj więcej” wyłącza ostrzeżenie. Włączysz je z powrotem w Ustawieniach → Speed Streak → Tryb Endless.
+
 Jak to działa:
 
 - Fiszki idą w rundach: w każdej rundzie każda fiszka pojawia się w losowej kolejności. Po ostatniej zaczyna się nowa runda i tak bez końca. Nad kartą widać postęp rundy, np. „6/20”.
-- **Ponownie**: fiszka wraca po 3 kartach. **Trudne**: po 7 kartach. **Dobre** i **Łatwe**: fiszka jest zaliczona w tej rundzie.
+- **Błąd** (czerwony przycisk, w zwykłej powtórce „Ponownie”): fiszka wraca po 3 kartach, a **wynik spada do 0**. **Trudne**: fiszka wraca po 7 kartach. **Dobre** i **Łatwe**: fiszka jest zaliczona w tej rundzie. „Reset” z paska nad kartą działa jak „Błąd”.
+- **Karty z jednej fiszki są od siebie daleko.** Fiszka z `:::` albo `??` daje dwie karty (np. „forestalled → uprzedzić” i „uprzedzić → forestalled”). Takie karty pojawiają się w odstępie co najmniej 5% wszystkich kart: przy 100 kartach co najmniej co 5, przy 400 co 20, przy małej puli co najmniej co 2. Obowiązuje to też na przełomie rund i po „Błąd” i „Trudne”. Gdy kart jest za mało, plugin rozsuwa je najlepiej, jak się da.
+- Gdy ostatnia karta rundy dostanie „Błąd” albo „Trudne”, nie wraca od razu: zaczyna się nowa runda, a ta karta przychodzi po co najmniej 3 (albo 7) innych.
 - **Endless nic nie zapisuje w notatkach.** Komentarze `<!--SR:…-->` i terminy powtórek zostają takie, jakie były. Do kalendarza powtórek liczy się tylko czas nauki i liczba kart.
 - Strzałka w lewo wraca do listy talii.
 
-**Speed Streak w Endless** działa jak zwykle (timer, Boosty, pauza), ale ma:
+### Wynik i rekordy Endless
 
-- **własny rekord wszech czasów**: najdłuższą serię kart z rzędu w Endless (🏆 w pasku), osobny od rekordów zwykłych powtórek,
-- **licznik „W tej sesji: N fiszek”**: ile kart oceniono od startu tej sesji Endless,
-- osobną listę „Najlepsze 5 w Endless” (dotknij pucharu).
+**Wynik** to liczba odpowiedzi bez błędu z rzędu: „Trudne”, „Dobre” i „Łatwe” dodają 1, „Błąd” zeruje. Wynik działa także przy wyłączonym Speed Streak. Przekroczenie czasu w Speed Streak go nie zeruje.
+
+> Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.
+
+- Nad kartą, w plakietce talii, widać **„Wynik 37”**, a przy pobiciu rekordu 🏆.
+- Na ekranie wyboru talii jest pasek **„🏆 Rekord: 112 · Dziś: 37”**. Dotknij go, żeby zobaczyć najlepsze 5 wyników, ostatnie 5 sesji (data, talie, liczba ocen, najlepszy wynik, błędy, czas) i sumy.
+- Po powrocie do listy talii widać podsumowanie sesji: „Wynik najlepszy w sesji: 54 · Błędy: 3 · Oceny: 120”, a przy nowym rekordzie wyróżnienie.
+
+### Speed Streak w Endless
+
+Speed Streak działa jak zwykle (timer, Boosty, pauza), ale ma:
+
+- **własny rekord serii** w Endless (🏆 w pasku), osobny od rekordów zwykłych powtórek i od wyniku Endless,
+- licznik **„Sesja: 27”**, czyli ile kart oceniono od startu sesji,
+- osobną listę „Najlepsze 5 w Endless” (dotknij pucharu),
+- **własny styl**, domyślnie **Klepsydrę**. Zmienisz go w Ustawieniach → Speed Streak → Wygląd → „Styl w trybie Endless”. Opcja „Taki sam jak w powtórce” daje styl zwykłej powtórki.
+
+**Klepsydra:**
+
+- Każda poprawna odpowiedź dosypuje jedno ziarnko piasku do dolnej bańki. W dolnej bańce jest tyle ziaren, ile wynosi wynik ponad pełne setki. Pod klepsydrą widać cały wynik.
+- **Co 100 ziaren** klepsydra przewraca się z błyskiem, a dolna bańka jest znowu pusta. Wynik się nie zeruje. Każda pełna setka zostawia złotą gwiazdkę (★, a przy wielu „★×3”).
+- **Błąd**: szkło na chwilę pęka, piasek się wysypuje, a wynik spada do 0.
+- **Przekroczenie czasu** tylko lekko porusza klepsydrą, piasek zostaje.
+- Przy ustawieniu wydajności „Minimalna” albo „Ogranicz animacje” klepsydra jest nieruchomym rysunkiem, a zamiast przewracania jest krótki błysk.
 
 ## Opcje (przycisk z kołem zębatym)
 

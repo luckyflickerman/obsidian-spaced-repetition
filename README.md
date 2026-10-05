@@ -15,7 +15,7 @@ Each add-on is a **built-in plugin** that can be turned on or off in the **Optio
 - **Speed Streak** — a timer game ported from the Anki add-on: a timer for the question and the answer, a streak counter, **Time Boost** (+10 s, earned every 10 cards), records (all-time, today, "pure" streaks, top 5), a compact bar or a side panel, 4 visual styles and 10 color themes.
 - **Read aloud** — after the answer is shown, the foreign word or sentence is read with the voices installed on your device (works offline). Mark words with `<u>…</u>`, set a language per tag or deck.
 - **Card authoring** — add cards in seconds right in the note: `Ctrl+Shift+N` inserts a template (`#ENG |:::`), `Tab` jumps to the translation, `Ctrl+Enter` finishes the card. A preview icon next to every card, warnings for unfinished cards and duplicates, images from the clipboard, gallery or camera.
-- **Endless mode** — tick decks and practise them without end in shuffled rounds; nothing is scheduled, the notes are not changed. Speed Streak keeps its own Endless record and counts the cards of the session.
+- **Endless mode** — tick decks and practise them without end in shuffled rounds; nothing is scheduled, the notes are not changed. An Endless score ("Error" resets it) with its own records, the two directions of a card kept apart, and the Hourglass style for Speed Streak.
 - **Daily goal** — "New today: 4/10" and a progress bar for new cards.
 - **Review calendar** — a year heatmap below the deck list with pace, time and day streaks; collapses to a progress ring.
 - **Review window** — full screen on/off, drag the window by its header, position remembered.

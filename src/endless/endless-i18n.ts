@@ -13,7 +13,8 @@ const EN = {
     ERROR_RESETS: "resets score",
     LATER: "later",
     ROUND_END: "done",
-    HONESTY: "Be honest with yourself — a record only means something when you admit your mistakes.",
+    HONESTY:
+        "Be honest with yourself — a record only means something when you admit your mistakes.",
     // Score and records
     SCORE: "Score ${n}",
     SCORE_RECORD_ARIA: "Score ${n}, new record",
@@ -24,7 +25,8 @@ const EN = {
     TOP_5: "Top 5 runs",
     RECENT: "Last sessions",
     TOTALS: "All Endless ratings: ${ratings} · Sessions: ${sessions}",
-    SESSION_LINE: "${date} · ${decks} · ${ratings} ratings · best ${best} · errors ${errors} · ${time}",
+    SESSION_LINE:
+        "${date} · ${decks} · ${ratings} ratings · best ${best} · errors ${errors} · ${time}",
     RUN_LINE: "${score} — ${decks}, ${date}",
     SUMMARY_TITLE: "Session finished",
     SUMMARY: "Best score in session: ${best} · Errors: ${errors} · Ratings: ${ratings}",
@@ -52,8 +54,7 @@ const PL: Record<Keys, string> = {
     ERROR_RESETS: "zeruje wynik",
     LATER: "później",
     ROUND_END: "zaliczone",
-    HONESTY:
-        "Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.",
+    HONESTY: "Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.",
     SCORE: "Wynik ${n}",
     SCORE_RECORD_ARIA: "Wynik ${n}, nowy rekord",
     RECORDS_BAR: "🏆 Rekord: ${best} · Dziś: ${today}",

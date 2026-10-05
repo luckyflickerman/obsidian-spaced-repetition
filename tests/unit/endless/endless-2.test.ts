@@ -212,7 +212,8 @@ describe("Endless records", () => {
 
     test("top 5 runs, best first", () => {
         let r = createEndlessRecords();
-        for (const s of [3, 9, 1, 7, 12, 5, 8]) r = addRun(r, run(s, "2026-10-05T10:00:00")).records;
+        for (const s of [3, 9, 1, 7, 12, 5, 8])
+            r = addRun(r, run(s, "2026-10-05T10:00:00")).records;
         expect(r.top.map((x) => x.score)).toEqual([12, 9, 8, 7, 5]);
         expect(r.top.length).toBe(TOP_RUNS);
     });
@@ -234,19 +235,17 @@ describe("Endless records", () => {
         expect(r.recent[0].ratings).toBe(70);
         expect(r.totals).toEqual({ ratings: 280, sessions: 7 });
         // an empty session is not stored
-        expect(
-            addSession(r, { ...r.recent[0], ratings: 0 }).totals.sessions,
-        ).toBe(7);
+        expect(addSession(r, { ...r.recent[0], ratings: 0 }).totals.sessions).toBe(7);
     });
 
     test("old data.json without the records loads; broken entries are dropped", () => {
         expect(normalizeEndlessData(undefined)).toEqual({ records: createEndlessRecords() });
-        expect(normalizeEndlessRecords({ best: { score: "x" }, top: [null, { score: 4 }] })).toEqual(
-            {
-                ...createEndlessRecords(),
-                top: [{ score: 4, endedAt: 0, day: localDay(0), decks: "" }],
-            },
-        );
+        expect(
+            normalizeEndlessRecords({ best: { score: "x" }, top: [null, { score: 4 }] }),
+        ).toEqual({
+            ...createEndlessRecords(),
+            top: [{ score: 4, endedAt: 0, day: localDay(0), decks: "" }],
+        });
         const stored = addRun(createEndlessRecords(), run(9, "2026-10-05T10:00:00")).records;
         expect(normalizeEndlessRecords(JSON.parse(JSON.stringify(stored)))).toEqual(stored);
     });
@@ -265,9 +264,9 @@ describe("Few cards warning", () => {
         expect(needsFewCardsWarning(100, s)).toBe(false);
         expect(needsFewCardsWarning(0, s)).toBe(false);
         expect(needsFewCardsWarning(42, { ...s, hideFewCardsWarning: true })).toBe(false);
-        expect(normalizeEndlessSettings({ hideFewCardsWarning: "x" as never }).hideFewCardsWarning).toBe(
-            false,
-        );
+        expect(
+            normalizeEndlessSettings({ hideFewCardsWarning: "x" as never }).hideFewCardsWarning,
+        ).toBe(false);
     });
 });
 
@@ -300,11 +299,12 @@ describe("Hourglass", () => {
     test("style setting: hourglass in Endless by default, old data loads", () => {
         expect(SPEED_STREAK_VISUAL_IDS).toContain("hourglass");
         expect(normalizeSpeedStreakSettings({}).endlessVisualStyle).toBe("hourglass");
-        expect(normalizeSpeedStreakSettings({ endlessVisualStyle: "same" }).endlessVisualStyle).toBe(
-            "same",
-        );
         expect(
-            normalizeSpeedStreakSettings({ endlessVisualStyle: "nope" as never }).endlessVisualStyle,
+            normalizeSpeedStreakSettings({ endlessVisualStyle: "same" }).endlessVisualStyle,
+        ).toBe("same");
+        expect(
+            normalizeSpeedStreakSettings({ endlessVisualStyle: "nope" as never })
+                .endlessVisualStyle,
         ).toBe("hourglass");
     });
 });
