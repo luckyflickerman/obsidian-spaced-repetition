@@ -18,63 +18,109 @@
     }
 }
 
+/* Colours shared by the whole plugin (0.9.2 design pass).
+   - Rating / deck-count colours: white text on them has a contrast of at least 4.5:1 (WCAG AA).
+   - *-fg: the same colours as text on the page background, in a light and a dark variant.
+   - Accent: the vault's own accent colour (Settings → Appearance), darkened so white text on it
+     stays readable. Custom properties have no parse-time fallback, so the darkened variant is set
+     only inside @supports (older iOS Safari keeps the plain accent). */
+body {
+    --usr-green: #2e7d32;
+    --usr-blue: #1e66b8;
+    --usr-red: #c62828;
+    --usr-orange: #b84a12;
+    --usr-green-fg: #2e7d32;
+    --usr-blue-fg: #1e66b8;
+    --usr-red-fg: #c62828;
+    --usr-orange-fg: #b84a12;
+    --usr-accent: var(--interactive-accent);
+    --usr-accent-hover: var(--interactive-accent-hover);
+}
+
+@supports (color: color-mix(in srgb, red 50%, black)) {
+    body {
+        --usr-accent: color-mix(in srgb, var(--interactive-accent) 72%, black);
+        --usr-accent-hover: color-mix(in srgb, var(--interactive-accent) 62%, black);
+    }
+}
+
+body.theme-dark {
+    --usr-green-fg: #66bb6a;
+    --usr-blue-fg: #64a8f0;
+    --usr-red-fg: #ff7b72;
+    --usr-orange-fg: #f59e5b;
+}
+
 .sr-bg-blue,
 .sr-bg-yellow,
 .sr-bg-green,
-.sr-bg-red {
+.sr-bg-red,
+.sr-bg-accent {
     color: #ffffff !important;
 }
 
 .sr-bg-green {
-    background-color: #47a84a !important;
+    background-color: var(--usr-green) !important;
 }
 
 .sr-bg-blue {
-    background-color: #3591dd !important;
+    background-color: var(--usr-blue) !important;
 }
 
 .sr-bg-red {
-    background-color: #f25d50 !important;
+    background-color: var(--usr-red) !important;
 }
 
 .sr-bg-yellow {
-    background-color: #e87743 !important;
+    background-color: var(--usr-orange) !important;
+}
+
+.sr-bg-accent {
+    background-color: var(--usr-accent) !important;
 }
 
 .sr-fg-green {
-    color: #47a84a !important;
+    color: var(--usr-green-fg) !important;
 }
 
 .sr-fg-blue {
-    color: #3591dd !important;
+    color: var(--usr-blue-fg) !important;
 }
 
 .sr-fg-red {
-    color: #f25d50 !important;
+    color: var(--usr-red-fg) !important;
 }
 
 .sr-fg-yellow {
-    color: #e87743 !important;
+    color: var(--usr-orange-fg) !important;
 }
 
 .sr-deck-container .sr-tree-item-row:hover .sr-bg-green,
 .sr-response-button.sr-bg-green:hover {
-    background-color: #429e45 !important;
+    background-color: var(--usr-green) !important;
+    background-color: color-mix(in srgb, var(--usr-green) 85%, black) !important;
 }
 
 .sr-deck-container .sr-tree-item-row:hover .sr-bg-blue,
 .sr-response-button.sr-bg-blue:hover {
-    background-color: #2e8ddc !important;
+    background-color: var(--usr-blue) !important;
+    background-color: color-mix(in srgb, var(--usr-blue) 85%, black) !important;
 }
 
 .sr-deck-container .sr-tree-item-row:hover .sr-bg-red,
 .sr-response-button.sr-bg-red:hover {
-    background-color: #f15041 !important;
+    background-color: var(--usr-red) !important;
+    background-color: color-mix(in srgb, var(--usr-red) 85%, black) !important;
 }
 
 .sr-deck-container .sr-tree-item-row:hover .sr-bg-yellow,
 .sr-response-button.sr-bg-yellow:hover {
-    background-color: #e66f37 !important;
+    background-color: var(--usr-orange) !important;
+    background-color: color-mix(in srgb, var(--usr-orange) 85%, black) !important;
+}
+
+.sr-response-button.sr-bg-accent:hover {
+    background-color: var(--usr-accent-hover) !important;
 }
 
 .sr-is-hidden {

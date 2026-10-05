@@ -171,6 +171,11 @@ export class SpeedStreakController {
 
     // MARK: Public API used by the card container
 
+    /** The pause screen covers the card: answering and rating are blocked. */
+    get isPauseScreenShown(): boolean {
+        return this.pauseOverlay.visible;
+    }
+
     get isEnabled(): boolean {
         return this.settings.enabled;
     }
@@ -199,6 +204,7 @@ export class SpeedStreakController {
         this.detachWindowListeners();
         const summary = this.engine.endSession();
         this.pauseOverlay.hide();
+        this.hostEl.removeClass("sr-ss-is-paused");
         this.teardownScene();
         if (SpeedStreakController.active === this) SpeedStreakController.active = null;
         if (summary) void this.persistSession(summary);
@@ -814,5 +820,7 @@ export class SpeedStreakController {
         } else if (!showPause && this.pauseOverlay.visible) {
             this.pauseOverlay.hide();
         }
+        // Rating buttons are greyed out and inactive while the pause screen is shown
+        this.hostEl.toggleClass("sr-ss-is-paused", showPause);
     }
 }

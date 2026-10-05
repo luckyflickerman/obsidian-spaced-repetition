@@ -33,7 +33,8 @@ const EN = {
         "Earn Boosts and spend them on extra time. Off: no Boosts, the timer is all you have (Time Boost mode only).",
     BOOST_BLOCKED_NO_CARD: "Wait for the next card",
     PAUSE_BLOCKED: "No Pause mode is on",
-    CLICK_TO_RESUME: "Click to resume",
+    CLICK_TO_RESUME: "or tap anywhere on the card",
+    RESUME: "Resume",
     SUMMARY_TITLE: "⚡ Speed Streak — session",
     SUMMARY_LINE:
         "Cards: ${cards} · best streak: ${best} · timeouts: ${timeouts} · boosts: ${boosts} · avg ${avg}s/card",
@@ -230,7 +231,8 @@ const PL: Record<Keys, string> = {
         "Zdobywaj Boosty i wydawaj je na dodatkowy czas. Wyłączone: bez Boostów, liczy się tylko timer (dotyczy trybu Time Boost).",
     BOOST_BLOCKED_NO_CARD: "Poczekaj na następną kartę",
     PAUSE_BLOCKED: "Tryb bez pauz jest włączony",
-    CLICK_TO_RESUME: "Kliknij, aby wznowić",
+    CLICK_TO_RESUME: "albo dotknij karty w dowolnym miejscu",
+    RESUME: "Wznów",
     SUMMARY_TITLE: "⚡ Speed Streak — sesja",
     SUMMARY_LINE:
         "Karty: ${cards} · najlepsza seria: ${best} · przekroczenia: ${timeouts} · boosty: ${boosts} · śr. ${avg}s/kartę",

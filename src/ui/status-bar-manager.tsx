@@ -190,7 +190,8 @@ export default class StatusBarManager {
         );
 
         if (updateItem !== undefined) {
-            updateItem.setText("Spaced Repetition: new Update!");
+            // The item already shows the plugin icon, so the text only says what happened
+            updateItem.setText(t("UPDATE_AVAILABLE"));
         }
     }
 

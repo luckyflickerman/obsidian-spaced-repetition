@@ -635,6 +635,13 @@ button.sr-ss-pause-btn {
     gap: 5px;
 }
 
+.sr-ss-paused-resume {
+    min-width: 160px;
+    min-height: 44px;
+    font-size: var(--font-ui-medium);
+    font-weight: var(--font-semibold);
+}
+
 .sr-ss-paused-hint {
     font-size: 0.85em;
     color: var(--text-muted);

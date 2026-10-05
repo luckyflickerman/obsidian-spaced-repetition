@@ -25,7 +25,7 @@ export default class DeckInfoComponent {
 
         this.chosenDeckInfo = this.deckInfoContainer.createDiv();
         this.chosenDeckInfo.addClass("sr-deck-info");
-        this.chosenDeckInfo.addClass("sr-bg-blue");
+        this.chosenDeckInfo.addClass("sr-bg-accent");
         this.chosenDeckInfo.addClass("sr-chosen-deck-info");
 
         this.chosenDeckName = this.chosenDeckInfo.createDiv();
@@ -54,7 +54,7 @@ export default class DeckInfoComponent {
 
         this.currentDeckInfo = this.deckInfoContainer.createDiv();
         this.currentDeckInfo.addClass("sr-deck-info");
-        this.currentDeckInfo.addClass("sr-bg-blue");
+        this.currentDeckInfo.addClass("sr-bg-accent");
         this.currentDeckInfo.addClass("sr-current-deck-info");
 
         this.currentDeckName = this.currentDeckInfo.createDiv();

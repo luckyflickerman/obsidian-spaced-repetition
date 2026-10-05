@@ -38,21 +38,38 @@
     display: inline;
 }
 
-.is-phone .sr-response-button:not(.sr-show-answer-button).sr-show-large-text > span.sr-small-text {
-    display: inline;
+/* Main buttons: slightly bigger, semi-bold text (readable on the coloured background) */
+.sr-response .sr-response-button {
+    font-size: var(--font-ui-medium);
+    font-weight: var(--font-semibold);
 }
 
-.is-phone .sr-response-button:not(.sr-show-answer-button).sr-show-large-text > span.sr-large-text {
-    display: none;
-}
+/* Rating buttons with the next interval: the name on top, the interval below it.
+   Same on every device, so the buttons are never told apart by colour alone. */
+.sr-response .sr-response-button.sr-two-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: 0;
+    height: 52px;
+    line-height: 1.15;
+    padding: 0 var(--size-2-2);
 
-@container (width < 580px) {
-    .sr-response-button:not(.sr-show-answer-button).sr-show-large-text > span.sr-small-text {
-        display: inline;
+    & > span.sr-large-text {
+        order: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-    .sr-response-button:not(.sr-show-answer-button).sr-show-large-text > span.sr-large-text {
-        display: none;
+    & > span.sr-small-text {
+        order: 1;
+        font-size: var(--font-ui-smaller);
+        font-weight: var(--font-normal);
+        white-space: nowrap;
     }
 }
 
@@ -62,9 +79,24 @@
         line-height: 38px;
     }
 
+    .is-phone .sr-response .sr-response-button.sr-two-line {
+        height: 44px;
+        line-height: 1.1;
+    }
+
     .is-phone .sr-response {
         padding-top: var(--size-2-1);
         padding-bottom: 0;
+    }
+}
+
+/* Speed Streak pause screen: the card is covered, so answering and rating are inactive */
+.sr-ss-is-paused .sr-response {
+    pointer-events: none;
+
+    & .sr-response-button {
+        opacity: 0.35;
+        filter: grayscale(1);
     }
 }
 

@@ -7,6 +7,7 @@ import { CardType } from "src/data/data-structures/card/questions/question";
 import { SRSettings } from "src/data/settings";
 import { t } from "src/lang/helpers";
 import type SRPlugin from "src/main";
+import { displayRatingLabel } from "src/review-window/rating-labels";
 import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
@@ -82,6 +83,8 @@ export class CardContainer {
         this.cardState = CardState.Closed;
         // Speed Streak hooks: notify the game before the review continues
         this.processReviewHandler = async (response: ReviewResponse) => {
+            // The Speed Streak pause screen covers the card: no rating until it is resumed
+            if (this.speedStreak?.isPauseScreenShown) return;
             if (this.cardState === CardState.Back) this.speedStreak?.onRate(response);
             this.tts?.cancel();
             await processReviewHandler(response);
@@ -91,7 +94,10 @@ export class CardContainer {
             this.tts?.cancel();
             skipCardHandler();
         };
-        this.showAnswerHandler = showAnswerHandler;
+        this.showAnswerHandler = () => {
+            if (this.speedStreak?.isPauseScreenShown) return;
+            showAnswerHandler();
+        };
         this.jumpToCardHandler = jumpToCurrentCardHandler;
 
         // Build ui
@@ -483,10 +489,10 @@ export class CardContainer {
         // Show response buttons
         this.response.showRatingButtons(
             reviewMode,
-            settings.flashcardAgainText,
-            settings.flashcardHardText,
-            settings.flashcardGoodText,
-            settings.flashcardEasyText,
+            displayRatingLabel(settings.flashcardAgainText, "again", t("AGAIN")),
+            displayRatingLabel(settings.flashcardHardText, "hard", t("HARD")),
+            displayRatingLabel(settings.flashcardGoodText, "good", t("GOOD")),
+            displayRatingLabel(settings.flashcardEasyText, "easy", t("EASY")),
             settings.showIntervalInReviewButtons,
             determineButtonSchedule,
         );
@@ -523,6 +529,9 @@ export class CardContainer {
             consumeKeyEvent();
             return;
         }
+
+        // No answering or rating while the Speed Streak pause screen covers the card
+        if (this.speedStreak.isPauseScreenShown) return;
 
         // Read aloud again
         if (this.cardState === CardState.Back && this.tts.handleKey(e)) {

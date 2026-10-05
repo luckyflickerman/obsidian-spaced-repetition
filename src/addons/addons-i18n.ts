@@ -4,7 +4,7 @@ import { isPolish } from "src/speed-streak/speed-streak-i18n";
 const EN = {
     TITLE: "Add-ons",
     BUTTON: "Add-ons",
-    INTRO: "Extras added to Spaced Repetition. The same options are also in Settings → Spaced Repetition.",
+    INTRO: "Extras of Upgraded Spaced Repetition. The same options are also in Settings → Upgraded Spaced Repetition.",
     SETTINGS: "Settings",
     NAME_HEATMAP: "Review calendar",
     DESC_HEATMAP: "A year of colored squares below the deck list, with statistics and streaks.",
@@ -21,7 +21,7 @@ type Keys = keyof typeof EN;
 const PL: Record<Keys, string> = {
     TITLE: "Dodatki",
     BUTTON: "Dodatki",
-    INTRO: "Dodatki do Spaced Repetition. Te same opcje są też w Ustawieniach → Spaced Repetition.",
+    INTRO: "Dodatki Upgraded Spaced Repetition. Te same opcje są też w Ustawieniach → Upgraded Spaced Repetition.",
     SETTINGS: "Ustawienia",
     NAME_HEATMAP: "Kalendarz powtórek",
     DESC_HEATMAP: "Rok kolorowych kwadratów pod listą talii, ze statystykami i seriami dni.",
