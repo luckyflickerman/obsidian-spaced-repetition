@@ -2,6 +2,8 @@ import { DropdownComponent, Notice, Platform, Setting, SettingGroup } from "obsi
 
 import { DataManager } from "src/data/data-manager";
 import { SettingsManager } from "src/data/settings-manager";
+import { en } from "src/endless/endless-i18n";
+import { normalizeEndlessSettings } from "src/endless/endless-settings";
 import SRPlugin from "src/main";
 import { SpeedStreakAudio } from "src/speed-streak/speed-streak-audio";
 import {
@@ -274,6 +276,20 @@ export class SpeedStreakPage extends SettingsPage {
                 });
             });
         });
+        display.addSetting((setting: Setting) => {
+            setting.setName(ss("ENDLESS_VISUAL")).setDesc(ss("ENDLESS_VISUAL_DESC"));
+            setting.addDropdown((dropdown) => {
+                dropdown.addOption("same", ss("ENDLESS_VISUAL_SAME"));
+                for (const visual of SPEED_STREAK_VISUALS) {
+                    dropdown.addOption(visual.id, visualDisplayName(visual, polish));
+                }
+                dropdown.setValue(s().endlessVisualStyle).onChange(async (value) => {
+                    s().endlessVisualStyle =
+                        value === "same" ? "same" : getSpeedStreakVisual(value).id;
+                    await this.save();
+                });
+            });
+        });
         this.addChoice(
             display,
             "layout",
@@ -338,6 +354,24 @@ export class SpeedStreakPage extends SettingsPage {
         this.addToggle(display, "showRatingTrail", ss("TRAIL"), ss("TRAIL_DESC"));
 
         // Records
+        // Endless mode: honesty note and the "few cards" warning
+        new SettingGroup(this.containerEl)
+            .setHeading(ss("G_ENDLESS"))
+            .addSetting((setting: Setting) => {
+                setting.setName(ss("ENDLESS_WARN")).setDesc(en("HONESTY"));
+                setting.addToggle((toggle) => {
+                    const endless = () =>
+                        normalizeEndlessSettings(this.settingsManager.settings.endless);
+                    toggle.setValue(!endless().hideFewCardsWarning).onChange(async (value) => {
+                        this.settingsManager.settings.endless = {
+                            ...endless(),
+                            hideFewCardsWarning: !value,
+                        };
+                        await this.settingsManager.save();
+                    });
+                });
+            });
+
         const records = new SettingGroup(this.containerEl).setHeading(ss("G_RECORDS"));
         this.addChoice(
             records,
@@ -524,6 +558,7 @@ export class SpeedStreakPage extends SettingsPage {
                 paused: false,
                 timedOut: false,
                 isNewBest: false,
+                endlessScore: null,
             });
         push();
         let tick = 0;

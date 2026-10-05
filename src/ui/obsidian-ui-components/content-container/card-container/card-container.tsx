@@ -229,6 +229,13 @@ export class CardContainer {
 
         this._updateInfoBar(sessionData, settings.flashcardCardOrder);
 
+        // Endless: score in the badge and in the hourglass
+        const endless = sessionData.endless
+            ? (sessionData.endlessScore ?? { score: 0, newRecord: false })
+            : null;
+        this.toolbar.setEndlessScore(endless?.score ?? null, endless?.newRecord ?? false);
+        if (endless) this.speedStreak.setEndlessScore(endless.score);
+
         // Update card content
         await this.drawCardFrontContent(sessionData, settings);
 

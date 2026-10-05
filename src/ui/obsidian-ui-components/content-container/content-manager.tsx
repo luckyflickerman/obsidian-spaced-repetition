@@ -7,7 +7,11 @@ import { Question } from "src/data/data-structures/card/questions/question";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
 import { en } from "src/endless/endless-i18n";
+import { bestScore } from "src/endless/endless-records";
 import { cardsOfDecks, EndlessReviewSequencer } from "src/endless/endless-sequencer";
+import { needsFewCardsWarning, normalizeEndlessSettings } from "src/endless/endless-settings";
+import { getEndlessRecords, storeEndlessRun, storeEndlessSession } from "src/endless/endless-store";
+import { askFewCards } from "src/endless/few-cards-modal";
 import { flushReviewLog, recordCardReview } from "src/heatmap/heatmap-view";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
@@ -69,6 +73,8 @@ export interface SessionData {
 
     /** Endless session (src/endless/): own Speed Streak records */
     endless?: boolean;
+    /** Endless score (answers without an error in a row) and whether it beats the record */
+    endlessScore?: { score: number; newRecord: boolean };
 }
 
 // TODO: Refactor/integrate this code with the backend
@@ -94,6 +100,10 @@ export default class ContentManager {
     private sessionData: SessionData | null = null;
 
     private lastPressedOnProcessReview: number = 0;
+    /** Endless: highest new all-time record set in this session (0 = none) */
+    private endlessNewRecord = 0;
+    /** Endless session whose records were already saved */
+    private finishingEndless: EndlessReviewSequencer | null = null;
     private pendingResumeTimeout: number | null = null;
 
     constructor(
@@ -144,6 +154,7 @@ export default class ContentManager {
 
     public close() {
         this._clearPendingResumeTimeout();
+        void this._finishEndlessSession();
         this.uiManager.setSRViewInFocus(false);
         this.deckContainer.closeList();
         this.cardContainer.closeSession();
@@ -202,8 +213,10 @@ export default class ContentManager {
 
     private async _showDecksList(reloadReviewQueue: boolean = false): Promise<void> {
         this._clearPendingResumeTimeout();
-        // After an Endless session the deck list needs the normal queue again
-        if (reloadReviewQueue || this.reviewSequencer instanceof EndlessReviewSequencer) {
+        // After an Endless session: save the records, then the normal queue again
+        const endedEndless = this.reviewSequencer instanceof EndlessReviewSequencer;
+        if (endedEndless) await this._finishEndlessSession();
+        if (reloadReviewQueue || endedEndless) {
             this.reviewSequencer = await this.reviewQueueLoader.loadReviewQueue();
         }
         if (this.reviewSequencer === null) return;
@@ -217,6 +230,7 @@ export default class ContentManager {
         this.sessionData = this._getNewSessionData(deck);
         if (this.sessionData === null) return;
         this.sessionData.endless = this.reviewSequencer instanceof EndlessReviewSequencer;
+        this._updateEndlessScore();
         this.uiManager.setUIState(UIState.CardFront);
         await this.cardContainer.openSession(this.sessionData, this.settings);
     }
@@ -267,6 +281,7 @@ export default class ContentManager {
         this.sessionData.currentQuestion = this.reviewSequencer.currentQuestion;
 
         this.sessionData.cardData.currentCard = this.reviewSequencer.currentCard;
+        this._updateEndlessScore();
         this.uiManager.setUIState(UIState.CardFront);
         this.sessionData.cardData.currentCardState = CardState.Front;
 
@@ -540,15 +555,75 @@ export default class ContentManager {
             new Notice(en("NOTHING_SELECTED"));
             return;
         }
-        const name = decks.map((d) => (d.isRootDeck ? t("ALL_DECKS") : d.deckName)).join(", ");
+        // Few cards: the same ones come back too often — ask first
+        const endlessSettings = normalizeEndlessSettings(this.settings.endless);
+        if (needsFewCardsWarning(cards.length, endlessSettings)) {
+            const answer = await askFewCards(this.app, cards.length);
+            if (answer.dontShowAgain) {
+                this.settings.endless = { ...endlessSettings, hideFewCardsWarning: true };
+                await this.plugin.dataManager.settingsManager.save();
+            }
+            if (!answer.start) return;
+        }
+
+        const decksName = decks
+            .map((d) => (d.isRootDeck ? t("ALL_DECKS") : d.deckName))
+            .join(", ");
+        const records = getEndlessRecords(this.plugin);
         const endless = new EndlessReviewSequencer(
             this.reviewSequencer,
             cards,
-            `∞ ${name}`,
+            {
+                decks: decksName,
+                bestAtStart: bestScore(records),
+                onRunEnded: (score) => {
+                    void storeEndlessRun(this.plugin, score, decksName).then((newBest) => {
+                        if (newBest) this.endlessNewRecord = Math.max(this.endlessNewRecord, score);
+                    });
+                },
+            },
             this.settings,
         );
+        this.endlessNewRecord = 0;
+        this.deckContainer.setEndlessSummary(null);
         this.reviewSequencer = endless;
         await this._reviewDeck(endless.sessionDeck);
+    }
+
+    /** Endless score into the session data (badge above the card, hourglass). */
+    private _updateEndlessScore() {
+        if (this.sessionData === null) return;
+        const seq = this.reviewSequencer;
+        this.sessionData.endlessScore =
+            seq instanceof EndlessReviewSequencer
+                ? { score: seq.score.score, newRecord: seq.isNewRecord }
+                : undefined;
+    }
+
+    /** End of an Endless session: the last run, the session record and the summary. */
+    private async _finishEndlessSession() {
+        const seq = this.reviewSequencer;
+        if (!(seq instanceof EndlessReviewSequencer) || this.finishingEndless === seq) return;
+        this.finishingEndless = seq;
+        const s = seq.score;
+        if (s.ratings === 0) return;
+        if (s.score > 0 && (await storeEndlessRun(this.plugin, s.score, seq.info.decks))) {
+            this.endlessNewRecord = Math.max(this.endlessNewRecord, s.score);
+        }
+        await storeEndlessSession(this.plugin, {
+            endedAt: Date.now(),
+            decks: seq.info.decks,
+            ratings: s.ratings,
+            bestScore: s.bestScore,
+            errors: s.errors,
+            durationMs: Date.now() - seq.startedAt,
+        });
+        this.deckContainer.setEndlessSummary({
+            bestScore: s.bestScore,
+            errors: s.errors,
+            ratings: s.ratings,
+            newRecord: this.endlessNewRecord,
+        });
     }
 
     private async _changeReviewMode(reviewMode: FlashcardReviewMode) {

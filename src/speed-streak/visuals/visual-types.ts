@@ -28,9 +28,15 @@ export interface VisualState {
     timedOut: boolean;
     /** The streak is above the record */
     isNewBest: boolean;
+    /**
+     * Endless score (answers without an error in a row); null outside Endless.
+     * Styles may show it instead of the streak (the hourglass does).
+     */
+    endlessScore: number | null;
 }
 
 export const EMPTY_VISUAL_STATE: VisualState = {
+    endlessScore: null,
     streak: 0,
     ratingTrail: [],
     streakRatings: { again: 0, hard: 0, good: 0, easy: 0 },

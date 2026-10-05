@@ -9,11 +9,25 @@ import { deckKey, isDeckCovered } from "src/endless/endless-settings";
 import { t } from "src/lang/helpers";
 import { DeckStats, IFlashcardReviewSequencer } from "src/scheduling/flashcard-review-sequencer";
 
+/** Summary of the Endless session that just ended. */
+export interface EndlessSummary {
+    bestScore: number;
+    errors: number;
+    ratings: number;
+    /** New all-time record set in the session (0 = none) */
+    newRecord: number;
+}
+
 /** Endless mode: decks are ticked instead of opened (src/endless/). */
 export interface EndlessDeckSelection {
     selected: string[];
     /** Cards in the ticked decks */
     cardCount: number;
+    /** Endless records: all-time best and today's best score */
+    best: number;
+    today: number;
+    summary: EndlessSummary | null;
+    openRecords(): void;
     toggle(key: string): void;
     start(): void;
 }
@@ -320,6 +334,39 @@ export default class DeckListComponent {
         bar.toggleClass("sr-is-hidden", this.endless === null);
         if (!this.endless) return;
         const endless = this.endless;
+
+        // Summary of the session that just ended
+        const summary = endless.summary;
+        if (summary) {
+            const box = bar.createDiv({ cls: "sr-endless-summary" });
+            box.toggleClass("is-record", summary.newRecord > 0);
+            box.setAttr("role", "status");
+            box.createDiv({ cls: "sr-endless-summary-title", text: en("SUMMARY_TITLE") });
+            box.createDiv({
+                text: en("SUMMARY", {
+                    best: summary.bestScore,
+                    errors: summary.errors,
+                    ratings: summary.ratings,
+                }),
+            });
+            if (summary.newRecord > 0) {
+                box.createDiv({
+                    cls: "sr-endless-summary-record",
+                    text: en("SUMMARY_RECORD", { n: summary.newRecord }),
+                });
+            }
+        }
+
+        // Records: tap for the top 5 and the last sessions
+        const records = bar.createEl("button", {
+            cls: "sr-endless-records",
+            text: en("RECORDS_BAR", { best: endless.best, today: endless.today }),
+            attr: {
+                "aria-label": en("RECORDS_BAR_ARIA", { best: endless.best, today: endless.today }),
+            },
+        });
+        records.addEventListener("click", () => endless.openRecords());
+
         bar.createDiv({ cls: "sr-endless-hint", text: en("HINT") });
         const button = bar.createEl("button", {
             cls: "sr-endless-start sr-bg-accent",

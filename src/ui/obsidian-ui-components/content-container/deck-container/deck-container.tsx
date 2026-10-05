@@ -6,8 +6,11 @@ import { DailyGoalView } from "src/card-authoring/daily-goal-view";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { TopicPath } from "src/data/data-structures/deck/topic-path";
 import { SRSettings } from "src/data/settings";
+import { bestScore, bestTodayScore } from "src/endless/endless-records";
+import { EndlessRecordsModal } from "src/endless/endless-records-modal";
 import { cardsOfDecks } from "src/endless/endless-sequencer";
 import { normalizeEndlessSettings, toggleDeck } from "src/endless/endless-settings";
+import { getEndlessRecords } from "src/endless/endless-store";
 import { getHeatmapSettings, HeatmapView } from "src/heatmap/heatmap-view";
 import type SRPlugin from "src/main";
 import type { ReviewWindowControls } from "src/review-window/review-window-controller";
@@ -15,7 +18,9 @@ import {
     FlashcardReviewMode,
     IFlashcardReviewSequencer as IFlashcardReviewSequencer,
 } from "src/scheduling/flashcard-review-sequencer";
-import DeckListComponent from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list";
+import DeckListComponent, {
+    EndlessSummary,
+} from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list";
 import DeckListHeaderComponent from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list-header";
 import { OptionsModal } from "src/ui/obsidian-ui-components/modals/options-modal";
 
@@ -29,6 +34,7 @@ export class DeckContainer {
     private lastReviewSequencer: IFlashcardReviewSequencer | null = null;
     private reviewMode: FlashcardReviewMode = FlashcardReviewMode.Review;
     private startEndless: (decks: Deck[]) => void;
+    private endlessSummary: EndlessSummary | null = null;
 
     constructor(
         parentEl: HTMLElement,
@@ -120,6 +126,11 @@ export class DeckContainer {
         this.redrawHeatmap(reviewSequencer);
     }
 
+    /** Summary of the Endless session that just ended (shown above the decks). */
+    setEndlessSummary(summary: EndlessSummary | null) {
+        this.endlessSummary = summary;
+    }
+
     /** The deck tree; in Endless mode with tick boxes and the start bar. */
     private redrawDecks(reviewSequencer: IFlashcardReviewSequencer, settings: SRSettings) {
         if (this.reviewMode !== FlashcardReviewMode.Endless) {
@@ -129,9 +140,14 @@ export class DeckContainer {
         const tree = reviewSequencer.originalDeckTree;
         const endless = normalizeEndlessSettings(settings.endless);
         const decks = this.selectedDecks(tree, endless.selectedDecks);
+        const records = getEndlessRecords(this.plugin);
         this.deckList.redraw(reviewSequencer, settings, {
             selected: endless.selectedDecks,
             cardCount: cardsOfDecks(decks).length,
+            best: bestScore(records),
+            today: bestTodayScore(records, Date.now()),
+            summary: this.endlessSummary,
+            openRecords: () => new EndlessRecordsModal(this.plugin.app, records).open(),
             toggle: (key) => {
                 settings.endless = {
                     ...endless,

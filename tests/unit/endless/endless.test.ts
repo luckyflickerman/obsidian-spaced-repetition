@@ -107,7 +107,10 @@ describe("Endless queue", () => {
 
 describe("Endless settings", () => {
     test("old data.json without the section loads", () => {
-        expect(normalizeEndlessSettings(undefined)).toEqual({ selectedDecks: [] });
+        expect(normalizeEndlessSettings(undefined)).toEqual({
+            selectedDecks: [],
+            hideFewCardsWarning: false,
+        });
         expect(
             normalizeEndlessSettings({ selectedDecks: ["a", "a", 3 as never, "b"] }).selectedDecks,
         ).toEqual(["a", "b"]);

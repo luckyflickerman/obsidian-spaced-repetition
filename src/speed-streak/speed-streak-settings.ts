@@ -12,9 +12,18 @@ export type SpeedStreakRecordDisplay = "all_time" | "today" | "both" | "none";
 export type SpeedStreakHudPosition = "top" | "bottom";
 
 /** Visual styles ("scenes"), see visuals/visual-registry.ts. Unknown → "fusion". */
-export const SPEED_STREAK_VISUAL_IDS = ["fusion", "singularity", "crystal", "minimal"] as const;
+export const SPEED_STREAK_VISUAL_IDS = [
+    "fusion",
+    "singularity",
+    "crystal",
+    "minimal",
+    "hourglass",
+] as const;
 export type SpeedStreakVisualId = (typeof SPEED_STREAK_VISUAL_IDS)[number];
 export const DEFAULT_SPEED_STREAK_VISUAL: SpeedStreakVisualId = "fusion";
+/** Style of Endless sessions: a visual id, or "same" = the normal review style. */
+export type SpeedStreakEndlessVisual = SpeedStreakVisualId | "same";
+export const DEFAULT_ENDLESS_VISUAL: SpeedStreakEndlessVisual = "hourglass";
 
 /** Layout of the HUD. "auto": side panel when the view is wide enough, else compact bar. */
 export type SpeedStreakLayoutSetting = "auto" | "compact" | "side-left" | "side-right";
@@ -69,6 +78,8 @@ export interface SpeedStreakSettings {
     // Display
     /** Visual style (scene), see visuals/visual-registry.ts */
     visualStyle: SpeedStreakVisualId;
+    /** Visual style in Endless sessions ("same" = like the normal review) */
+    endlessVisualStyle: SpeedStreakEndlessVisual;
     layout: SpeedStreakLayoutSetting;
     /** Side panel folded to a narrow strip */
     sidePanelCollapsed: boolean;
@@ -122,6 +133,7 @@ export const DEFAULT_SPEED_STREAK_SETTINGS: SpeedStreakSettings = {
     vibrationEnabled: true,
 
     visualStyle: DEFAULT_SPEED_STREAK_VISUAL,
+    endlessVisualStyle: DEFAULT_ENDLESS_VISUAL,
     layout: "auto",
     sidePanelCollapsed: false,
     hudPosition: "top",
@@ -180,6 +192,11 @@ export function normalizeSpeedStreakSettings(
         allowed.includes(value as T) ? (value as T) : def;
     const bool = (v: unknown, def: boolean) => (typeof v === "boolean" ? v : def);
     merged.visualStyle = oneOf(merged.visualStyle, SPEED_STREAK_VISUAL_IDS, d.visualStyle);
+    merged.endlessVisualStyle = oneOf(
+        merged.endlessVisualStyle,
+        [...SPEED_STREAK_VISUAL_IDS, "same"] as const,
+        d.endlessVisualStyle,
+    );
     merged.layout = oneOf(
         merged.layout,
         ["auto", "compact", "side-left", "side-right"] as const,

@@ -28,6 +28,7 @@
 import { SpeedStreakVisualId, STYLE_DEFAULT_THEME } from "src/speed-streak/speed-streak-settings";
 import { CrystalVisual } from "src/speed-streak/visuals/crystal-visual";
 import { FusionVisual } from "src/speed-streak/visuals/fusion-visual";
+import { HourglassVisual } from "src/speed-streak/visuals/hourglass-visual";
 import { MinimalVisual } from "src/speed-streak/visuals/minimal-visual";
 import { SingularityVisual } from "src/speed-streak/visuals/singularity-visual";
 import type { SpeedStreakVisual } from "src/speed-streak/visuals/visual-types";
@@ -54,6 +55,7 @@ export const SPEED_STREAK_VISUALS: SpeedStreakVisualInfo[] = [
     entry(() => new SingularityVisual()),
     entry(() => new CrystalVisual()),
     entry(() => new MinimalVisual()),
+    entry(() => new HourglassVisual()),
 ];
 
 export function getSpeedStreakVisual(id: string | null | undefined): SpeedStreakVisualInfo {

@@ -92,10 +92,15 @@ export async function saveSpeedStreakData(plugin: SRPlugin): Promise<void> {
     await plugin.dataManager.pluginDataManager.savePluginData();
 }
 
+/** Style of the session: Endless can have its own (default: the hourglass). */
+export function activeVisualId(s: SpeedStreakSettings, endless: boolean): string {
+    return endless && s.endlessVisualStyle !== "same" ? s.endlessVisualStyle : s.visualStyle;
+}
+
 /** Settings that need the layout / scene to be rebuilt when they change. */
-function sceneKey(s: SpeedStreakSettings, reducedMotion: boolean): string {
+function sceneKey(s: SpeedStreakSettings, reducedMotion: boolean, endless: boolean): string {
     return [
-        s.visualStyle,
+        activeVisualId(s, endless),
         s.layout,
         s.performance,
         s.theme,
@@ -148,6 +153,8 @@ export class SpeedStreakController {
     private bestAllTimeAtStart = 0;
     /** Endless session: own all-time record and "cards this session" */
     private endless = false;
+    /** Endless score (answers without an error in a row), shown by the hourglass */
+    private endlessScore = 0;
 
     private themeRgb: { good: RGB; hard: RGB; again: RGB } | null = null;
 
@@ -185,6 +192,7 @@ export class SpeedStreakController {
 
     startSession(deckName: string, endless: boolean = false) {
         this.endless = endless;
+        this.endlessScore = 0;
         this.refreshSettings();
         if (!this.settings.enabled) {
             this.teardownScene();
@@ -218,6 +226,13 @@ export class SpeedStreakController {
         if (!this.engine.sessionActive || this.interrupted) return;
         const policy = resolveTimerPolicy(this.settings, this.rules, ctx.tags, ctx.deckPath);
         this.engine.onQuestionShown(policy);
+        this.render();
+    }
+
+    /** Endless: the score after a rating (the hourglass adds a grain or empties). */
+    setEndlessScore(score: number) {
+        if (!this.endless || score === this.endlessScore) return;
+        this.endlessScore = score;
         this.render();
     }
 
@@ -348,7 +363,7 @@ export class SpeedStreakController {
         }
         this.loadRecords();
         this.engine.bestToBeat = this.bestStreak;
-        if (sceneKey(this.settings, this.systemReducedMotion) !== this.builtSceneKey)
+        if (sceneKey(this.settings, this.systemReducedMotion, this.endless) !== this.builtSceneKey)
             this.buildScene();
         this.render();
     }
@@ -397,7 +412,7 @@ export class SpeedStreakController {
                 : new SidePanelLayout(this.hostEl, kind, s.sidePanelCollapsed, this.callbacks);
         this.layout.root.toggleClass("sr-ss-reduced-motion", this.reducedMotion);
 
-        const visualInfo = getSpeedStreakVisual(s.visualStyle);
+        const visualInfo = getSpeedStreakVisual(activeVisualId(s, this.endless));
         const theme = getSpeedStreakTheme(resolveThemeId(s.theme, visualInfo.id));
         applySpeedStreakTheme(this.layout.root, theme);
         applySpeedStreakTheme(this.pauseOverlay.root, theme);
@@ -409,7 +424,7 @@ export class SpeedStreakController {
             reducedMotion: this.reducedMotion,
             size: this.layout.sceneSize,
         });
-        this.builtSceneKey = sceneKey(s, this.systemReducedMotion);
+        this.builtSceneKey = sceneKey(s, this.systemReducedMotion, this.endless);
 
         if (!this.resizeObserver && typeof ResizeObserver !== "undefined") {
             this.resizeObserver = new ResizeObserver(() => this.onViewResize());
@@ -838,6 +853,7 @@ export class SpeedStreakController {
             paused: e.paused,
             timedOut: e.timedOut,
             isNewBest: newBest,
+            endlessScore: this.endless ? this.endlessScore : null,
         };
         this.visual?.update(state);
 

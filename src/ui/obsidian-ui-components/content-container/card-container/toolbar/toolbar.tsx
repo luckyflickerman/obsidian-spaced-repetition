@@ -161,6 +161,11 @@ export default class CardToolbarComponent {
         );
     }
 
+    /** Endless score in the deck badge (null = hidden). */
+    public setEndlessScore(score: number | null, newRecord: boolean) {
+        this.infoSection.setEndlessScore(score, newRecord);
+    }
+
     /**
      * Sets the reset button disabled state
      * @param disabled - The disabled state

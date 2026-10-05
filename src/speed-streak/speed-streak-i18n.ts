@@ -133,7 +133,7 @@ const EN = {
     RECENT_5: "Recent 5",
     ENDLESS_RECORD: "Endless all-time best",
     ENDLESS_BEST_5: "Endless best 5",
-    ENDLESS_SESSION: "This session: ${n} cards",
+    ENDLESS_SESSION: "Session: ${n}",
     ENDLESS_SUMMARY_RECORD: "🏆 New Endless record: ${n} in a row!",
     PURE_BADGE: "Pure",
     BREAKS_BADGE: "Breaks",
@@ -169,6 +169,12 @@ const EN = {
     // Settings v2
     VISUAL: "Visual style",
     VISUAL_DESC: "The animated scene of your streak. Each style has its own default colors.",
+    ENDLESS_VISUAL: "Style in Endless mode",
+    ENDLESS_VISUAL_DESC:
+        "The Hourglass adds a grain for every correct answer and turns over at each hundred.",
+    ENDLESS_VISUAL_SAME: "Same as in the review",
+    G_ENDLESS: "Endless mode",
+    ENDLESS_WARN: "Warn when the chosen decks have fewer than 100 cards",
     LAYOUT: "Layout",
     LAYOUT_DESC:
         "Automatic: side panel when the review view is at least 900 px wide (computer, iPad in landscape), otherwise a compact bar.",
@@ -334,7 +340,7 @@ const PL: Record<Keys, string> = {
     RECENT_5: "Ostatnie 5",
     ENDLESS_RECORD: "Rekord Endless",
     ENDLESS_BEST_5: "Najlepsze 5 w Endless",
-    ENDLESS_SESSION: "W tej sesji: ${n} fiszek",
+    ENDLESS_SESSION: "Sesja: ${n}",
     ENDLESS_SUMMARY_RECORD: "🏆 Nowy rekord Endless: ${n} z rzędu!",
     PURE_BADGE: "Czysta",
     BREAKS_BADGE: "Przerwy",
@@ -369,6 +375,12 @@ const PL: Record<Keys, string> = {
     R_EASY: "Łatwe",
     VISUAL: "Styl wizualny",
     VISUAL_DESC: "Animowana scena Twojej serii. Każdy styl ma swoje domyślne kolory.",
+    ENDLESS_VISUAL: "Styl w trybie Endless",
+    ENDLESS_VISUAL_DESC:
+        "Klepsydra dosypuje ziarnko za każdą poprawną odpowiedź i przewraca się co setkę.",
+    ENDLESS_VISUAL_SAME: "Taki sam jak w powtórce",
+    G_ENDLESS: "Tryb Endless",
+    ENDLESS_WARN: "Ostrzegaj, gdy wybrane talie mają mniej niż 100 fiszek",
     LAYOUT: "Układ",
     LAYOUT_DESC:
         "Automatyczny: panel boczny, gdy widok powtórki ma co najmniej 900 px szerokości (komputer, iPad poziomo), w przeciwnym razie kompaktowy pasek.",

@@ -1,5 +1,6 @@
 import { CardHistory, createCardHistory } from "src/card-authoring/daily-counter";
 import { DEFAULT_SETTINGS, SRSettings } from "src/data/settings";
+import type { EndlessData } from "src/endless/endless-records";
 import { createDefaultReviewLog, ReviewLog } from "src/heatmap/heatmap-data";
 import type { LegacyImportState } from "src/migration/legacy-import";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
@@ -42,6 +43,8 @@ export interface PluginData {
     cardHistory: CardHistory;
     /** Import from the original Spaced Repetition plugin (unset = never offered) */
     legacyImport?: LegacyImportState;
+    /** Endless mode: score records (src/endless/endless-records.ts) */
+    endless?: EndlessData;
 }
 
 export const DEFAULT_DATA: PluginData = {

@@ -18,6 +18,7 @@ import { Deck } from "src/data/data-structures/deck/deck";
 import { TopicPath } from "src/data/data-structures/deck/topic-path";
 import { SRSettings } from "src/data/settings";
 import { EndlessQueue, EndlessRating, EndlessStats } from "src/endless/endless-queue";
+import { applyRating, createScoreState, EndlessScoreState } from "src/endless/endless-records";
 import { Note } from "src/note/note";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
 import { RepItemState, ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
@@ -46,28 +47,57 @@ export function cardsOfDecks(decks: Deck[]): Card[] {
     return [...cards];
 }
 
+export interface EndlessSessionInfo {
+    /** Deck names, e.g. "ENG, ESP" */
+    decks: string;
+    /** All-time best score when the session started (for the 🏆 on a new record) */
+    bestAtStart: number;
+    /** A run of the score ended ("Error" after good answers) */
+    onRunEnded(score: number): void;
+}
+
 export class EndlessReviewSequencer implements IFlashcardReviewSequencer {
     private base: IFlashcardReviewSequencer;
     private queue: EndlessQueue<Card>;
     private settings: SRSettings;
+    private _score: EndlessScoreState = createScoreState();
+    readonly info: EndlessSessionInfo;
+    readonly startedAt = Date.now();
     /** Shown as the deck name above the card */
     readonly sessionDeck: Deck;
 
     constructor(
         base: IFlashcardReviewSequencer,
         cards: Card[],
-        sessionName: string,
+        info: EndlessSessionInfo,
         settings: SRSettings,
         random?: () => number,
     ) {
         this.base = base;
         this.settings = settings;
-        this.queue = new EndlessQueue(cards, random);
-        this.sessionDeck = new Deck(sessionName, null);
+        this.info = info;
+        // cards of one note (`:::`, `??`) are kept apart
+        this.queue = new EndlessQueue(cards, random, (card) => card.question);
+        this.sessionDeck = new Deck(`∞ ${info.decks}`, null);
     }
 
     get stats(): EndlessStats {
         return this.queue.stats;
+    }
+
+    /** Score, best of the session, errors and ratings so far. */
+    get score(): EndlessScoreState {
+        return this._score;
+    }
+
+    /** The running score beats the all-time record. */
+    get isNewRecord(): boolean {
+        return this._score.score > this.info.bestAtStart;
+    }
+
+    /** Show index of the current card (logs). */
+    get showIndex(): number {
+        return this.queue.showIndex;
     }
 
     get hasCurrentCard(): boolean {
@@ -134,8 +164,13 @@ export class EndlessReviewSequencer implements IFlashcardReviewSequencer {
         return this.base.determineCardSchedule(response, card);
     }
 
+    /** Moves the card in the queue and updates the score. Never writes a schedule. */
     async processReview(response: ReviewResponse): Promise<void> {
-        this.queue.rate(responseToEndlessRating(response));
+        const rating = responseToEndlessRating(response);
+        this.queue.rate(rating);
+        const { state, endedRun } = applyRating(this._score, rating);
+        this._score = state;
+        if (endedRun !== null) this.info.onRunEnded(endedRun);
     }
 
     async updateCurrentQuestionTextAndCards(text: string): Promise<void> {

@@ -60,3 +60,80 @@
 .is-phone .sr-endless-bar {
     margin-inline: var(--size-4-2);
 }
+
+/* Records line above the decks (tap for details) */
+.sr-endless-records {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    min-height: 36px;
+    padding: var(--size-4-1) var(--size-4-2);
+    background: transparent;
+    box-shadow: none;
+    border: 1px solid var(--background-modifier-border);
+    font-weight: var(--font-semibold);
+    color: var(--text-normal);
+    cursor: pointer;
+}
+
+.sr-endless-records:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.is-mobile .sr-endless-records {
+    min-height: 44px;
+}
+
+/* Summary of the session that just ended */
+.sr-endless-summary {
+    flex: 1 1 100%;
+    padding: var(--size-4-2) var(--size-4-3);
+    border-radius: var(--radius-m);
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    font-size: var(--font-ui-small);
+}
+
+.sr-endless-summary-title {
+    font-weight: var(--font-bold);
+    margin-bottom: var(--size-2-2);
+}
+
+.sr-endless-summary.is-record {
+    border-color: var(--color-yellow);
+}
+
+.sr-endless-summary-record {
+    margin-top: var(--size-2-2);
+    font-weight: var(--font-bold);
+}
+
+/* "Score 37" in the deck badge above the card */
+.sr-endless-score {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.sr-endless-score.is-record {
+    font-weight: var(--font-bold);
+}
+
+/* Records window */
+.sr-endless-records-modal ol,
+.sr-endless-records-modal ul {
+    padding-inline-start: 1.4em;
+}
+
+.sr-endless-records-modal li + li {
+    margin-top: var(--size-2-2);
+}
+
+.sr-endless-totals,
+.sr-endless-honesty,
+.sr-endless-empty {
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+}
+
+.sr-endless-few-modal .modal-button-container {
+    flex-wrap: wrap;
+}

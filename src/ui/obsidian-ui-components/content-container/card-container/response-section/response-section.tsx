@@ -127,11 +127,12 @@ export default class ResponseSectionComponent {
                 this.hardButton.buttonEl.addClass("sr-is-hidden");
             }
         } else if (reviewMode === FlashcardReviewMode.Endless) {
-            // Nothing is scheduled: the second line says when the card comes back
+            // Nothing is scheduled: the second line says when the card comes back.
+            // The red button is "Error": it sets the Endless score back to 0.
             this.responseEl.removeClass("is-cram");
             this.responseEl.addClass("is-endless");
             const lines: [SRResponseButtonComponent, string, string][] = [
-                [this.againButton, againButtonText, en("SOON")],
+                [this.againButton, en("ERROR"), en("ERROR_RESETS")],
                 [this.hardButton, hardButtonText, en("LATER")],
                 [this.goodButton, goodButtonText, en("ROUND_END")],
                 [this.easyButton, easyButtonText, en("ROUND_END")],

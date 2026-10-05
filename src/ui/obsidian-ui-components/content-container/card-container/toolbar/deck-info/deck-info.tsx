@@ -1,6 +1,7 @@
 import "src/ui/obsidian-ui-components/content-container/card-container/toolbar/deck-info/deck-info.css";
 import { setIcon } from "obsidian";
 
+import { en } from "src/endless/endless-i18n";
 import ProgressCounterComponent from "src/ui/obsidian-ui-components/content-container/card-container/toolbar/deck-info/progress-counter-component";
 
 export default class DeckInfoComponent {
@@ -11,6 +12,8 @@ export default class DeckInfoComponent {
     private chosenDeckCounterDivider: HTMLDivElement;
     private chosenDeckCardCounter: ProgressCounterComponent;
     private chosenDeckSubDeckCounter: ProgressCounterComponent;
+    private scoreDivider: HTMLDivElement;
+    private scoreEl: HTMLDivElement;
 
     private deckPointer: HTMLDivElement;
 
@@ -48,6 +51,10 @@ export default class DeckInfoComponent {
             0,
         );
 
+        // Endless: "Score 37" (and 🏆 when it beats the record)
+        this.scoreDivider = this.chosenDeckInfo.createDiv("sr-divider sr-is-hidden");
+        this.scoreEl = this.chosenDeckInfo.createDiv("sr-endless-score sr-is-hidden");
+
         this.deckPointer = this.deckInfoContainer.createDiv();
         setIcon(this.deckPointer, "chevron-right");
         this.deckPointer.addClass("sr-deck-pointer");
@@ -67,6 +74,20 @@ export default class DeckInfoComponent {
             "credit-card",
             0,
             0,
+        );
+    }
+
+    /** Endless score in the badge; null hides it (normal review). */
+    public setEndlessScore(score: number | null, newRecord: boolean) {
+        const hidden = score === null;
+        this.scoreDivider.toggleClass("sr-is-hidden", hidden);
+        this.scoreEl.toggleClass("sr-is-hidden", hidden);
+        if (hidden) return;
+        this.scoreEl.setText(en("SCORE", { n: score }) + (newRecord ? " 🏆" : ""));
+        this.scoreEl.toggleClass("is-record", newRecord);
+        this.scoreEl.setAttr(
+            "aria-label",
+            newRecord ? en("SCORE_RECORD_ARIA", { n: score }) : en("SCORE", { n: score }),
         );
     }
 
