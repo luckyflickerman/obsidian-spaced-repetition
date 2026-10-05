@@ -1,9 +1,5 @@
 import { DEFAULT_SETTINGS } from "src/data/settings";
-import {
-    buildImportedData,
-    parseLegacyData,
-    shouldOfferImport,
-} from "src/migration/legacy-import";
+import { buildImportedData, parseLegacyData, shouldOfferImport } from "src/migration/legacy-import";
 
 describe("parseLegacyData", () => {
     test("valid JSON object", () => {

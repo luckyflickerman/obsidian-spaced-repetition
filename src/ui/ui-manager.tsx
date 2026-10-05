@@ -71,15 +71,11 @@ export class UIManager {
 
         this.statusBarManager = new StatusBarManager(this.plugin, this.settingsManager);
 
-        this.ribbonIcon = this.plugin.addRibbonIcon(
-            APP_ICON,
-            t("REVIEW_CARDS"),
-            async () => {
-                if (this.plugin.isDataManagerLoaded()) {
-                    await this.openDeckContainer(FlashcardReviewMode.Review);
-                }
-            },
-        );
+        this.ribbonIcon = this.plugin.addRibbonIcon(APP_ICON, t("REVIEW_CARDS"), async () => {
+            if (this.plugin.isDataManagerLoaded()) {
+                await this.openDeckContainer(FlashcardReviewMode.Review);
+            }
+        });
 
         this.plugin.registerEvent(
             this.plugin.app.workspace.on("file-menu", (menu: Menu, file: TAbstractFile) => {

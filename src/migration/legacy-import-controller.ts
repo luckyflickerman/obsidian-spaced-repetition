@@ -3,11 +3,7 @@ import { App, Modal, normalizePath, Notice } from "obsidian";
 
 import { ORIGINAL_PLUGIN_ID } from "src/data/constants";
 import type SRPlugin from "src/main";
-import {
-    buildImportedData,
-    parseLegacyData,
-    shouldOfferImport,
-} from "src/migration/legacy-import";
+import { buildImportedData, parseLegacyData, shouldOfferImport } from "src/migration/legacy-import";
 import { li } from "src/migration/legacy-import-i18n";
 
 type Answer = "yes" | "no" | "later";
