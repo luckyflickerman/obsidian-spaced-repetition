@@ -5,3 +5,4 @@ styles.css
 pnpm-lock.yaml
 docs/vaults/
 tests/vaults/
+dev-vault/

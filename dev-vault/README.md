@@ -11,6 +11,6 @@ Instalacja / aktualizacja pluginu w tym vaulcie:
 pnpm build
 node scripts/dev-vault-install.mjs
 ```
-Skrypt kopiuje `main.js`, `styles.css`, `manifest.json` do `dev-vault/.obsidian/plugins/obsidian-spaced-repetition/`,
+Skrypt kopiuje `main.js`, `styles.css`, `manifest.json` do `dev-vault/.obsidian/plugins/upgraded-spaced-repetition/`,
 przy pierwszym razie wgrywa `_config/data.json` i tworzy plik `.hotreload` (dla pluginu Hot Reload).
 Folder `dev-vault/.obsidian/` nie trafia do gita.
