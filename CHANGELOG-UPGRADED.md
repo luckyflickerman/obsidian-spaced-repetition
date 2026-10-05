@@ -3,6 +3,10 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.1
+
+- **Faster loading on phones and tablets**: `main.js` is about 3 times smaller (3.4 MB → 1.2 MB). The release build no longer contains debugging data (source map) and the code is minified. Styles are unchanged.
+
 ## 0.9.0
 
 First beta of **Upgraded Spaced Repetition**: an extended version of Obsidian Spaced Repetition with its own plugin id, so it can be installed with BRAT next to (or instead of) the original.

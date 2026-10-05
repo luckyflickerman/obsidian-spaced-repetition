@@ -32,6 +32,31 @@ const moveToRootPlugin = {
     },
 };
 
+// Release build: minify only main.js. The CSS is NOT minified, because esbuild rewrites nested
+// rules (`& > .x` → `> .x`) into a form older iOS Safari (before 17.2) does not understand.
+// Function names are kept, so error messages stay readable.
+const minifyJsPlugin = {
+    name: "minify-js",
+    setup(build) {
+        build.onEnd(async (result) => {
+            if (result.errors.length > 0) return;
+            const jsFile = path.join("build", "main.js");
+            const code = fs.readFileSync(jsFile, "utf8");
+            const out = await esbuild.transform(code, {
+                loader: "js",
+                format: "cjs",
+                target: "es2018",
+                minify: true,
+                keepNames: true,
+            });
+            fs.writeFileSync(jsFile, out.code);
+            console.log(
+                `✓ main.js minified: ${Math.round(code.length / 1024)} KB → ${Math.round(out.code.length / 1024)} KB`,
+            );
+        });
+    },
+};
+
 const context = await esbuild.context({
     entryPoints: ["src/main.ts"],
     bundle: true,
@@ -40,14 +65,15 @@ const context = await esbuild.context({
     format: "cjs",
     target: "es2018",
     logLevel: "info",
-    sourcemap: "inline",
+    // The release build has no source map (main.js is downloaded and parsed on phones too)
+    sourcemap: prod ? false : "inline",
     sourcesContent: !prod,
     treeShaking: true,
     outfile: "build/main.js",
     loader: {
         ".css": "css",
     },
-    plugins: [moveToRootPlugin],
+    plugins: prod ? [moveToRootPlugin, minifyJsPlugin] : [moveToRootPlugin],
 });
 
 if (prod) {

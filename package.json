@@ -1,6 +1,6 @@
 {
     "name": "upgraded-spaced-repetition",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "description": "Fight the forgetting curve by reviewing flashcards & entire notes.",
     "main": "main.js",
     "scripts": {
