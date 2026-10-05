@@ -64,6 +64,8 @@ node scripts/dev-vault-install.mjs --bez-danych   # bez startowego data.json (te
 
 ## Wydania
 
+Historia wydań dla przyszłych sesji (decyzje, pułapki środowiska, otwarte sprawy): `docs/wydania/<wersja>.md` — **przeczytaj najnowszy plik przed pracą nad wydaniem**. Po każdym wydaniu dopisz nowy.
+
 - Wersja jest w `manifest.json`, `package.json` i `versions.json` (`"wersja": "minAppVersion"`) — zmieniaj wszystkie trzy.
 - Opis wydania: sekcja `## <wersja>` w `CHANGELOG-UPGRADED.md`.
 - Wydanie robi GitHub Actions (`.github/workflows/release.yml`) po wysłaniu taga **równego wersji, bez `v`** (np. `0.9.0`). Workflow przerywa, gdy tag ≠ wersja w manifeście. Publikuje `main.js`, `manifest.json`, `styles.css` (dla BRAT) i zip.
