@@ -25,6 +25,10 @@ Each add-on is a **built-in plugin** that can be turned on or off in the **Optio
 | -------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------- |
 | ![Review with Speed Streak](docs/screenshots/review.png) | ![Card preview](docs/screenshots/editor.png) | ![Review on a phone](docs/screenshots/phone-review.png) |
 
+| Endless with the Hourglass                                            | Endless on a phone                                        |
+| --------------------------------------------------------------------- | --------------------------------------------------------- |
+| ![Endless with the Hourglass](docs/screenshots/endless-hourglass.png) | ![Endless on a phone](docs/screenshots/endless-phone.png) |
+
 Full description of the add-ons (in Polish): [SPEED-STREAK-README.md](SPEED-STREAK-README.md). Changes per version: [CHANGELOG-UPGRADED.md](CHANGELOG-UPGRADED.md).
 
 For everything that comes from the original plugin — card formats, decks, cloze cards, notes review, algorithms — see the [original documentation](https://stephenmwangi.com/obsidian-spaced-repetition/).

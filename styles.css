@@ -228,7 +228,7 @@ button.sr-ca-notice-btn {
   font-size: var(--font-ui-small);
 }
 .sr-goal.is-reached {
-  --sr-goal-color: var(--color-green);
+  --sr-goal-color: var(--usr-green-fg, var(--color-green));
 }
 .sr-goal-head {
   display: flex;

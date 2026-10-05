@@ -11,7 +11,8 @@
 }
 
 .sr-goal.is-reached {
-    --sr-goal-color: var(--color-green);
+    /* readable green text in both themes (≥ 4.5:1) */
+    --sr-goal-color: var(--usr-green-fg, var(--color-green));
 }
 
 .sr-goal-head {

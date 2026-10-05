@@ -116,9 +116,9 @@ export class HourglassVisual extends CanvasVisual {
             gx = Math.min(w * 0.3, gh * 0.3 + 2);
             gy = h / 2;
         } else {
-            gh = Math.min(h * 0.62, w * 0.9);
+            gh = Math.min(h * 0.58, w * 0.9);
             gx = w / 2;
-            gy = h * 0.38;
+            gy = h * 0.34;
         }
         const gw = gh * 0.6;
 
@@ -135,9 +135,10 @@ export class HourglassVisual extends CanvasVisual {
                 ctx.fillText(`★×${fill.hundreds}`, (left + w) / 2, h * 0.8);
             }
         } else {
-            const top = gy + gh / 2 + h * 0.02;
-            this.drawScore(ctx, w / 2, top + h * 0.09, w * 0.8, h * 0.16);
-            this.drawHundreds(ctx, w / 2, top + h * 0.22, Math.min(w, h) * 0.06, fill.hundreds);
+            // below the bottom cap: the score, then the stars of the hundreds
+            const top = gy + gh / 2 + Math.max(2, gh * 0.05);
+            this.drawScore(ctx, w / 2, top + h * 0.1, w * 0.8, h * 0.15);
+            this.drawHundreds(ctx, w / 2, top + h * 0.21, Math.min(w, h) * 0.05, fill.hundreds);
         }
     }
 
@@ -171,9 +172,13 @@ export class HourglassVisual extends CanvasVisual {
         let shownGrains = grains;
         if (cut !== null) {
             // 0–0.2 full bulb glows, 0.2–0.7 the hourglass turns over, then it settles
+            // (turned by 180° the full bottom bulb is the full top bulb of the new hundred,
+            // so once the turn is done the hourglass is drawn upright again)
             const turn = easeInOut(Math.max(0, Math.min(1, (cut - 0.2) / 0.5)));
-            ctx.rotate(Math.PI * turn);
-            shownGrains = turn < 1 ? GRAINS_PER_HOURGLASS : grains;
+            if (turn < 1) {
+                ctx.rotate(Math.PI * turn);
+                shownGrains = GRAINS_PER_HOURGLASS;
+            }
         }
         if (err !== null) shownGrains = Math.round(this.grainsBeforeError * (1 - easeInOut(err)));
         ctx.translate(-cx, -cy);
