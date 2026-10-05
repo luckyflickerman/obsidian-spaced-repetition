@@ -19,6 +19,8 @@ export class PluginDataError extends Error {
 export class PluginDataManager {
     private plugin: SRPlugin;
     private _pluginData: PluginData | null = null;
+    /** True when this plugin had no saved data yet (first start) */
+    public loadedEmpty = false;
 
     constructor(plugin: SRPlugin) {
         this.plugin = plugin;
@@ -45,6 +47,7 @@ export class PluginDataManager {
      */
     async loadData(): Promise<void> {
         const loadedData: PluginData = (await this.plugin.loadData()) as PluginData;
+        this.loadedEmpty = loadedData === null || loadedData === undefined;
         if (loadedData?.settings) upgradeSettings(loadedData.settings);
         this._pluginData = Object.assign({}, DEFAULT_DATA, loadedData);
         this._pluginData.settings = Object.assign({}, DEFAULT_SETTINGS, this._pluginData.settings);

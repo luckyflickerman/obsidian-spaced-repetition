@@ -8,6 +8,7 @@ import { PluginDataError, PluginDataManager } from "src/data/plugin-data-manager
 import { SRSettings } from "src/data/settings";
 import { SettingsManager } from "src/data/settings-manager";
 import { LocaleManagerInstance } from "src/lang/locale-manager";
+import { LegacyImportController } from "src/migration/legacy-import-controller";
 import { NextNoteReviewHandler } from "src/note/next-note-review-handler";
 import { NoteReviewQueue } from "src/note/note-review-queue";
 import { ReminderManager } from "src/scheduling/reminder-manager";
@@ -72,6 +73,11 @@ export default class SRPlugin extends Plugin {
 
                 this.isInitialized = true;
                 this._reminderManager.restartReviewReminders();
+
+                // One-time offer to copy data from the original Spaced Repetition plugin
+                const legacyImport = new LegacyImportController(this);
+                legacyImport.load();
+                await legacyImport.checkOnStartup();
             });
         } catch (error) {
             if (error instanceof PluginDataError || error instanceof Error) {

@@ -1,0 +1,31 @@
+.usr-legacy-import-question {
+    font-weight: var(--font-semibold);
+}
+
+.usr-legacy-import-details,
+.usr-legacy-import-warning {
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+}
+
+.usr-legacy-import-warning {
+    color: var(--text-warning);
+}
+
+.usr-legacy-import-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--size-4-2);
+    margin-top: var(--size-4-4);
+}
+
+/* Big enough for a finger */
+.usr-legacy-import-buttons button {
+    min-width: 88px;
+    min-height: 44px;
+}
+
+.is-phone .usr-legacy-import-buttons button {
+    flex: 1 1 0;
+}

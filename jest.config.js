@@ -83,6 +83,11 @@ export default {
         // Review window DOM glue
         "src/review-window/review-window-controller.ts",
         "src/review-window/review-window-i18n.ts",
+
+        // Import from the original plugin: window, command and texts
+        "src/migration/legacy-import-controller.ts",
+        "src/migration/legacy-import-i18n.ts",
+        "src/migration/legacy-import.css",
     ],
     coverageDirectory: "coverage",
     collectCoverage: true,

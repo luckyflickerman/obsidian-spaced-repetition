@@ -1,6 +1,7 @@
 import { CardHistory, createCardHistory } from "src/card-authoring/daily-counter";
 import { DEFAULT_SETTINGS, SRSettings } from "src/data/settings";
 import { createDefaultReviewLog, ReviewLog } from "src/heatmap/heatmap-data";
+import type { LegacyImportState } from "src/migration/legacy-import";
 import { SRAlgorithmType } from "src/scheduling/algorithms/base/isr-algorithm";
 import { ISerializedFSRSScheduleData } from "src/scheduling/algorithms/fsrs/serialized-schedule-data";
 import { ISerializedSM2ScheduleData } from "src/scheduling/algorithms/osr/serialized-schedule-data";
@@ -39,6 +40,8 @@ export interface PluginData {
     reviewLog: ReviewLog;
     /** When each card was first seen (daily "New today" counter) */
     cardHistory: CardHistory;
+    /** Import from the original Spaced Repetition plugin (unset = never offered) */
+    legacyImport?: LegacyImportState;
 }
 
 export const DEFAULT_DATA: PluginData = {
