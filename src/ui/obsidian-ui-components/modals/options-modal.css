@@ -1,0 +1,20 @@
+/* MARK: Options window */
+
+.sr-options-modal {
+    width: min(640px, 100%);
+}
+
+/* A settings page inside the window scrolls in a fixed-height box */
+.sr-options-modal.is-page .modal-content {
+    height: min(70vh, 640px);
+    overflow: hidden;
+}
+
+.sr-options-page {
+    height: 100%;
+}
+
+/* The window title already names the page */
+.sr-options-page .sr-settings-page-title-wrapper {
+    display: none;
+}

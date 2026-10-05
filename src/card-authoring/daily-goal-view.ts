@@ -2,9 +2,11 @@
  * Card authoring — daily goal of NEW cards in the deck list: its own block
  * above the review calendar ("New cards today 4/10" with a bar), independent
  * of the calendar (shown also when the calendar is expanded or switched off).
+ * Can be minimized to a small "🎯 4/10" badge on the right (`goalMinimized`).
  */
 
 import "src/card-authoring/daily-goal.css";
+import { setIcon } from "obsidian";
 
 import { ca } from "src/card-authoring/card-authoring-i18n";
 import { normalizeCardAuthoringSettings } from "src/card-authoring/card-authoring-settings";
@@ -48,6 +50,24 @@ export class DailyGoalView {
 
             this.rootEl.empty();
             this.rootEl.toggleClass("is-reached", goal.reached);
+            this.rootEl.toggleClass("is-minimized", settings.goalMinimized);
+
+            if (settings.goalMinimized) {
+                // A small badge on the right; tap to show the whole block again
+                this.rootEl.removeAttribute("aria-label");
+                const badge = this.rootEl.createEl("button", {
+                    cls: "sr-goal-badge",
+                    attr: {
+                        "aria-label": ca("GOAL_EXPAND", { done: goal.done, goal: goal.goal }),
+                        "aria-expanded": "false",
+                    },
+                });
+                setIcon(badge.createSpan({ cls: "sr-goal-badge-icon" }), "target");
+                badge.createSpan({ cls: "sr-goal-value", text: `${goal.done}/${goal.goal}` });
+                badge.addEventListener("click", () => this.setMinimized(false));
+                return;
+            }
+
             this.rootEl.setAttr(
                 "aria-label",
                 ca("GOAL_ARIA", { done: goal.done, goal: goal.goal }),
@@ -56,6 +76,12 @@ export class DailyGoalView {
             const head = this.rootEl.createDiv({ cls: "sr-goal-head" });
             head.createSpan({ cls: "sr-goal-title", text: ca("GOAL_TITLE") });
             head.createSpan({ cls: "sr-goal-value", text: `${goal.done}/${goal.goal}` });
+            const minimize = head.createEl("button", {
+                cls: "sr-goal-minimize clickable-icon",
+                attr: { "aria-label": ca("GOAL_MINIMIZE"), "aria-expanded": "true" },
+            });
+            setIcon(minimize, "chevrons-right");
+            minimize.addEventListener("click", () => this.setMinimized(true));
 
             const bar = this.rootEl.createDiv({ cls: "sr-goal-bar" });
             bar.createDiv({ cls: "sr-goal-fill" }).setCssProps({
@@ -69,5 +95,20 @@ export class DailyGoalView {
         } catch (e) {
             console.error("[Card authoring] could not render the daily goal", e);
         }
+    }
+
+    /** Remembered in the settings, so every open deck list shows the same. */
+    private setMinimized(minimized: boolean) {
+        const settings = this.plugin.dataManager.data.settings;
+        settings.cardAuthoring = {
+            ...normalizeCardAuthoringSettings(settings.cardAuthoring),
+            goalMinimized: minimized,
+        };
+        refreshDailyGoalViews();
+        // focus stays on the same place after the redraw (keyboard / screen reader)
+        this.rootEl
+            .querySelector<HTMLElement>(minimized ? ".sr-goal-badge" : ".sr-goal-minimize")
+            ?.focus();
+        void this.plugin.dataManager.settingsManager.save();
     }
 }

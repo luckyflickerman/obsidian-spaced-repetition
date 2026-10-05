@@ -254,6 +254,54 @@ button.sr-ca-notice-btn {
   background-color: var(--sr-goal-color);
   transition: width 400ms ease;
 }
+.sr-goal-minimize {
+  flex: 0 0 auto;
+  margin: calc(-1 * var(--size-4-1)) calc(-1 * var(--size-4-2))
+    calc(-1 * var(--size-4-1)) 0;
+  color: var(--text-muted);
+}
+.sr-goal.is-minimized {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+  border: none;
+}
+.sr-goal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-4-1);
+  height: auto;
+  min-height: 32px;
+  padding: var(--size-4-1) var(--size-4-3);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l);
+  background-color: var(--background-primary);
+  box-shadow: none;
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+.sr-goal-badge:hover {
+  background-color: var(--background-modifier-hover);
+}
+.sr-goal-badge-icon {
+  display: flex;
+  color: var(--sr-goal-color);
+}
+.sr-goal-badge-icon svg {
+  width: var(--icon-s);
+  height: var(--icon-s);
+}
+.sr-goal-badge .sr-goal-value {
+  font-size: 1em;
+}
+.is-mobile .sr-goal-minimize {
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: calc(-1 * var(--size-4-3));
+}
+.is-mobile .sr-goal-badge {
+  min-height: 44px;
+}
 .sr-goal-note {
   margin-top: var(--size-4-1);
   font-size: var(--font-smallest);
@@ -1463,7 +1511,7 @@ body.theme-dark {
 .is-mobile .sr-header .sr-button.clickable-icon,
 .is-mobile .sr-card-container .sr-button.clickable-icon,
 .is-mobile .sr-hm-nav-btn.clickable-icon,
-.is-mobile .sr-addons-item .extra-setting-button {
+.is-mobile .sr-plugin-item .extra-setting-button {
   min-width: 44px;
   min-height: 44px;
   align-items: center;
@@ -2404,34 +2452,31 @@ body:not(.is-mobile)
   }
 }
 
-/* src/ui/obsidian-ui-components/modals/addons-modal.css */
-.sr-addons-modal {
+/* src/ui/obsidian-ui-components/modals/options-modal.css */
+.sr-options-modal {
   width: min(640px, 100%);
 }
-.sr-addons-intro {
-  color: var(--text-muted);
-  font-size: var(--font-ui-small);
-  margin-bottom: var(--size-4-3);
+.sr-options-modal.is-page .modal-content {
+  height: min(70vh, 640px);
+  overflow: hidden;
 }
-.sr-addons-item .setting-item-name {
+.sr-options-page {
+  height: 100%;
+}
+.sr-options-page .sr-settings-page-title-wrapper {
+  display: none;
+}
+
+/* src/ui/obsidian-ui-components/built-in-plugins-group.css */
+.sr-plugin-item .setting-item-name {
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
   font-weight: var(--font-semibold);
 }
-.sr-addons-icon {
+.sr-plugin-icon {
   display: flex;
   color: var(--text-accent);
-}
-.sr-addons-modal.is-page .modal-content {
-  height: min(70vh, 640px);
-  overflow: hidden;
-}
-.sr-addons-page {
-  height: 100%;
-}
-.sr-addons-page .sr-settings-page-title-wrapper {
-  display: none;
 }
 
 /* src/ui/obsidian-ui-components/content-container/settings-page/settings-page.css */
@@ -2524,91 +2569,6 @@ body:not(.is-mobile)
 }
 body:not(.is-phone) .sr-settings-page-content {
   padding-right: var(--size-4-1);
-}
-
-/* src/ui/obsidian-ui-components/modals/edit-modal.css */
-.sr-edit-modal {
-  height: 80%;
-}
-.sr-edit-view {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: var(--size-4-4);
-}
-.sr-edit-view .sr-input {
-  flex-grow: 1;
-  width: 100%;
-  resize: none;
-}
-.sr-edit-view .sr-response {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  width: 100%;
-  margin-top: 0;
-}
-.sr-edit-view .sr-response-button {
-  width: 100%;
-}
-.sr-edit-view .sr-response-button.sr-dummy-button {
-  opacity: 0;
-  cursor: default;
-}
-
-/* src/ui/obsidian-ui-components/modals/modal-view.css */
-#sr-modal-view {
-  padding: 0;
-  max-width: 100%;
-  max-height: 100%;
-}
-#sr-modal-view .sr-modal-content {
-  overflow: visible;
-  padding: 0;
-}
-#sr-modal-view .modal-close-button,
-#sr-modal-view > .modal-header-button,
-#sr-modal-view .modal-header {
-  display: none;
-}
-#sr-modal-view.sr-is-placed:not(.sr-is-fullscreen) {
-  position: absolute;
-  left: var(--sr-window-left);
-  top: var(--sr-window-top);
-  margin: 0;
-}
-#sr-modal-view.sr-movable:not(.sr-is-fullscreen)
-  :is(.sr-deck-list-header, .sr-card-toolbar) {
-  cursor: grab;
-  touch-action: none;
-}
-#sr-modal-view.sr-is-dragging,
-#sr-modal-view.sr-is-dragging * {
-  cursor: grabbing !important;
-  user-select: none;
-}
-#sr-modal-view.sr-is-fullscreen {
-  position: absolute;
-  inset: 0;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100%;
-  max-height: 100%;
-  margin: 0;
-  border-radius: 0 !important;
-  border: none;
-  resize: none !important;
-}
-body:not(.is-mobile) #sr-modal-view {
-  resize: both;
-}
-.is-mobile #sr-modal-view {
-  padding-top: var(--safe-area-inset-top) !important;
-  padding-right: var(--safe-area-inset-right) !important;
-  padding-left: var(--safe-area-inset-left) !important;
-  padding-bottom: var(--safe-area-inset-bottom) !important;
 }
 
 /* src/ui/obsidian-ui-components/content-container/settings-page/statistics-page/statistics-page.css */
@@ -2963,6 +2923,91 @@ th.gridjs-th:last-child {
 .gridjs-resizable:hover {
   background-color: #9bc2f7;
   cursor: ew-resize;
+}
+
+/* src/ui/obsidian-ui-components/modals/edit-modal.css */
+.sr-edit-modal {
+  height: 80%;
+}
+.sr-edit-view {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--size-4-4);
+}
+.sr-edit-view .sr-input {
+  flex-grow: 1;
+  width: 100%;
+  resize: none;
+}
+.sr-edit-view .sr-response {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  width: 100%;
+  margin-top: 0;
+}
+.sr-edit-view .sr-response-button {
+  width: 100%;
+}
+.sr-edit-view .sr-response-button.sr-dummy-button {
+  opacity: 0;
+  cursor: default;
+}
+
+/* src/ui/obsidian-ui-components/modals/modal-view.css */
+#sr-modal-view {
+  padding: 0;
+  max-width: 100%;
+  max-height: 100%;
+}
+#sr-modal-view .sr-modal-content {
+  overflow: visible;
+  padding: 0;
+}
+#sr-modal-view .modal-close-button,
+#sr-modal-view > .modal-header-button,
+#sr-modal-view .modal-header {
+  display: none;
+}
+#sr-modal-view.sr-is-placed:not(.sr-is-fullscreen) {
+  position: absolute;
+  left: var(--sr-window-left);
+  top: var(--sr-window-top);
+  margin: 0;
+}
+#sr-modal-view.sr-movable:not(.sr-is-fullscreen)
+  :is(.sr-deck-list-header, .sr-card-toolbar) {
+  cursor: grab;
+  touch-action: none;
+}
+#sr-modal-view.sr-is-dragging,
+#sr-modal-view.sr-is-dragging * {
+  cursor: grabbing !important;
+  user-select: none;
+}
+#sr-modal-view.sr-is-fullscreen {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  border-radius: 0 !important;
+  border: none;
+  resize: none !important;
+}
+body:not(.is-mobile) #sr-modal-view {
+  resize: both;
+}
+.is-mobile #sr-modal-view {
+  padding-top: var(--safe-area-inset-top) !important;
+  padding-right: var(--safe-area-inset-right) !important;
+  padding-left: var(--safe-area-inset-left) !important;
+  padding-bottom: var(--safe-area-inset-bottom) !important;
 }
 
 /* src/ui/obsidian-ui-components/item-views/review-queue-list-view.css */

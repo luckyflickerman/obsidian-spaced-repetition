@@ -1,0 +1,13 @@
+/* Built-in plugins (Options window and the main Settings page) */
+
+.sr-plugin-item .setting-item-name {
+    display: flex;
+    align-items: center;
+    gap: var(--size-4-2);
+    font-weight: var(--font-semibold);
+}
+
+.sr-plugin-icon {
+    display: flex;
+    color: var(--text-accent);
+}

@@ -30,6 +30,8 @@ export interface CardAuthoringSettings {
     showDailyCounter: boolean;
     /** Daily goal block above the review calendar in the deck list */
     goalInDeckList: boolean;
+    /** The goal block is minimized to a small badge on the right of the deck list */
+    goalMinimized: boolean;
     /** Rename "Pasted image …" pasted into a card line after its word */
     renamePastedImages: boolean;
     /** Shrink large photos before saving them */
@@ -50,6 +52,7 @@ export const DEFAULT_CARD_AUTHORING_SETTINGS: CardAuthoringSettings = {
     dailyGoal: 10,
     showDailyCounter: true,
     goalInDeckList: true,
+    goalMinimized: false,
     renamePastedImages: true,
     resizeImages: true,
     maxImageWidth: 800,
@@ -107,6 +110,7 @@ export function normalizeCardAuthoringSettings(
         dailyGoal: num(s.dailyGoal, d.dailyGoal, 1, 999),
         showDailyCounter: bool(s.showDailyCounter, d.showDailyCounter),
         goalInDeckList: bool(s.goalInDeckList, d.goalInDeckList),
+        goalMinimized: bool(s.goalMinimized, d.goalMinimized),
         renamePastedImages: bool(s.renamePastedImages, d.renamePastedImages),
         resizeImages: bool(s.resizeImages, d.resizeImages),
         maxImageWidth: num(s.maxImageWidth, d.maxImageWidth, 200, 4000),

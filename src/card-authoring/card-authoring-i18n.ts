@@ -78,6 +78,8 @@ const EN = {
     GOAL_ARIA: "${done} of ${goal} new cards created today",
     GOAL_LEFT: "${n} more to go",
     GOAL_REACHED: "Goal reached!",
+    GOAL_MINIMIZE: "Minimize the daily goal",
+    GOAL_EXPAND: "Show the daily goal: ${done} of ${goal} new cards today",
     G_IMAGES: "Images",
     RENAME_PASTED: "Name pasted images after the word",
     RENAME_PASTED_DESC:
@@ -163,6 +165,8 @@ const PL: Record<Keys, string> = {
     GOAL_ARIA: "Dziś stworzono ${done} z ${goal} nowych fiszek",
     GOAL_LEFT: "Jeszcze ${n}",
     GOAL_REACHED: "Cel osiągnięty!",
+    GOAL_MINIMIZE: "Zminimalizuj cel dzienny",
+    GOAL_EXPAND: "Pokaż cel dzienny: dziś ${done} z ${goal} nowych fiszek",
     G_IMAGES: "Obrazki",
     RENAME_PASTED: "Nazywaj wklejone obrazki od słowa",
     RENAME_PASTED_DESC:

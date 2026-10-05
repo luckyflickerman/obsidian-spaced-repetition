@@ -1,14 +1,16 @@
 /**
- * Add-ons built on top of vanilla Spaced Repetition: their on/off switches,
- * in one place, for the "Add-ons" window next to the deck list.
+ * Built-in plugins (in code: "add-ons") on top of vanilla Spaced Repetition:
+ * their on/off switches, in one place. Shown under "Built-in plugins" in the
+ * Options window next to the deck list and on the main Settings page
+ * (built-in-plugins-group.ts).
  *
- * HOW TO ADD A NEW ADD-ON
- * -----------------------
+ * HOW TO ADD A NEW BUILT-IN PLUGIN
+ * --------------------------------
  * 1. Give it an "enabled" (or "show") setting and a settings page
- *    (`SettingsPageType` in settings-page-manager.tsx).
+ *    (`SettingsPageType` in settings-page-types.ts, created in
+ *    `createSettingsPage` in settings-page-manager.tsx).
  * 2. Add one entry to `ADDONS` below, and its name / description to
  *    `addons-i18n.ts` (keys `NAME_<ID>` / `DESC_<ID>`).
- * 3. Create its page in `AddonsModal.createPage` (addons-modal.tsx).
  */
 
 import { normalizeCardAuthoringSettings } from "src/card-authoring/card-authoring-settings";
@@ -72,6 +74,11 @@ export const ADDONS: AddonInfo[] = [
         },
     },
 ];
+
+/** True for the settings pages of built-in plugins (they are listed apart from the options). */
+export function isAddonPage(pageType: string): boolean {
+    return ADDONS.some((a) => a.pageType === pageType);
+}
 
 export function getAddon(id: AddonId): AddonInfo {
     const addon = ADDONS.find((a) => a.id === id);

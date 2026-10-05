@@ -28,6 +28,105 @@ import { UIManager } from "src/ui/ui-manager";
 export { getPageIcon, getPageName, SettingsPageTypesArray };
 export type { SettingsPageType };
 
+/** Everything a settings page needs, wherever it is shown (Settings tab or the Options window). */
+export interface SettingsPageContext {
+    plugin: SRPlugin;
+    uiManager: UIManager;
+    settingsManager: SettingsManager;
+    dataManager: DataManager;
+    applySettingsUpdate: (callback: () => unknown) => void;
+    display: () => void;
+    openPage: (pageType: SettingsPageType) => void;
+    scrollListener: (scrollPosition: number) => void;
+    didReadMultilineEndMarkerWarning: boolean;
+    changeMultilineEndMarkerWarningState: (didReadMultilineEndMarkerWarning: boolean) => void;
+}
+
+/** Creates one settings page (hidden; call `show()`). */
+export function createSettingsPage(
+    pageType: SettingsPageType,
+    containerEl: HTMLElement,
+    ctx: SettingsPageContext,
+): SettingsPage {
+    const common = [
+        containerEl,
+        ctx.plugin,
+        ctx.settingsManager,
+        ctx.dataManager,
+        pageType,
+        ctx.applySettingsUpdate,
+        ctx.display,
+        ctx.openPage,
+        ctx.scrollListener,
+    ] as const;
+    switch (pageType) {
+        case "main-page":
+            return new MainPage(
+                containerEl,
+                ctx.plugin,
+                ctx.settingsManager,
+                ctx.dataManager,
+                pageType,
+                ctx.display,
+                ctx.openPage,
+                ctx.scrollListener,
+            );
+        case "flashcards-page":
+            return new FlashcardsPage(
+                containerEl,
+                ctx.plugin,
+                ctx.settingsManager,
+                ctx.dataManager,
+                pageType,
+                ctx.didReadMultilineEndMarkerWarning,
+                ctx.applySettingsUpdate,
+                ctx.display,
+                ctx.openPage,
+                ctx.scrollListener,
+                ctx.changeMultilineEndMarkerWarningState,
+            );
+        case "speed-streak-page":
+            return new SpeedStreakPage(...common);
+        case "card-authoring-page":
+            return new CardAuthoringPage(...common);
+        case "daily-goal-page":
+            return new DailyGoalPage(...common);
+        case "heatmap-page":
+            return new HeatmapPage(...common);
+        case "tts-page":
+            return new TtsPage(...common);
+        case "notes-page":
+            return new NotesPage(...common);
+        case "scheduling-page":
+            return new SchedulingPage(...common);
+        case "ui-preferences-page":
+            return new UIPreferencesPage(
+                containerEl,
+                ctx.plugin,
+                ctx.settingsManager,
+                ctx.dataManager,
+                ctx.uiManager,
+                pageType,
+                ctx.applySettingsUpdate,
+                ctx.display,
+                ctx.openPage,
+                ctx.scrollListener,
+            );
+        case "data-page":
+            return new DataPage(...common);
+        case "statistics-page":
+            return new StatisticsPage(
+                containerEl,
+                ctx.plugin,
+                ctx.settingsManager,
+                ctx.dataManager,
+                pageType,
+                ctx.openPage,
+                ctx.scrollListener,
+            );
+    }
+}
+
 /**
  * Represents a settings page manager.
  *
@@ -92,201 +191,27 @@ export class SettingsPageManager {
     }
 
     // https://github.com/mgmeyers/obsidian-kanban/blob/main/src/Settings.ts
-    private applySettingsUpdate(callback: () => void): void {
+    private applySettingsUpdate(callback: () => unknown): void {
         window.clearTimeout(this.applyDebounceTimer);
         this.applyDebounceTimer = window.setTimeout(callback, 512);
     }
 
     private createPages() {
         this.containerEl.empty();
+        const ctx: SettingsPageContext = {
+            plugin: this.plugin,
+            uiManager: this.uiManager,
+            settingsManager: this.settingsManager,
+            dataManager: this.dataManager,
+            applySettingsUpdate: this.applySettingsUpdate.bind(this),
+            display: this.display,
+            openPage: this.openPage.bind(this),
+            scrollListener: this.scrollListener.bind(this),
+            didReadMultilineEndMarkerWarning: this.didReadMultilineEndMarkerWarning,
+            changeMultilineEndMarkerWarningState: this.changeMultilineEndMarkerWarningState,
+        };
         for (const pageType of SettingsPageTypesArray) {
-            const newPageContainerEl = this.containerEl.createDiv();
-            switch (pageType) {
-                case "main-page":
-                    this.pages.push(
-                        new MainPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "flashcards-page":
-                    this.pages.push(
-                        new FlashcardsPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.didReadMultilineEndMarkerWarning,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                            this.changeMultilineEndMarkerWarningState.bind(this),
-                        ),
-                    );
-                    break;
-                case "speed-streak-page":
-                    this.pages.push(
-                        new SpeedStreakPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "card-authoring-page":
-                    this.pages.push(
-                        new CardAuthoringPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "daily-goal-page":
-                    this.pages.push(
-                        new DailyGoalPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "heatmap-page":
-                    this.pages.push(
-                        new HeatmapPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "tts-page":
-                    this.pages.push(
-                        new TtsPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "notes-page":
-                    this.pages.push(
-                        new NotesPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "scheduling-page":
-                    this.pages.push(
-                        new SchedulingPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            (callback: () => unknown) => {
-                                this.applySettingsUpdate(callback);
-                            },
-                            this.display,
-                            (pageType: SettingsPageType) => {
-                                this.openPage(pageType);
-                            },
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "ui-preferences-page":
-                    this.pages.push(
-                        new UIPreferencesPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            this.uiManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "data-page":
-                    this.pages.push(
-                        new DataPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.applySettingsUpdate.bind(this),
-                            this.display,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-                case "statistics-page":
-                    this.pages.push(
-                        new StatisticsPage(
-                            newPageContainerEl,
-                            this.plugin,
-                            this.settingsManager,
-                            this.dataManager,
-                            pageType,
-                            this.openPage.bind(this),
-                            this.scrollListener.bind(this),
-                        ),
-                    );
-                    break;
-            }
+            this.pages.push(createSettingsPage(pageType, this.containerEl.createDiv(), ctx));
         }
     }
 

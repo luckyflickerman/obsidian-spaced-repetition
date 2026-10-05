@@ -1,4 +1,4 @@
-import { ADDONS, getAddon } from "src/addons/addons";
+import { ADDONS, getAddon, isAddonPage } from "src/addons/addons";
 import type { SRSettings } from "src/data/settings";
 
 function emptySettings(): SRSettings {
@@ -17,6 +17,13 @@ describe("add-ons", () => {
         ]);
         expect(getAddon("tts").icon).toBe("volume-2");
         expect(() => getAddon("nope" as never)).toThrow();
+    });
+
+    test("their pages are told apart from the other options", () => {
+        expect(isAddonPage("speed-streak-page")).toBe(true);
+        expect(isAddonPage("daily-goal-page")).toBe(true);
+        expect(isAddonPage("card-authoring-page")).toBe(false);
+        expect(isAddonPage("main-page")).toBe(false);
     });
 
     test("are on by default, also with old settings", () => {

@@ -20,7 +20,7 @@ export default class DeckListHeaderComponent {
         parentEl: HTMLElement,
         changeReviewMode: (reviewMode: FlashcardReviewMode) => void,
         closeModal?: () => void,
-        openAddons?: () => void,
+        openOptions?: () => void,
         windowControls?: ReviewWindowControls,
     ) {
         this.header = parentEl.createDiv();
@@ -59,13 +59,13 @@ export default class DeckListHeaderComponent {
             ]);
         }
 
-        // Add-ons (review calendar, read aloud, Speed Streak): left of the close button
-        if (openAddons !== undefined) {
+        // Options of the plugin and its built-in plugins: left of the close button
+        if (openOptions !== undefined) {
             new SRButtonComponent(this.header, {
-                classNames: ["sr-addons-button", isPhone ? "mod-raised" : "clickable-icon"],
-                icon: "puzzle",
+                classNames: ["sr-options-button", isPhone ? "mod-raised" : "clickable-icon"],
+                icon: "settings",
                 tooltip: ad("BUTTON"),
-                onClick: () => openAddons(),
+                onClick: () => openOptions(),
             });
         }
 

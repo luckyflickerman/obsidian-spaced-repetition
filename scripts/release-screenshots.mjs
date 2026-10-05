@@ -267,13 +267,13 @@ const capture = async (mode, which) => {
         await sleep(2000);
         await shot(`${mode}-1-talie.png`);
         await measure(`${mode} · lista talii`);
-        if (has("addons")) {
+        if (has("options")) {
             await run(
-                `document.querySelector('.modal-container .sr-addons-button')?.click(); return 1`,
+                `document.querySelector('.modal-container .sr-options-button')?.click(); return 1`,
             );
             await sleep(1200);
-            await shot(`${mode}-2-dodatki.png`);
-            await measure(`${mode} · Dodatki`);
+            await shot(`${mode}-2-opcje.png`);
+            await measure(`${mode} · Opcje`);
         }
         await esc();
     }
@@ -379,7 +379,7 @@ try {
     await theme("obsidian");
     await capture("komputer-ciemny", [
         "deck",
-        "addons",
+        "options",
         "review",
         "answer",
         "pause",
@@ -387,7 +387,7 @@ try {
         "settings",
     ]);
     await theme("moonstone");
-    await capture("komputer-jasny", ["deck", "addons", "review", "answer", "editor", "settings"]);
+    await capture("komputer-jasny", ["deck", "options", "review", "answer", "editor", "settings"]);
     await theme("obsidian");
     await setSize(1440, 900, false);
     await capture("komputer-szeroki", ["deck", "review", "answer"]);
@@ -402,7 +402,7 @@ try {
 
     await setSize(390, 844, true);
     await sleep(800);
-    await capture("telefon-ciemny", ["deck", "addons", "review", "answer", "pause", "editor"]);
+    await capture("telefon-ciemny", ["deck", "options", "review", "answer", "pause", "editor"]);
     await theme("moonstone");
     await capture("telefon-jasny", ["deck", "review", "answer"]);
 } finally {

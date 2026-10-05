@@ -14,7 +14,7 @@ import {
 } from "src/scheduling/flashcard-review-sequencer";
 import DeckListComponent from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list";
 import DeckListHeaderComponent from "src/ui/obsidian-ui-components/content-container/deck-container/deck-list-header";
-import { AddonsModal } from "src/ui/obsidian-ui-components/modals/addons-modal";
+import { OptionsModal } from "src/ui/obsidian-ui-components/modals/options-modal";
 
 export class DeckContainer {
     private containerEl: HTMLDivElement;
@@ -42,7 +42,7 @@ export class DeckContainer {
             this.containerEl,
             changeReviewMode,
             closeModal,
-            () => new AddonsModal(plugin, () => this.onAddonsChanged()).open(),
+            () => new OptionsModal(plugin, () => this.onAddonsChanged()).open(),
             windowControls,
         );
 

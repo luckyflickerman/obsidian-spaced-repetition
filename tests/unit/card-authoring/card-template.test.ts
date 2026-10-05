@@ -97,6 +97,14 @@ describe("card authoring settings", () => {
         expect(currentDeck(s)?.file).toBe("Fiszki/Angielski.md");
     });
 
+    test("daily goal block: shown in full unless minimized", () => {
+        expect(normalizeCardAuthoringSettings({}).goalMinimized).toBe(false);
+        expect(normalizeCardAuthoringSettings({ goalMinimized: true }).goalMinimized).toBe(true);
+        expect(
+            normalizeCardAuthoringSettings({ goalMinimized: "yes" as never }).goalMinimized,
+        ).toBe(false);
+    });
+
     test("normalizes decks: tags, files, languages, duplicates", () => {
         const s = normalizeCardAuthoringSettings({
             decks: [
@@ -104,7 +112,7 @@ describe("card authoring settings", () => {
                 { tag: "#eng", file: "x.md", lang: "en" },
                 { tag: "", file: "y.md", lang: "" },
                 { tag: "#DEU", file: "", lang: "de" },
-                null as never,
+                null,
             ],
             lastDeckTag: "DEU",
             dailyGoal: 0,

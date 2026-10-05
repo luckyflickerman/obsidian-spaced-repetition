@@ -52,6 +52,65 @@
     transition: width 400ms ease;
 }
 
+/* Minimize button at the end of the head row */
+.sr-goal-minimize {
+    flex: 0 0 auto;
+    margin: calc(-1 * var(--size-4-1)) calc(-1 * var(--size-4-2)) calc(-1 * var(--size-4-1)) 0;
+    color: var(--text-muted);
+}
+
+/* Minimized: only a small badge, on the right */
+.sr-goal.is-minimized {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+    border: none;
+}
+
+.sr-goal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--size-4-1);
+    height: auto;
+    min-height: 32px;
+    padding: var(--size-4-1) var(--size-4-3);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-l);
+    background-color: var(--background-primary);
+    box-shadow: none;
+    font-size: var(--font-ui-small);
+    cursor: pointer;
+}
+
+.sr-goal-badge:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.sr-goal-badge-icon {
+    display: flex;
+    color: var(--sr-goal-color);
+}
+
+.sr-goal-badge-icon svg {
+    width: var(--icon-s);
+    height: var(--icon-s);
+}
+
+.sr-goal-badge .sr-goal-value {
+    font-size: 1em;
+}
+
+/* Touch: 44 px targets */
+.is-mobile .sr-goal-minimize {
+    min-width: 44px;
+    min-height: 44px;
+    margin-block: calc(-1 * var(--size-4-3));
+}
+
+.is-mobile .sr-goal-badge {
+    min-height: 44px;
+}
+
 .sr-goal-note {
     margin-top: var(--size-4-1);
     font-size: var(--font-smallest);

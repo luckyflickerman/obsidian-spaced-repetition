@@ -1,5 +1,8 @@
 import { ButtonComponent, setIcon, Setting, SettingGroup } from "obsidian";
 
+import { isAddonPage } from "src/addons/addons";
+import { ad } from "src/addons/addons-i18n";
+import { refreshDailyGoalViews } from "src/card-authoring/daily-goal-view";
 import { PLUGIN_REPO_URL } from "src/data/constants";
 import { DataManager } from "src/data/data-manager";
 import { DebugLoggerInstance } from "src/data/debug-logger";
@@ -8,6 +11,10 @@ import { t, tHTML } from "src/lang/helpers";
 import { LocaleManagerInstance } from "src/lang/locale-manager";
 import SRPlugin from "src/main";
 import { setDebugParser } from "src/parser";
+import {
+    addPageLinkSetting,
+    createBuiltInPluginsGroup,
+} from "src/ui/obsidian-ui-components/built-in-plugins-group";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import {
     getPageIcon,
@@ -23,6 +30,8 @@ import {
  * @extends {SettingsPage}
  */
 export class MainPage extends SettingsPage {
+    private refreshBuiltInPlugins: () => void = () => {};
+
     constructor(
         pageContainerEl: HTMLElement,
         plugin: SRPlugin,
@@ -47,31 +56,14 @@ export class MainPage extends SettingsPage {
 
         this.containerEl.addClass("sr-main-page");
 
-        const mainSettingsGroup = new SettingGroup(this.containerEl).setHeading(
-            t("SETTINGS_TAB_HEADING"),
-        );
+        // "Options" (every page except the built-in plugins), then "Built-in plugins"
+        // with their switches, like Obsidian's own settings
+        const mainSettingsGroup = new SettingGroup(this.containerEl).setHeading(ad("OPTIONS"));
         SettingsPageTypesArray.forEach((pageType) => {
             if (pageType === "main-page") return;
             if (pageType === "statistics-page") return;
-            mainSettingsGroup.addSetting((setting: Setting) => {
-                setting.setName(getPageName(pageType)).addButton((button: ButtonComponent) => {
-                    button.setIcon("chevron-right").onClick(() => {
-                        this.openPage(pageType);
-                    });
-
-                    button.buttonEl.addClass("clickable-icon");
-                });
-                const iconEl = activeDocument.createElement("div");
-                iconEl.addClass("sr-settings-page-title-icon");
-                setIcon(iconEl, getPageIcon(pageType));
-
-                setting.nameEl.insertBefore(iconEl, setting.nameEl.firstChild);
-                setting.nameEl.addClass("sr-settings-page-title");
-                setting.settingEl.addClass("sr-settings-page-title-setting");
-                setting.settingEl.addEventListener("click", () => {
-                    this.openPage(pageType);
-                });
-            });
+            if (isAddonPage(pageType)) return;
+            addPageLinkSetting(mainSettingsGroup, pageType, (p) => this.openPage(p));
         });
 
         mainSettingsGroup.addSetting((setting: Setting) => {
@@ -103,6 +95,13 @@ export class MainPage extends SettingsPage {
                     });
                 });
         });
+
+        this.refreshBuiltInPlugins = createBuiltInPluginsGroup(
+            this.containerEl,
+            this.plugin,
+            (p) => this.openPage(p),
+            () => refreshDailyGoalViews(),
+        );
 
         new SettingGroup(this.containerEl)
             .setHeading(t("INFO"))
@@ -263,5 +262,10 @@ export class MainPage extends SettingsPage {
                             });
                     });
             });
+    }
+
+    /** Back from a plugin's page: it may have been switched there. */
+    public render(): void {
+        this.refreshBuiltInPlugins();
     }
 }
