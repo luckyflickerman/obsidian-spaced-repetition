@@ -3,6 +3,11 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.3
+
+- **Options window**: the puzzle "Add-ons" button in the deck list header is now an **Options** button (gear). Like Obsidian's settings, the window lists **Options** (every settings page of the plugin, opened right in the window) and **Built-in plugins** (review calendar, daily goal, read aloud, Speed Streak — each with its on/off switch and settings). The main settings page uses the same two groups.
+- **Daily goal**: a » button minimizes the block to a small "🎯 4/10" badge on the right of the deck list; tap the badge to show it again. Remembered between sessions.
+
 ## 0.9.2
 
 Design pass after the visual review: easier to read, easier to tap, fully in Polish.

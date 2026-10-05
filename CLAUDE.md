@@ -37,7 +37,7 @@ Oryginalny kod pluginu: `src/data`, `src/note`, `src/scheduling` (algorytmy SM-2
 | `src/card-authoring/`  | tworzenie fiszek: szablony, wykrywanie, podgląd w edytorze (CodeMirror 6), duplikaty, licznik, obrazki, cel dzienny |
 | `src/heatmap/`         | kalendarz aktywności                                                                                                |
 | `src/review-window/`   | okno powtórek                                                                                                       |
-| `src/addons/addons.ts` | rejestr dodatków (włącz/wyłącz w oknie „Dodatki”)                                                                   |
+| `src/addons/addons.ts` | rejestr „wbudowanych wtyczek” (przełączniki w oknie „Opcje” i na głównej stronie Ustawień)                          |
 | `src/migration/`       | jednorazowy import danych z oryginalnego pluginu (okno Tak/Nie/Później + komenda)                                   |
 
 Wzorzec każdego modułu:
@@ -112,7 +112,7 @@ Przed wysłaniem taga **każdej** wersji (także poprawkowej) zrób komplet zrzu
 **Ekrany w każdym trybie** (numer w nazwie pliku = kolejność):
 
 1. lista talii (z celem dziennym i kalendarzem),
-2. okno Dodatków,
+2. okno Opcji (przycisk z kołem zębatym; „Opcje” + „Wbudowane wtyczki”),
 3. powtórka — pytanie (druga karta: pierwsza to „gratis” bez timera),
 4. powtórka — odpowiedź (przyciski ocen),
 5. pauza Speed Streak,

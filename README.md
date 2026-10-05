@@ -10,7 +10,7 @@ Your flashcards stay plain Markdown, and review dates stay in the same `<!--SR:�
 
 ## Add-ons
 
-Each add-on can be turned on or off in the **Add-ons** window (puzzle icon in the deck list header).
+Each add-on is a **built-in plugin** that can be turned on or off in the **Options** window (gear icon in the deck list header) or on the main settings page.
 
 - **Speed Streak** — a timer game ported from the Anki add-on: a timer for the question and the answer, a streak counter, **Time Boost** (+10 s, earned every 10 cards), records (all-time, today, "pure" streaks, top 5), a compact bar or a side panel, 4 visual styles and 10 color themes.
 - **Read aloud** — after the answer is shown, the foreign word or sentence is read with the voices installed on your device (works offline). Mark words with `<u>…</u>`, set a language per tag or deck.

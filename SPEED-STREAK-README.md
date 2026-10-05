@@ -225,19 +225,22 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 - Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
 - Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
 
-## Dodatki (przycisk z puzzlem)
+## Opcje (przycisk z kołem zębatym)
 
-W nagłówku listy talii, obok X, jest przycisk **Dodatki** (ikona puzzla). Pokazuje wszystkie dodatki do zwykłego Spaced Repetition: kalendarz powtórek, czytanie na głos i Speed Streak.
+W nagłówku listy talii, obok X, jest przycisk **Opcje** (koło zębate). Otwiera okno „Opcje Upgraded Spaced Repetition”, ułożone jak ustawienia Obsidiana:
 
-- Przełącznik przy dodatku włącza go i wyłącza.
-- Koło zębate otwiera wszystkie ustawienia dodatku, te same co w Ustawieniach → Upgraded Spaced Repetition. Strzałka w lewo wraca do listy.
+- **Opcje**: wszystkie strony ustawień pluginu (Fiszki, Tworzenie fiszek, Notatki, Harmonogram, Wygląd, Dane, Statystyki). Dotknij wiersza, żeby otworzyć stronę. Strzałka w lewo wraca do listy.
+- **Wbudowane wtyczki**: kalendarz powtórek, cel dzienny, czytanie na głos i Speed Streak. Przełącznik włącza i wyłącza wtyczkę, a koło zębate otwiera jej ustawienia.
+
+Ten sam podział jest na głównej stronie Ustawienia → Upgraded Spaced Repetition.
+
 - Wyłączony kalendarz dalej zapisuje historię w tle, więc po ponownym włączeniu nie ma w nim dziur.
 
 ## Kalendarz powtórek
 
 Pod listą talii jest kalendarz całego roku: jeden kwadrat to jeden dzień. Im więcej kart tego dnia powtórzysz, tym mocniejszy kolor.
 
-- **Kolor** (zielony, niebieski, czerwony) wybierasz w Ustawieniach → **Kalendarz powtórek** albo w oknie Dodatki (koło zębate przy kalendarzu).
+- **Kolor** (zielony, niebieski, czerwony) wybierasz w Ustawieniach → **Kalendarz powtórek** albo w oknie Opcje (koło zębate przy kalendarzu w „Wbudowanych wtyczkach”).
 - **Zwijanie**: przycisk po prawej nad kalendarzem zwija go do małego bloku pod kolumnami Due / Nowe / Seen / Total. Zostaje tylko koło w kolorze kalendarza (pokazuje, jaka część zaplanowanych na dziś kart jest już zrobiona, a w środku liczbę kart, które zostały) i bieżący miesiąc. Dotknij bloku, żeby rozwinąć kalendarz. Zwinięcie można też włączyć w Ustawieniach → Kalendarz powtórek.
 - Strzałki przełączają rok, kółko wraca do bieżącego roku. Po najechaniu na kwadrat (albo przytrzymaniu na telefonie) widać datę i liczbę kart.
 - Statystyki: karty i czas dzisiaj, średnie tempo (karty na minutę), szacowany czas na pozostałe karty, łączny czas nauki i czas z ostatniego tygodnia, średnio kart dziennie, procent dni z nauką, najdłuższa i obecna seria dni.
@@ -292,6 +295,7 @@ Na komputerze podgląd otwiera się obok ikonki, a na telefonie w okienku. Ikonk
 - Fiszki istniejące przed aktualizacją nie są liczone.
 - Dzień zaczyna się o godzinie z ustawienia „Początek dnia”, tak jak powtórki.
 - Cel dzienny ustawisz w ustawieniach (domyślnie 10).
+- Na liście talii cel ma własny blok nad kalendarzem. Przycisk **»** po jego prawej stronie zwija go do małej plakietki „🎯 4/10” przy prawej krawędzi. Dotknij plakietki, żeby rozwinąć blok. Plugin pamięta zwinięcie także po zamknięciu Obsidiana.
 
 ### Obrazki
 
