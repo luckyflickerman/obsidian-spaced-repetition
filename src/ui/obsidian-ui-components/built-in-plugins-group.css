@@ -1,3 +1,10 @@
+/* Rows that open a settings page: icon and name side by side, in any container */
+.sr-page-link .setting-item-name {
+    display: flex;
+    align-items: center;
+    gap: var(--size-4-2);
+}
+
 /* Built-in plugins (Options window and the main Settings page) */
 
 .sr-plugin-item .setting-item-name {

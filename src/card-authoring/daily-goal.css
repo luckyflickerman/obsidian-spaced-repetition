@@ -111,6 +111,11 @@
     min-height: 44px;
 }
 
+/* Phone: the badge does not touch the screen edge */
+.is-phone .sr-goal.is-minimized {
+    padding-inline-end: var(--size-4-2);
+}
+
 .sr-goal-note {
     margin-top: var(--size-4-1);
     font-size: var(--font-smallest);

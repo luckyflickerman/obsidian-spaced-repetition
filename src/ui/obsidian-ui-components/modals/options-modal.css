@@ -4,6 +4,14 @@
     width: min(640px, 100%);
 }
 
+/* Phone: the long title wraps instead of hiding under the close button */
+.is-phone .sr-options-modal .modal-title {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    padding-inline: 48px;
+}
+
 /* A settings page inside the window scrolls in a fixed-height box */
 .sr-options-modal.is-page .modal-content {
     height: min(70vh, 640px);

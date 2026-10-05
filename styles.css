@@ -302,6 +302,9 @@ button.sr-ca-notice-btn {
 .is-mobile .sr-goal-badge {
   min-height: 44px;
 }
+.is-phone .sr-goal.is-minimized {
+  padding-inline-end: var(--size-4-2);
+}
 .sr-goal-note {
   margin-top: var(--size-4-1);
   font-size: var(--font-smallest);
@@ -2456,6 +2459,12 @@ body:not(.is-mobile)
 .sr-options-modal {
   width: min(640px, 100%);
 }
+.is-phone .sr-options-modal .modal-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  padding-inline: 48px;
+}
 .sr-options-modal.is-page .modal-content {
   height: min(70vh, 640px);
   overflow: hidden;
@@ -2468,6 +2477,11 @@ body:not(.is-mobile)
 }
 
 /* src/ui/obsidian-ui-components/built-in-plugins-group.css */
+.sr-page-link .setting-item-name {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+}
 .sr-plugin-item .setting-item-name {
   display: flex;
   align-items: center;

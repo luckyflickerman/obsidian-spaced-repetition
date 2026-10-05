@@ -64,7 +64,7 @@ export class DailyGoalView {
                 });
                 setIcon(badge.createSpan({ cls: "sr-goal-badge-icon" }), "target");
                 badge.createSpan({ cls: "sr-goal-value", text: `${goal.done}/${goal.goal}` });
-                badge.addEventListener("click", () => this.setMinimized(false));
+                badge.addEventListener("click", (e) => this.setMinimized(false, e));
                 return;
             }
 
@@ -81,7 +81,7 @@ export class DailyGoalView {
                 attr: { "aria-label": ca("GOAL_MINIMIZE"), "aria-expanded": "true" },
             });
             setIcon(minimize, "chevrons-right");
-            minimize.addEventListener("click", () => this.setMinimized(true));
+            minimize.addEventListener("click", (e) => this.setMinimized(true, e));
 
             const bar = this.rootEl.createDiv({ cls: "sr-goal-bar" });
             bar.createDiv({ cls: "sr-goal-fill" }).setCssProps({
@@ -98,17 +98,19 @@ export class DailyGoalView {
     }
 
     /** Remembered in the settings, so every open deck list shows the same. */
-    private setMinimized(minimized: boolean) {
+    private setMinimized(minimized: boolean, e: MouseEvent) {
         const settings = this.plugin.dataManager.data.settings;
         settings.cardAuthoring = {
             ...normalizeCardAuthoringSettings(settings.cardAuthoring),
             goalMinimized: minimized,
         };
         refreshDailyGoalViews();
-        // focus stays on the same place after the redraw (keyboard / screen reader)
-        this.rootEl
-            .querySelector<HTMLElement>(minimized ? ".sr-goal-badge" : ".sr-goal-minimize")
-            ?.focus();
+        // keyboard (Enter / Space: no pointer, detail 0): focus stays on the same place
+        if (e.detail === 0) {
+            this.rootEl
+                .querySelector<HTMLElement>(minimized ? ".sr-goal-badge" : ".sr-goal-minimize")
+                ?.focus();
+        }
         void this.plugin.dataManager.settingsManager.save();
     }
 }

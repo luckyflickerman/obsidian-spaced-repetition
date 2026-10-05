@@ -40,7 +40,12 @@ export function addPageLinkSetting(
         setIcon(iconEl, getPageIcon(pageType));
         setting.nameEl.prepend(iconEl);
         setting.nameEl.addClass("sr-settings-page-title");
-        setting.settingEl.addClass("sr-settings-page-title-setting");
+        // mod-navigable: Obsidian keeps such rows on one line also on phones
+        setting.settingEl.addClasses([
+            "sr-settings-page-title-setting",
+            "sr-page-link",
+            "mod-navigable",
+        ]);
         setting.settingEl.addEventListener("click", () => openPage(pageType));
     });
 }
@@ -67,7 +72,8 @@ export function createBuiltInPluginsGroup(
     const toggles: [AddonInfo, ToggleComponent][] = [];
     for (const addon of ADDONS) {
         group.addSetting((setting: Setting) => {
-            setting.settingEl.addClass("sr-plugin-item");
+            // mod-toggle: Obsidian keeps the switch next to the name also on phones
+            setting.settingEl.addClasses(["sr-plugin-item", "mod-toggle"]);
             const icon = createDiv({ cls: "sr-plugin-icon" });
             setIcon(icon, addon.icon);
             setting.nameEl.prepend(icon);
