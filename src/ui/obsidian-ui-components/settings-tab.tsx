@@ -1,6 +1,7 @@
 import { App, PluginSettingTab } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
+import { APP_ICON } from "src/icons/app-icon";
 import type SRPlugin from "src/main";
 import {
     SettingsPageManager,
@@ -27,7 +28,7 @@ export class SRSettingTab extends PluginSettingTab {
         this.plugin = plugin;
         this.uiManager = uiManager;
         this.settingsManager = settingsManager;
-        this.icon = "SpacedRepIcon";
+        this.icon = APP_ICON;
         this.containerEl.addClass("sr-settings-tab");
     }
 

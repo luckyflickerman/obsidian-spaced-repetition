@@ -4,6 +4,7 @@ import { ItemView, Menu, setIcon, TFile, WorkspaceLeaf } from "obsidian";
 import { TICKS_PER_DAY } from "src/data/constants";
 import { DataStore } from "src/data/data-store/base/data-store";
 import { SRSettings } from "src/data/settings";
+import { APP_ICON } from "src/icons/app-icon";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { NextNoteReviewHandler } from "src/note/next-note-review-handler";
@@ -13,7 +14,8 @@ import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { ConfirmationModal } from "src/ui/obsidian-ui-components/modals/confirmation-modal";
 import { formatDateWithMoment } from "src/utils/dates";
 
-export const REVIEW_QUEUE_VIEW_TYPE = "review-queue-list-view";
+// Global view id - usr- prefix so it does not clash with the original plugin
+export const REVIEW_QUEUE_VIEW_TYPE = "usr-review-queue-list-view";
 
 export class ReviewQueueListView extends ItemView {
     private get noteReviewQueue(): NoteReviewQueue {
@@ -52,7 +54,7 @@ export class ReviewQueueListView extends ItemView {
     }
 
     public getIcon(): string {
-        return "SpacedRepIcon";
+        return APP_ICON;
     }
 
     protected onOpen(): Promise<void> {
@@ -329,7 +331,7 @@ export class ReviewQueueListView extends ItemView {
                         difficulty: this.plugin.dataManager.data.settings.flashcardEasyText,
                     }),
                 )
-                    .setIcon("SpacedRepIcon")
+                    .setIcon(APP_ICON)
                     .onClick(() => {
                         void this.plugin.dataManager.saveNoteReviewResponse(
                             file,
@@ -344,7 +346,7 @@ export class ReviewQueueListView extends ItemView {
                         difficulty: this.plugin.dataManager.data.settings.flashcardGoodText,
                     }),
                 )
-                    .setIcon("SpacedRepIcon")
+                    .setIcon(APP_ICON)
                     .onClick(() => {
                         void this.plugin.dataManager.saveNoteReviewResponse(
                             file,
@@ -359,7 +361,7 @@ export class ReviewQueueListView extends ItemView {
                         difficulty: this.plugin.dataManager.data.settings.flashcardHardText,
                     }),
                 )
-                    .setIcon("SpacedRepIcon")
+                    .setIcon(APP_ICON)
                     .onClick(() => {
                         void this.plugin.dataManager.saveNoteReviewResponse(
                             file,

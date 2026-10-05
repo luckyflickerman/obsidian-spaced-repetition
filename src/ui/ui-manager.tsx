@@ -3,7 +3,7 @@ import { Menu, MenuItem, Notice, Platform, TAbstractFile, TFile, WorkspaceLeaf }
 
 import { DataStore } from "src/data/data-store/base/data-store";
 import { SettingsManager } from "src/data/settings-manager";
-import { appIcon } from "src/icons/app-icon";
+import { APP_ICON, appIcon } from "src/icons/app-icon";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { RepItemState, ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
@@ -72,7 +72,7 @@ export class UIManager {
         this.statusBarManager = new StatusBarManager(this.plugin, this.settingsManager);
 
         this.ribbonIcon = this.plugin.addRibbonIcon(
-            "SpacedRepIcon",
+            APP_ICON,
             t("REVIEW_CARDS"),
             async () => {
                 if (this.plugin.isDataManagerLoaded()) {
@@ -463,7 +463,7 @@ export class UIManager {
                         difficulty: settings.flashcardEasyText,
                     }),
                 )
-                    .setIcon("SpacedRepIcon")
+                    .setIcon(APP_ICON)
                     .onClick(() => {
                         void this.plugin.dataManager.saveNoteReviewResponse(
                             file,
@@ -478,7 +478,7 @@ export class UIManager {
                         difficulty: settings.flashcardGoodText,
                     }),
                 )
-                    .setIcon("SpacedRepIcon")
+                    .setIcon(APP_ICON)
                     .onClick(() => {
                         void this.plugin.dataManager.saveNoteReviewResponse(
                             file,
@@ -493,7 +493,7 @@ export class UIManager {
                         difficulty: settings.flashcardHardText,
                     }),
                 )
-                    .setIcon("SpacedRepIcon")
+                    .setIcon(APP_ICON)
                     .onClick(() => {
                         void this.plugin.dataManager.saveNoteReviewResponse(
                             file,

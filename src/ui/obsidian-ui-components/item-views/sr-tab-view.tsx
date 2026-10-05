@@ -3,6 +3,7 @@ import { ItemView, Platform, WorkspaceLeaf } from "obsidian";
 
 import { SR_TAB_VIEW } from "src/data/constants";
 import { SRSettings } from "src/data/settings";
+import { APP_ICON } from "src/icons/app-icon";
 import SRPlugin from "src/main";
 import ContentManager from "src/ui/obsidian-ui-components/content-container/content-manager";
 import { ReviewQueueLoader } from "src/ui/review-queue-loader";
@@ -93,7 +94,7 @@ export class SRTabView extends ItemView {
      * @returns {string} The tab icon identifier.
      */
     getIcon() {
-        return "SpacedRepIcon";
+        return APP_ICON;
     }
 
     /**

@@ -1,5 +1,6 @@
 import { ButtonComponent, setIcon, Setting, SettingGroup } from "obsidian";
 
+import { PLUGIN_REPO_URL } from "src/data/constants";
 import { DataManager } from "src/data/data-manager";
 import { DebugLoggerInstance } from "src/data/debug-logger";
 import { SettingsManager } from "src/data/settings-manager";
@@ -165,8 +166,8 @@ export class MainPage extends SettingsPage {
             .setHeading(t("HELP") + " & " + t("GROUP_CONTRIBUTING"))
             .addSetting((setting: Setting) => {
                 const elements: (HTMLElement | Text)[] = tHTML("GITHUB_DISCUSSIONS", {
-                    discussionsUrl:
-                        "https://github.com/st3v3nmw/obsidian-spaced-repetition/discussions/",
+                    // Discussions may be disabled in the fork, so questions go to issues too
+                    discussionsUrl: `${PLUGIN_REPO_URL}/issues/`,
                 });
 
                 setting.infoEl.empty();
@@ -177,7 +178,7 @@ export class MainPage extends SettingsPage {
             })
             .addSetting((setting: Setting) => {
                 const elements: (HTMLElement | Text)[] = tHTML("GITHUB_ISSUES", {
-                    issuesUrl: "https://github.com/st3v3nmw/obsidian-spaced-repetition/issues/",
+                    issuesUrl: `${PLUGIN_REPO_URL}/issues/`,
                 });
 
                 setting.infoEl.empty();
@@ -188,7 +189,7 @@ export class MainPage extends SettingsPage {
             })
             .addSetting((setting: Setting) => {
                 const elements: (HTMLElement | Text)[] = tHTML("GITHUB_SOURCE_CODE", {
-                    githubProjectUrl: "https://github.com/st3v3nmw/obsidian-spaced-repetition",
+                    githubProjectUrl: PLUGIN_REPO_URL,
                 });
 
                 setting.infoEl.empty();

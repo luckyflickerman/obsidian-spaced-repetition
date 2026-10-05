@@ -8,6 +8,7 @@
 
 import { ca } from "src/card-authoring/card-authoring-i18n";
 import { hm } from "src/heatmap/heatmap-i18n";
+import { APP_ICON } from "src/icons/app-icon";
 import { t } from "src/lang/helpers";
 import { ss } from "src/speed-streak/speed-streak-i18n";
 import { tt } from "src/tts/tts-i18n";
@@ -97,7 +98,7 @@ export function getPageIcon(pageType: SettingsPageType): string {
         case "main-page":
             return "Settings";
         case "flashcards-page":
-            return "SpacedRepIcon";
+            return APP_ICON;
         case "speed-streak-page":
             return "zap";
         case "tts-page":

@@ -1,6 +1,8 @@
 import { request } from "obsidian";
 
+import { PLUGIN_REPO } from "src/data/constants";
 import { SettingsManager } from "src/data/settings-manager";
+import { APP_ICON } from "src/icons/app-icon";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
@@ -112,7 +114,7 @@ export default class StatusBarManager {
             switch (statusBarItemType) {
                 case "card-review":
                     statusBarItem = new CounterStatusBarItem(this.plugin, statusBarItemType, {
-                        icon: "SpacedRepIcon",
+                        icon: APP_ICON,
                         show: false,
                         count: 0,
                         hideIcon: false,
@@ -195,7 +197,7 @@ export default class StatusBarManager {
     private async getNewestVersion(): Promise<string> {
         try {
             const response: string = await request({
-                url: "https://api.github.com/repos/st3v3nmw/obsidian-spaced-repetition/releases/latest",
+                url: `https://api.github.com/repos/${PLUGIN_REPO}/releases/latest`,
             });
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             return (await JSON.parse(response)).tag_name as string;

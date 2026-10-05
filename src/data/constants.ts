@@ -30,7 +30,14 @@ export const TICKS_PER_DAY = 24 * 3600 * 1000;
 export const SR_HTML_COMMENT_BEGIN = "<!--SR:";
 export const SR_HTML_COMMENT_END = "-->";
 
-export const SR_TAB_VIEW = "spaced-repetition-tab-view";
+// This fork's GitHub repository (releases, issues, source code)
+export const PLUGIN_REPO = "luckyflickerman/obsidian-spaced-repetition";
+export const PLUGIN_REPO_URL = `https://github.com/${PLUGIN_REPO}`;
+// Id of the original plugin (for the one-time data import)
+export const ORIGINAL_PLUGIN_ID = "obsidian-spaced-repetition";
+
+// View ids are global in Obsidian - the usr- prefix keeps them apart from the original plugin
+export const SR_TAB_VIEW = "usr-spaced-repetition-tab-view";
 
 // Disables the error hiding workaround (see src/ui/sr-tab-view.tsx)
 // Enables emulated platform detection via the EmulatedPlatform() function
