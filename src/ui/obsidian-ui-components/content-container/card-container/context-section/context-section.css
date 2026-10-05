@@ -1,8 +1,20 @@
+/* The note > heading trail above the card: small but readable (muted text, not faint italic),
+   one line with an ellipsis; tap it to see the whole trail. Fixed size, so the card text size
+   setting does not make it bigger. */
 .sr-context {
-    font-style: italic;
-    color: var(--text-faint);
-    word-break: break-word;
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     padding-bottom: var(--size-4-2);
+    cursor: pointer;
+}
+
+.sr-context.is-expanded {
+    white-space: normal;
+    word-break: break-word;
 }
 
 @media only screen and (orientation: landscape) {

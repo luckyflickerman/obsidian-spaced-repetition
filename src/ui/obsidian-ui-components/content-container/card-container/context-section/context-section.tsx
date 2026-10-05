@@ -9,6 +9,13 @@ export default class ContextSectionComponent {
     constructor(parentEl: HTMLDivElement) {
         this.contextSection = parentEl.createDiv();
         this.contextSection.addClass("sr-context");
+        // One line with "…"; a tap shows the whole trail (works without hover on touch screens)
+        this.contextSection.addEventListener("click", () => {
+            this.contextSection.toggleClass(
+                "is-expanded",
+                !this.contextSection.hasClass("is-expanded"),
+            );
+        });
     }
 
     public updateCardContext(
@@ -26,9 +33,9 @@ export default class ContextSectionComponent {
             this.contextSection.removeClass("sr-is-hidden");
         }
 
-        this.contextSection.setText(
-            ` ${this._formatQuestionContextText(currentQuestion.questionContext, currentNote)}`,
-        );
+        const text = this._formatQuestionContextText(currentQuestion.questionContext, currentNote);
+        this.contextSection.setText(text);
+        this.contextSection.setAttr("title", text);
     }
 
     private _formatQuestionContextText(questionContext: string[], currentNote: Note): string {

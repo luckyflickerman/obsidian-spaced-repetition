@@ -13,13 +13,45 @@ export interface ReviewWindowSettings {
      */
     left: number | null;
     top: number | null;
+    /** How big the card text is in the review */
+    cardTextSize: CardTextSize;
+    /** Short cards (a word and its translation) are centered in the window */
+    centerShortCards: boolean;
 }
+
+export const CARD_TEXT_SIZES = ["normal", "large", "xlarge"] as const;
+export type CardTextSize = (typeof CARD_TEXT_SIZES)[number];
 
 export const DEFAULT_REVIEW_WINDOW_SETTINGS: ReviewWindowSettings = {
     fullscreen: false,
     left: null,
     top: null,
+    cardTextSize: "large",
+    centerShortCards: true,
 };
+
+/** A card with at most this many characters (front + back) counts as short. */
+export const SHORT_CARD_MAX_CHARS = 80;
+
+export function isShortCard(textLength: number): boolean {
+    return textLength <= SHORT_CARD_MAX_CHARS;
+}
+
+/**
+ * Font-size multiplier for the card text. Short cards (single words) get the full size,
+ * long ones (sentences, lists, images) only a little, so they still fit on a phone.
+ */
+export function cardTextScale(size: CardTextSize, textLength: number): number {
+    const short = isShortCard(textLength);
+    switch (size) {
+        case "large":
+            return short ? 1.6 : 1.1;
+        case "xlarge":
+            return short ? 2.1 : 1.2;
+        default:
+            return 1;
+    }
+}
 
 export function normalizeReviewWindowSettings(
     stored: Partial<ReviewWindowSettings> | null | undefined,
@@ -34,6 +66,13 @@ export function normalizeReviewWindowSettings(
         // both or neither
         left: left !== null && top !== null ? left : null,
         top: left !== null && top !== null ? top : null,
+        cardTextSize: (CARD_TEXT_SIZES as readonly unknown[]).includes(s.cardTextSize)
+            ? (s.cardTextSize as CardTextSize)
+            : DEFAULT_REVIEW_WINDOW_SETTINGS.cardTextSize,
+        centerShortCards:
+            typeof s.centerShortCards === "boolean"
+                ? s.centerShortCards
+                : DEFAULT_REVIEW_WINDOW_SETTINGS.centerShortCards,
     };
 }
 

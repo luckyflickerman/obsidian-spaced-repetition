@@ -8,7 +8,13 @@ import { SRSettings } from "src/data/settings";
 import { t } from "src/lang/helpers";
 import type SRPlugin from "src/main";
 import { displayRatingLabel } from "src/review-window/rating-labels";
+import {
+    cardTextScale,
+    isShortCard,
+    normalizeReviewWindowSettings,
+} from "src/review-window/review-window";
 import type { ReviewWindowControls } from "src/review-window/review-window-controller";
+import { rw } from "src/review-window/review-window-i18n";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
@@ -293,9 +299,24 @@ export class CardContainer {
         }
     }
 
+    /**
+     * Card text size and centering (Settings → Appearance). Computed from the whole card
+     * (front + back), so the question and the answer keep the same size.
+     */
+    private applyCardLayout(sessionData: SessionData, settings: SRSettings) {
+        const rw = normalizeReviewWindowSettings(settings.reviewWindow);
+        const card = sessionData.cardData.currentCard;
+        const length = `${card.front}\n${card.back}`.replace(/<!--[\s\S]*?-->/g, "").trim().length;
+        this.content.setCssProps({
+            "--sr-card-scale": String(cardTextScale(rw.cardTextSize, length)),
+        });
+        this.content.toggleClass("sr-card-centered", rw.centerShortCards && isShortCard(length));
+    }
+
     private async drawCardFrontContent(sessionData: SessionData, settings: SRSettings) {
         // Update card content
         this.content.empty();
+        this.applyCardLayout(sessionData, settings);
 
         // Create context section
         this.drawCardContext(sessionData, settings);
@@ -322,6 +343,8 @@ export class CardContainer {
         this.toolbar.setResetButtonDisabled(true);
         this.cardState = CardState.Front;
         this.content.empty();
+        this.content.removeClass("sr-card-centered");
+        this.content.setCssProps({ "--sr-card-scale": "1" });
         this.response.hideAllButtons();
         this.pendingClock = this.content.createDiv({
             cls: "sr-centered",
@@ -340,9 +363,7 @@ export class CardContainer {
 
             const formatted = `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
-            this.pendingClock?.setText(
-                `Waiting for the next FSRS review step. Next card due in ${formatted} (HH:mm:ss).`,
-            );
+            this.pendingClock?.setText(rw("PENDING_NEXT_STEP", { time: formatted }));
             this.pendingResumeTimeout = window.setTimeout(() => {
                 updatePendingClock();
             }, 1000);
@@ -450,6 +471,7 @@ export class CardContainer {
             this.content.appendChild(hr);
         } else {
             this.content.empty();
+            this.applyCardLayout(sessionData, settings);
             this.drawCardContext(sessionData, settings);
         }
 

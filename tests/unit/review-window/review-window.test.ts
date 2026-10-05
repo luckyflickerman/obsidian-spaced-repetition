@@ -1,12 +1,15 @@
 import {
+    cardTextScale,
     clampPosition,
     DEFAULT_REVIEW_WINDOW_SETTINGS,
     fromFractions,
     isDrag,
+    isShortCard,
     MIN_VISIBLE_HEIGHT,
     MIN_VISIBLE_WIDTH,
     normalizeReviewWindowSettings,
     ReviewWindowSettings,
+    SHORT_CARD_MAX_CHARS,
     toFractions,
 } from "src/review-window/review-window";
 
@@ -20,6 +23,8 @@ describe("normalizeReviewWindowSettings", () => {
             fullscreen: false,
             left: null,
             top: null,
+            cardTextSize: "large",
+            centerShortCards: true,
         });
     });
 
@@ -28,7 +33,21 @@ describe("normalizeReviewWindowSettings", () => {
             fullscreen: true,
             left: 0.25,
             top: 1,
+            cardTextSize: "large",
+            centerShortCards: true,
         });
+    });
+
+    test("card text size and centering: kept when valid, defaults otherwise", () => {
+        expect(
+            normalizeReviewWindowSettings({ cardTextSize: "xlarge", centerShortCards: false }),
+        ).toMatchObject({ cardTextSize: "xlarge", centerShortCards: false });
+        expect(
+            normalizeReviewWindowSettings({
+                cardTextSize: "huge" as never,
+                centerShortCards: "no" as never,
+            }),
+        ).toMatchObject({ cardTextSize: "large", centerShortCards: true });
     });
 
     test("position needs both coordinates", () => {
@@ -41,7 +60,23 @@ describe("normalizeReviewWindowSettings", () => {
                 left: Number.NaN,
                 top: 0.1,
             }),
-        ).toEqual({ fullscreen: false, left: null, top: null });
+        ).toMatchObject({ fullscreen: false, left: null, top: null });
+    });
+});
+
+describe("cardTextScale", () => {
+    test("short cards get the full size, long ones only a little", () => {
+        expect(cardTextScale("normal", 10)).toBe(1);
+        expect(cardTextScale("normal", 500)).toBe(1);
+        expect(cardTextScale("large", 20)).toBe(1.6);
+        expect(cardTextScale("large", 300)).toBe(1.1);
+        expect(cardTextScale("xlarge", 20)).toBe(2.1);
+        expect(cardTextScale("xlarge", 300)).toBe(1.2);
+    });
+
+    test("the border between short and long", () => {
+        expect(isShortCard(SHORT_CARD_MAX_CHARS)).toBe(true);
+        expect(isShortCard(SHORT_CARD_MAX_CHARS + 1)).toBe(false);
     });
 });
 

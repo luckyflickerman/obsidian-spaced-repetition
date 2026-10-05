@@ -11,7 +11,8 @@
         display: flex;
 
         & .sr-content {
-            font-size: var(--font-text-size);
+            /* --sr-card-scale: Settings → Appearance → Card text size (set per card) */
+            font-size: calc(var(--font-text-size) * var(--sr-card-scale, 1));
             overflow-x: hidden;
             overflow-y: auto;
             user-select: text;
@@ -35,6 +36,30 @@
     & .sr-content .cloze-input {
         height: 1.4rem;
     }
+}
+
+/* Short cards (a word and its translation): centered in the window.
+   Two growing spacers around the card content; the trail (.sr-context) is moved before them,
+   so it stays at the top. Long cards keep the normal top-left layout. */
+.sr-card-container .sr-scroll-wrapper .sr-content.sr-card-centered {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.sr-card-container .sr-content.sr-card-centered::before,
+.sr-card-container .sr-content.sr-card-centered::after {
+    content: "";
+    flex: 1 1 0;
+}
+
+.sr-card-container .sr-content.sr-card-centered > * {
+    flex-shrink: 0;
+}
+
+.sr-card-container .sr-content.sr-card-centered > .sr-context {
+    order: -1;
+    text-align: start;
 }
 
 @media only screen and (orientation: landscape) {

@@ -5,6 +5,8 @@ import { DEFAULT_SETTINGS } from "src/data/settings";
 import { SettingsManager } from "src/data/settings-manager";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
+import { CardTextSize, normalizeReviewWindowSettings } from "src/review-window/review-window";
+import { rw } from "src/review-window/review-window-i18n";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
 import { UIManager } from "src/ui/ui-manager";
@@ -37,6 +39,46 @@ export class UIPreferencesPage extends SettingsPage {
         );
 
         this.uiManager = uiManager;
+
+        // Upgraded Spaced Repetition: size and centering of the card text in the review
+        const reviewWindow = () => {
+            const s = this.settingsManager.settings;
+            s.reviewWindow = normalizeReviewWindowSettings(s.reviewWindow);
+            return s.reviewWindow;
+        };
+        new SettingGroup(this.containerEl)
+            .setHeading(rw("G_CARD"))
+            .addSetting((setting: Setting) => {
+                setting
+                    .setName(rw("CARD_TEXT_SIZE"))
+                    .setDesc(rw("CARD_TEXT_SIZE_DESC"))
+                    .addDropdown((dropdown) =>
+                        dropdown
+                            .addOptions({
+                                normal: rw("SIZE_NORMAL"),
+                                large: rw("SIZE_LARGE"),
+                                xlarge: rw("SIZE_XLARGE"),
+                            })
+                            .setValue(reviewWindow().cardTextSize)
+                            .onChange(async (value) => {
+                                reviewWindow().cardTextSize = value as CardTextSize;
+                                await this.settingsManager.save();
+                            }),
+                    );
+            })
+            .addSetting((setting: Setting) => {
+                setting
+                    .setName(rw("CENTER_SHORT"))
+                    .setDesc(rw("CENTER_SHORT_DESC"))
+                    .addToggle((toggle) =>
+                        toggle
+                            .setValue(reviewWindow().centerShortCards)
+                            .onChange(async (value) => {
+                                reviewWindow().centerShortCards = value;
+                                await this.settingsManager.save();
+                            }),
+                    );
+            });
 
         new SettingGroup(this.containerEl)
             .setHeading(t("OBSIDIAN_INTEGRATION"))
