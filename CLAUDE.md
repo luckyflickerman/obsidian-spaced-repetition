@@ -93,7 +93,7 @@ Przed wysłaniem taga **każdej** wersji (także poprawkowej) zrób komplet zrzu
 - Tylko okno, którego tytuł zawiera „- dev-vault - Obsidian” — skrypt przerywa, jeśli go nie ma, i dodatkowo sprawdza `app.vault.getName()`.
 - Jeśli Obsidian działa bez portu debugowania (np. z vaultem użytkowniczki „cała wiedza”), **nie zamykaj go** — poproś ją o zamknięcie. Po uruchomieniu z portem otwórz `dev-vault` przez `obsidian://open?path=…`, jej vaultu nie dotykaj.
 - Oryginalny plugin `obsidian-spaced-repetition` na czas zrzutów wyłączony przez `disablePluginAndSave` (te same nazwy klas CSS — po przeładowaniu w trybie telefonu inaczej wraca i miesza style), na koniec `enablePluginAndSave`.
-- Powtórki oceniają fiszki testowe: po zrzutach `git checkout -- dev-vault/Fiszki`.
+- Powtórki oceniają fiszki testowe: skrypt sam przywraca pliki `dev-vault/Fiszki/*.md` po zrzutach (gdyby przerwał — `git checkout -- dev-vault/Fiszki`).
 
 **Tryby (7):**
 
