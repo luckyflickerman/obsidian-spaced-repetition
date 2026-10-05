@@ -133,11 +133,26 @@ body.theme-dark {
 .is-mobile .sr-card-container .sr-button.clickable-icon,
 .is-mobile .sr-hm-nav-btn.clickable-icon,
 .is-mobile .sr-addons-item .extra-setting-button {
+    /* only the size: "display" stays as it is, so buttons hidden on purpose stay hidden */
     min-width: 44px;
     min-height: 44px;
-    display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Phone: the deck list header fits the screen (the review mode menu shrinks first) */
+.is-phone .sr-deck-list-header {
+    gap: var(--size-4-1);
+}
+
+.is-phone .sr-deck-list-header .dropdown {
+    min-width: 0;
+    flex-shrink: 1;
+    text-overflow: ellipsis;
+}
+
+.is-phone .sr-deck-list-header .sr-title {
+    flex-shrink: 0;
 }
 
 .sr-hide-by-scaling {

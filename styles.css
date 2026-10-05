@@ -795,7 +795,7 @@ button.sr-ss-pause-btn {
   z-index: 5;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--size-4-1);
   background: color-mix(in srgb, var(--background-primary) 82%, transparent);
   backdrop-filter: blur(6px);
@@ -803,6 +803,12 @@ button.sr-ss-pause-btn {
 }
 .sr-ss-paused-overlay.is-visible {
   display: flex;
+}
+.sr-ss-paused-overlay > :first-child {
+  margin-top: auto;
+}
+.sr-ss-paused-overlay > :last-child {
+  margin-bottom: auto;
 }
 .sr-ss-paused-overlay {
   padding: max(var(--size-4-4), env(safe-area-inset-top))
@@ -1460,9 +1466,19 @@ body.theme-dark {
 .is-mobile .sr-addons-item .extra-setting-button {
   min-width: 44px;
   min-height: 44px;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+.is-phone .sr-deck-list-header {
+  gap: var(--size-4-1);
+}
+.is-phone .sr-deck-list-header .dropdown {
+  min-width: 0;
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+}
+.is-phone .sr-deck-list-header .sr-title {
+  flex-shrink: 0;
 }
 .sr-hide-by-scaling {
   scale: 0;
@@ -1917,7 +1933,8 @@ button.sr-hm-mini-box:hover {
 }
 
 /* src/ui/obsidian-ui-components/content-container/card-container/context-section/context-section.css */
-.sr-context {
+.sr-content .sr-context {
+  font-style: normal;
   color: var(--text-muted);
   font-size: var(--font-ui-small);
   line-height: 1.4;
@@ -1927,7 +1944,7 @@ button.sr-hm-mini-box:hover {
   padding-bottom: var(--size-4-2);
   cursor: pointer;
 }
-.sr-context.is-expanded {
+.sr-content .sr-context.is-expanded {
   white-space: normal;
   word-break: break-word;
 }
@@ -1972,6 +1989,11 @@ button.sr-hm-mini-box:hover {
 .sr-response .sr-response-button {
   font-size: var(--font-ui-medium);
   font-weight: var(--font-semibold);
+}
+.sr-response
+  .sr-response-button.sr-two-line.sr-show-large-text.sr-show-small-text
+  > span {
+  display: inline;
 }
 .sr-response .sr-response-button.sr-two-line {
   display: flex;

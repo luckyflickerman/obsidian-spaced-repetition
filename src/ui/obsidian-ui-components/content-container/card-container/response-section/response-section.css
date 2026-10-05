@@ -45,7 +45,13 @@
 }
 
 /* Rating buttons with the next interval: the name on top, the interval below it.
-   Same on every device, so the buttons are never told apart by colour alone. */
+   Same on every device, so the buttons are never told apart by colour alone.
+   (Selectors are specific on purpose: the original plugin, if still enabled, hides the name on
+   phones with `.is-phone .sr-response-button:not(…).sr-show-large-text > span.sr-large-text`.) */
+.sr-response .sr-response-button.sr-two-line.sr-show-large-text.sr-show-small-text > span {
+    display: inline;
+}
+
 .sr-response .sr-response-button.sr-two-line {
     display: flex;
     flex-direction: column;

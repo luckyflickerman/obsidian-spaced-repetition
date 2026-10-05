@@ -1,7 +1,9 @@
 /* The note > heading trail above the card: small but readable (muted text, not faint italic),
    one line with an ellipsis; tap it to see the whole trail. Fixed size, so the card text size
    setting does not make it bigger. */
-.sr-context {
+.sr-content .sr-context {
+    /* explicit, so the original plugin's italic faint style (same class) cannot win */
+    font-style: normal;
     color: var(--text-muted);
     font-size: var(--font-ui-small);
     line-height: 1.4;
@@ -12,7 +14,7 @@
     cursor: pointer;
 }
 
-.sr-context.is-expanded {
+.sr-content .sr-context.is-expanded {
     white-space: normal;
     word-break: break-word;
 }
