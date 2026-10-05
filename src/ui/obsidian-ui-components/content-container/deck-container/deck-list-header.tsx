@@ -72,15 +72,11 @@ export default class DeckListHeaderComponent {
         // If we don't have a close modal, we don't need the close button
         if (closeModal === undefined) return;
 
+        // Same style as the neighbouring buttons (on a phone: a big raised button, 44 px)
         const closeButtonClasses = [
             "sr-modal-close-button",
             isPhone ? "mod-raised" : "clickable-icon",
         ];
-
-        if (isPhone) {
-            closeButtonClasses.push("mod-raised");
-            closeButtonClasses.push("clickable-icon");
-        }
 
         new ModalCloseButtonComponent(
             this.header,

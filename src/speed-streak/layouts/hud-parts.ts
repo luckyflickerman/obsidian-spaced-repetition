@@ -6,6 +6,7 @@
 import { setIcon } from "obsidian";
 
 import type { SpeedStreakRating } from "src/speed-streak/speed-streak-engine";
+import { ss } from "src/speed-streak/speed-streak-i18n";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -81,6 +82,9 @@ export class RatingTrail {
 
     constructor(parent: HTMLElement) {
         this.root = parent.createDiv({ cls: "sr-ss-trail" });
+        // One coloured dot per rated card of the current streak
+        this.root.setAttr("title", ss("TRAIL_LABEL"));
+        this.root.setAttr("aria-label", ss("TRAIL_LABEL"));
     }
 
     render(trail: SpeedStreakRating[], visible: boolean) {

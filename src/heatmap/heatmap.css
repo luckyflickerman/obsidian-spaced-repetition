@@ -66,10 +66,11 @@
 }
 
 /* Top statistics */
+/* centered, so a wrapped "Average" block sits in the middle under the counts on a phone */
 .sr-hm-top {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: center;
     gap: var(--size-4-3);
     margin-bottom: var(--size-4-3);
 }
@@ -111,7 +112,7 @@
 .sr-hm-top-side {
     flex: 0 1 auto;
     text-align: center;
-    align-self: flex-start;
+    align-self: center;
 }
 
 .sr-hm-minutes-more {
@@ -165,6 +166,16 @@
 .sr-hm-scroller {
     overflow-x: auto;
     padding-bottom: var(--size-4-1);
+}
+
+/* Phone, current year: only the last half year, filling the width without sideways scrolling */
+.sr-hm-scroller.is-half-year {
+    overflow-x: visible;
+}
+
+.sr-hm-scroller.is-half-year .sr-hm-months,
+.sr-hm-scroller.is-half-year .sr-hm-weeks {
+    min-width: 0;
 }
 
 .sr-hm-months,

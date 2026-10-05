@@ -320,6 +320,39 @@ export function buildYearGrid(
     return { year, weeks, monthStarts };
 }
 
+/** How many weeks a phone shows of the current year (about half a year, no scrolling). */
+export const PHONE_WEEKS = 26;
+
+/**
+ * Part of the year grid to draw: on a phone, for the current year, the last `maxWeeks` weeks up to
+ * the week with today; otherwise the whole year. Returns [start, end) week indexes.
+ */
+export function visibleWeekRange(
+    grid: HeatmapGrid,
+    maxWeeks: number | null,
+): { start: number; end: number } {
+    const all = { start: 0, end: grid.weeks.length };
+    if (maxWeeks === null || maxWeeks <= 0 || grid.weeks.length <= maxWeeks) return all;
+    const todayWeek = grid.weeks.findIndex((w) => w.some((c) => c.isToday));
+    if (todayWeek < 0) return all;
+    const end = todayWeek + 1;
+    return { start: Math.max(0, end - maxWeeks), end };
+}
+
+/**
+ * Month (0–11) to label above week column `index`: the month starting in that week, or — for the
+ * first visible column — the month it belongs to, so a cut-off calendar still says where it starts.
+ */
+export function monthLabelAt(grid: HeatmapGrid, index: number, firstVisible: number): number {
+    const starting = grid.monthStarts.indexOf(index);
+    if (starting >= 0) return starting;
+    if (index !== firstVisible) return -1;
+    const day = grid.weeks[index]?.find((c) => !c.outside);
+    // Too close to the next month's label: leave this one out, so the two do not overlap
+    if (!day || grid.monthStarts[day.date.getMonth() + 1] - index < 3) return -1;
+    return day.date.getMonth();
+}
+
 /** Years that can be browsed: from the first review (or this year) to this year. */
 export function yearRange(log: ReviewLog, today: Date): { min: number; max: number } {
     const max = today.getFullYear();

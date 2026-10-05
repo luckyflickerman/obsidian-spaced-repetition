@@ -11,13 +11,16 @@ import {
     HeatmapSettings,
     levelReference,
     MAX_MS_PER_CARD,
+    monthLabelAt,
     normalizeHeatmapSettings,
     normalizeReviewLog,
     parseDayKey,
+    PHONE_WEEKS,
     polishPluralForm,
     recordReview,
     ReviewLog,
     todayProgress,
+    visibleWeekRange,
     yearRange,
 } from "src/heatmap/heatmap-data";
 
@@ -343,5 +346,42 @@ describe("minimized calendar", () => {
         expect(todayProgress(12, 0)).toEqual({ left: 0, planned: 12, fraction: 1 });
         expect(todayProgress(0, 0)).toEqual({ left: 0, planned: 0, fraction: 1 });
         expect(todayProgress(-3, -1).left).toBe(0);
+    });
+});
+
+describe("visibleWeekRange / monthLabelAt (phone: last half year)", () => {
+    const log = logOf({ "2026-10-04": [10] });
+    const today = new Date(2026, 9, 4); // Sunday 4 Oct 2026
+    const grid = buildYearGrid(log, 2026, today, true);
+    const todayWeek = grid.weeks.findIndex((w) => w.some((c) => c.isToday));
+
+    test("no limit: the whole year", () => {
+        expect(visibleWeekRange(grid, null)).toEqual({ start: 0, end: grid.weeks.length });
+    });
+
+    test("phone: the last 26 weeks ending with the week of today", () => {
+        const r = visibleWeekRange(grid, PHONE_WEEKS);
+        expect(r.end).toBe(todayWeek + 1);
+        expect(r.end - r.start).toBe(PHONE_WEEKS);
+    });
+
+    test("early in the year: from the first week", () => {
+        const g = buildYearGrid(log, 2026, new Date(2026, 1, 10), true);
+        expect(visibleWeekRange(g, PHONE_WEEKS).start).toBe(0);
+    });
+
+    test("another year (no today in it): the whole year", () => {
+        const g = buildYearGrid(log, 2025, today, true);
+        expect(visibleWeekRange(g, PHONE_WEEKS)).toEqual({ start: 0, end: g.weeks.length });
+    });
+
+    test("month labels: months that start in a week, plus the month of the first visible week", () => {
+        const r = visibleWeekRange(grid, PHONE_WEEKS);
+        expect(monthLabelAt(grid, grid.monthStarts[9], r.start)).toBe(9); // October starts here
+        const first = monthLabelAt(grid, r.start, r.start);
+        const firstDay = grid.weeks[r.start].find((c) => !c.outside)!;
+        const next = grid.monthStarts[firstDay.date.getMonth() + 1];
+        expect(first).toBe(next - r.start < 3 ? -1 : firstDay.date.getMonth());
+        expect(monthLabelAt(grid, r.start + 1, r.start)).toBe(grid.monthStarts.indexOf(r.start + 1));
     });
 });

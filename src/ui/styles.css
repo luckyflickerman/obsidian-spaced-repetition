@@ -127,6 +127,19 @@ body.theme-dark {
     display: none !important;
 }
 
+/* Touch screens (phone, iPad): every icon button of the plugin is at least 44×44 px,
+   so it is easy to hit with a finger. The desktop keeps the compact mouse sizes. */
+.is-mobile .sr-header .sr-button.clickable-icon,
+.is-mobile .sr-card-container .sr-button.clickable-icon,
+.is-mobile .sr-hm-nav-btn.clickable-icon,
+.is-mobile .sr-addons-item .extra-setting-button {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .sr-hide-by-scaling {
     scale: 0;
     user-select: none;

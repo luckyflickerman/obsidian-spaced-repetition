@@ -10,6 +10,9 @@ import {
 import {
     buildMonthGrid,
     buildYearGrid,
+    monthLabelAt,
+    PHONE_WEEKS,
+    visibleWeekRange,
     computeStats,
     estimateMinutesLeft,
     HEATMAP_COLORS,
@@ -350,13 +353,20 @@ export class HeatmapView {
         const locale = isPolish() ? "pl-PL" : "en-GB";
         const monthFormat = new Intl.DateTimeFormat(locale, { month: "short" });
 
+        // Phone: the current year shows only the last half year, without sideways scrolling
+        const isPhone = activeDocument.body.hasClass("is-phone");
+        const range = visibleWeekRange(grid, isPhone ? PHONE_WEEKS : null);
+        const cut = range.start > 0 || range.end < grid.weeks.length;
+
         const scroller = this.rootEl.createDiv({ cls: "sr-hm-scroller" });
+        scroller.toggleClass("is-half-year", cut);
         const months = scroller.createDiv({ cls: "sr-hm-months" });
         const weeksEl = scroller.createDiv({ cls: "sr-hm-weeks" });
 
         grid.weeks.forEach((week, index) => {
+            if (index < range.start || index >= range.end) return;
             const monthLabel = months.createDiv({ cls: "sr-hm-month" });
-            const month = grid.monthStarts.indexOf(index);
+            const month = monthLabelAt(grid, index, range.start);
             if (month >= 0) monthLabel.setText(monthFormat.format(new Date(this.year, month, 1)));
 
             const col = weeksEl.createDiv({ cls: "sr-hm-week" });
