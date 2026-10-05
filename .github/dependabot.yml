@@ -1,22 +1,14 @@
+# Limited on purpose: once a month, everything in one grouped pull request per ecosystem,
+# no major versions. (Python/mkdocs docs are not published from this fork.)
 version: 2
 updates:
     - package-ecosystem: "npm"
       directory: "/"
       schedule:
           interval: "monthly"
+      open-pull-requests-limit: 1
       groups:
           npm:
-              patterns:
-                  - "*"
-      ignore:
-          - dependency-name: "*"
-            update-types: ["version-update:semver-major"]
-    - package-ecosystem: "pip"
-      directory: "/"
-      schedule:
-          interval: "monthly"
-      groups:
-          pip:
               patterns:
                   - "*"
       ignore:
@@ -26,6 +18,7 @@ updates:
       directory: "/"
       schedule:
           interval: "monthly"
+      open-pull-requests-limit: 1
       groups:
           github-actions:
               patterns:

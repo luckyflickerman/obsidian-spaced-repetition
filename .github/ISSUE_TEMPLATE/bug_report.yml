@@ -82,7 +82,7 @@ body:
       attributes:
           label: Config file
           description: |
-              Drag & drop your config file here [VAULT/.obsidian/plugins/obsidian-spaced-repetition/data.json]
+              Drag & drop your config file here [VAULT/.obsidian/plugins/upgraded-spaced-repetition/data.json]
               Drag & drop your violated file containing your error here
           placeholder: |
               data.json
