@@ -1,15 +1,15 @@
-# Speed Streak dla Obsidian Spaced Repetition
+# Upgraded Spaced Repetition — dodatki
 
-Port dodatku Anki **Speed Streak** wbudowany w plugin _Spaced Repetition_ (wersja 1.15.4).
+Opis dodatków pluginu **Upgraded Spaced Repetition** (rozszerzona wersja _Spaced Repetition_ 1.15.4): Speed Streak, czytanie na głos, tworzenie fiszek, cel dzienny, kalendarz i okno powtórek.
 
 ## Instalacja
 
-1. Zamknij Obsidiana (albo wyłącz plugin Spaced Repetition).
-2. Rozpakuj `obsidian-spaced-repetition-speed-streak.zip` i skopiuj `main.js`, `styles.css`, `manifest.json` do
-   `<twój vault>/.obsidian/plugins/obsidian-spaced-repetition/` (zastąp istniejące pliki; `data.json` zostaw).
-3. Uruchom Obsidiana. Ustawienia → Spaced Repetition → **Speed Streak**.
+Plugin instaluje się przez **BRAT** — krok po kroku w [README.md](README.md#po-polsku) (komputer, iPad, telefon).
 
-> Uwaga: nie aktualizuj tego pluginu ze sklepu społeczności — aktualizacja nadpisze wersję z Speed Streak.
+- Plugin ma własny identyfikator (`upgraded-spaced-repetition`) i własny folder `.obsidian/plugins/upgraded-spaced-repetition/`, więc aktualizacja oryginalnego Spaced Repetition ze sklepu niczego nie nadpisze.
+- Przy pierwszym uruchomieniu plugin proponuje przeniesienie ustawień, rekordów Speed Streak i historii z oryginału (Tak / Nie / Później). Później: komenda „Importuj dane z oryginalnego Spaced Repetition”.
+- Po przeniesieniu **wyłącz oryginalny plugin** (Ustawienia → Wtyczki społeczności), żeby fiszki nie były liczone podwójnie.
+- Ustawienia dodatków: Ustawienia → **Upgraded Spaced Repetition**.
 
 ## Jak działa
 
@@ -127,7 +127,7 @@ farma = -/untimed      pytanie domyślnie, odpowiedź bez limitu
 ## Czytanie na głos
 
 Po odsłonięciu odpowiedzi plugin może przeczytać na głos obce słowo albo zdanie, z wymową dla języka karty.
-Używa głosów zainstalowanych w systemie, więc działa bez internetu i bez kont. Ustawienia → Spaced Repetition → **Czytanie na głos**.
+Używa głosów zainstalowanych w systemie, więc działa bez internetu i bez kont. Ustawienia → Upgraded Spaced Repetition → **Czytanie na głos**.
 
 ### Jak oznaczać słowa
 
@@ -141,11 +141,11 @@ el gato::Este es un <u>gato</u>
 - Pojedynczemu słowu możesz nadać inny język: `<u lang="en">computer</u>`.
 - Nie używaj `==…==`, bo plugin zamienia je w luki.
 - Podkreślenia są szukane w pytaniu i w odpowiedzi.
-- Gdy nic nie jest podkreślone, czytane jest **pytanie** (np. w `#ENG forestalled:: uprzedzić` lektor czyta
+- Gdy nic nie jest podkreślone, czytane jest **pytanie** (np. w `#ENG forestalled:: uprzedzić` lektor czyta „forestalled”). Można to zmienić w ustawieniach („Gdy nic nie jest podkreślone, czytaj”).
 
-Oznacz„Oznacz do czytania na głos”**:
+Najszybciej podkreślisz słowo komendą **„Podkreśl do czytania”** (zaznacz słowo i użyj komendy):
 
-- na komputerze: skrót **Ctrl+Shift+U** (na Macu Cmd+Shift+U) Oznacz„Oznacz do czytania na głos”,
+- na komputerze: skrót **Ctrl+Shift+U** (na Macu Cmd+Shift+U) albo prawy przycisk myszy → „Podkreśl do czytania”,
 - na telefonie: paleta komend albo przycisk na pasku narzędzi edytora (Ustawienia → Pasek narzędzi mobilnych → dodaj komendę).
 
 Ponowne użycie komendy na podkreślonym słowie zdejmuje podkreślenie.
@@ -212,7 +212,7 @@ Na górze `tts-provider.ts` jest instrukcja krok po kroku, jak dodać nowego dos
 W nagłówku listy talii, obok X, jest przycisk **Dodatki** (ikona puzzla). Pokazuje wszystkie dodatki do zwykłego Spaced Repetition: kalendarz powtórek, czytanie na głos i Speed Streak.
 
 - Przełącznik przy dodatku włącza go i wyłącza.
-- Koło zębate otwiera wszystkie ustawienia dodatku, te same co w Ustawieniach → Spaced Repetition. Strzałka w lewo wraca do listy.
+- Koło zębate otwiera wszystkie ustawienia dodatku, te same co w Ustawieniach → Upgraded Spaced Repetition. Strzałka w lewo wraca do listy.
 - Wyłączony kalendarz dalej zapisuje historię w tle, więc po ponownym włączeniu nie ma w nim dziur.
 
 ## Kalendarz powtórek
@@ -246,7 +246,7 @@ Dodawanie słówek z książki ma zajmować kilka sekund. Wszystko dzieje się w
 
 ### Talie
 
-Ustawienia → Spaced Repetition → **Tworzenie fiszek** → **Talie fiszek**. Każda talia to tag, plik i język czytania, np. `#ENG → Fiszki/Angielski.md → en-GB`.
+Ustawienia → Upgraded Spaced Repetition → **Tworzenie fiszek** → **Talie fiszek**. Każda talia to tag, plik i język czytania, np. `#ENG → Fiszki/Angielski.md → en-GB`.
 
 - Nowe fiszki trafiają na koniec pliku talii. Plugin tylko dopisuje: istniejące linie i ich komentarze `<!--SR:…-->` się nie zmieniają.
 - Ostatnio używana talia jest zapamiętywana. Zmienisz ją komendą „Nowa fiszka: zmień język”.

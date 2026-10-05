@@ -1,6 +1,6 @@
 # Obsidian Spaced Repetition Plugin
 
-![SR_Banner](./docs/media/en/SR_Banner.jpg)
+![SR_Banner](./media/en/SR_Banner.jpg)
 
 <img src="https://img.shields.io/github/downloads/st3v3nmw/obsidian-spaced-repetition/total" /> <img src="https://img.shields.io/github/downloads/st3v3nmw/obsidian-spaced-repetition/latest/total" /> <img src="https://img.shields.io/github/manifest-json/v/st3v3nmw/obsidian-spaced-repetition" /> <img alt="Codecov" src="https://img.shields.io/codecov/c/gh/st3v3nmw/obsidian-spaced-repetition">
 
@@ -95,7 +95,7 @@ Fight the forgetting curve by reviewing flashcards & notes using the FSRS or the
 - _Cram flashcards in this note_
   -> All decks and all cards from this note are reviewable and the algorithm is fully ignored
 
-![Deck view](./docs/media/en/deck-view.png)
+![Deck view](./media/en/deck-view.png)
 
 ##### 2. Select a deck via the list and click on the deck name
 
@@ -103,7 +103,7 @@ Fight the forgetting curve by reviewing flashcards & notes using the FSRS or the
 
 - This tells the algorithm what you know well and what you don't
 
-![Card view](./docs/media/en/card-view.png)
+![Card view](./media/en/card-view.png)
 
 <br/>
 
