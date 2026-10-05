@@ -47,3 +47,9 @@ env.sh
 # AI Tooling
 .claude/
 .sourcerer/
+
+# Dev vault (Obsidian config, installed plugins) and task briefs
+dev-vault/.obsidian/
+zadania/
+Claude outputs/
+ZADANIE-*.md
