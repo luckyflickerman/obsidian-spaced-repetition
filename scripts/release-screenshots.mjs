@@ -102,6 +102,54 @@ const shot = async (name) => {
     return true;
 };
 
+/**
+ * Obsidian 1.13 opens Settings in a separate window ("Ustawienia - dev-vault - Obsidian"), which is
+ * a separate CDP target: connect to it briefly to take the screenshot and the measurements.
+ */
+const inSettingsWindow = async (file, measureJs) => {
+    let target = null;
+    for (let i = 0; i < 20 && !target; i++) {
+        const targets = await (await fetch("http://localhost:9222/json/list")).json();
+        target = targets.find(
+            (t) =>
+                t.type === "page" && /^(Ustawienia|Settings) - dev-vault - Obsidian/.test(t.title),
+        );
+        if (!target) await sleep(250);
+    }
+    if (!target) return { ok: false };
+    const sw = new WebSocket(target.webSocketDebuggerUrl);
+    await new Promise((r) => (sw.onopen = r));
+    let n = 0;
+    const waiting = new Map();
+    sw.onmessage = (e) => {
+        const m = JSON.parse(e.data);
+        if (m.id && waiting.has(m.id)) waiting.get(m.id)(m);
+    };
+    const call = (method, params = {}) =>
+        Promise.race([
+            new Promise((res) => {
+                const i = ++n;
+                waiting.set(i, res);
+                sw.send(JSON.stringify({ id: i, method, params }));
+            }),
+            sleep(12000).then(() => null),
+        ]);
+    try {
+        await sleep(600);
+        const img = await call("Page.captureScreenshot", { format: "png" });
+        if (!img?.result?.data) return { ok: false };
+        fs.writeFileSync(path.join(OUT, file), Buffer.from(img.result.data, "base64"));
+        console.log("  ✓", file);
+        const r = await call("Runtime.evaluate", {
+            expression: `(() => { ${measureJs} })()`,
+            returnByValue: true,
+        });
+        return { ok: true, metrics: r?.result?.result?.value };
+    } finally {
+        sw.close();
+    }
+};
+
 if ((await run(`return app.vault.getName()`)) !== "dev-vault") {
     console.error("✗ The connected window is not dev-vault — stopping.");
     process.exit(2);
@@ -112,14 +160,20 @@ if ((await run(`return app.vault.getName()`)) !== "dev-vault") {
 const MEASURE = `
 const vis = (e) => { const r = e.getBoundingClientRect(); const s = getComputedStyle(e);
     return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none' && +s.opacity !== 0 && r.bottom > 0 && r.top < innerHeight; };
-const parse = (c) => { const m = c.match(/rgba?\\(([^)]+)\\)/); if (!m) return null; const p = m[1].split(/[ ,\\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+const parse = (c) => {
+    // rgb()/rgba(), and color(srgb r g b / a) with 0–1 channels (what color-mix() computes to)
+    let m = c.match(/rgba?\\(([^)]+)\\)/);
+    if (m) { const p = m[1].split(/[ ,\\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+    m = c.match(/color\\(srgb ([^)]+)\\)/);
+    if (m) { const p = m[1].split(/[ \\/]+/).filter(Boolean).map(Number); return { r: p[0] * 255, g: p[1] * 255, b: p[2] * 255, a: p.length > 3 ? p[3] : 1 }; }
+    return null; };
 const lum = ({ r, g, b }) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
 const blend = (fg, bg) => ({ r: fg.r * fg.a + bg.r * (1 - fg.a), g: fg.g * fg.a + bg.g * (1 - fg.a), b: fg.b * fg.a + bg.b * (1 - fg.a), a: 1 });
 const bgOf = (e) => { const layers = []; for (let n = e; n; n = n.parentElement) { const s = getComputedStyle(n); if (s.backgroundImage && s.backgroundImage !== 'none') return null; const c = parse(s.backgroundColor); if (c && c.a > 0) { layers.push(c); if (c.a >= 1) break; } }
     let base = { r: 255, g: 255, b: 255, a: 1 }; if (document.body.classList.contains('theme-dark')) { const c = parse(getComputedStyle(document.body).backgroundColor); if (c) base = c; }
     for (let i = layers.length - 1; i >= 0; i--) base = blend(layers[i], base); return base; };
 const ratio = (a, b) => { const l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05); };
-const roots = [...document.querySelectorAll('.modal-container, .popover, .status-bar, .cm-content')];
+const roots = [...document.querySelectorAll('.modal-container, .mod-settings, .popover, .status-bar, .cm-content')];
 const label = (e) => { const t = (e.getAttribute('aria-label') || e.innerText || e.className || '').toString().replace(/\\s+/g, ' ').trim(); return (e.className.toString().split(' ').find(c => c.startsWith('sr-') || c.startsWith('usr-')) || e.tagName.toLowerCase()) + ' «' + t.slice(0, 32) + '»'; };
 const touch = document.body.classList.contains('is-mobile');
 const small = []; const seen = new Set();
@@ -289,11 +343,17 @@ const capture = async (mode, which) => {
             );
             const file = `${mode}-7${String.fromCharCode(97 + i)}-ustawienia-${name.split(" ")[0].toLowerCase()}.png`;
             if (visible) {
+                // older Obsidian: settings as a modal in the main window
                 await shot(file);
                 await measure(`${mode} · ustawienia: ${name}`);
             } else {
-                metrics.notes.push(`${file}: settings window not visible to the screenshot tool`);
-                console.log(`  ✗ settings window not visible: ${name}`);
+                // Obsidian 1.13+: settings in their own window
+                const r = await inSettingsWindow(file, MEASURE);
+                if (r.ok) metrics.screens[`${mode} · ustawienia: ${name}`] = r.metrics;
+                else {
+                    metrics.notes.push(`${file}: settings window not found`);
+                    console.log(`  ✗ settings window not found: ${name}`);
+                }
             }
         }
         await run(`app.setting.close(); return 1`);
