@@ -3,7 +3,7 @@ import { Question } from "src/data/data-structures/card/questions/question";
 import { IQuestionPostponementList } from "src/data/data-structures/card/questions/question-postponement-list";
 import { TopicPath, TopicPathList } from "src/data/data-structures/deck/topic-path";
 import { RepItemState } from "src/scheduling/algorithms/base/repetition-item";
-import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
+import { FlashcardReviewMode, showsAllCards } from "src/scheduling/flashcard-review-sequencer";
 
 // The same card can be added to multiple decks e.g.
 //      #flashcards/language/words
@@ -502,7 +502,7 @@ export class DeckTreeFilter {
     ): Deck {
         return deckTree.copyWithRepItemFilter(
             (repItem: RepetitionItem) =>
-                (reviewMode === FlashcardReviewMode.Cram || repItem.isNew || repItem.isDue) &&
+                (showsAllCards(reviewMode) || repItem.isNew || repItem.isDue) &&
                 !questionPostponementList.includes(repItem.question),
         );
     }

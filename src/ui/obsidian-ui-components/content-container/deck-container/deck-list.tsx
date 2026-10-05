@@ -1,10 +1,22 @@
 import "src/ui/obsidian-ui-components/content-container/deck-container/deck-list.css";
+import "src/endless/endless.css";
 import { setIcon } from "obsidian";
 
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
+import { en } from "src/endless/endless-i18n";
+import { deckKey, isDeckCovered } from "src/endless/endless-settings";
 import { t } from "src/lang/helpers";
 import { DeckStats, IFlashcardReviewSequencer } from "src/scheduling/flashcard-review-sequencer";
+
+/** Endless mode: decks are ticked instead of opened (src/endless/). */
+export interface EndlessDeckSelection {
+    selected: string[];
+    /** Cards in the ticked decks */
+    cardCount: number;
+    toggle(key: string): void;
+    start(): void;
+}
 
 export default class DeckListComponent {
     private scrollWrapper: HTMLDivElement;
@@ -24,6 +36,8 @@ export default class DeckListComponent {
     private totalCardsText: HTMLDivElement;
 
     private startReviewOfDeck: (deck: Deck) => void;
+    private endless: EndlessDeckSelection | null = null;
+    private endlessBar: HTMLDivElement;
 
     public constructor(parentEl: HTMLElement, startReviewOfDeck: (deck: Deck) => void) {
         this.startReviewOfDeck = startReviewOfDeck;
@@ -99,6 +113,9 @@ export default class DeckListComponent {
         ]);
         this.totalCardsText.setText(t("TOTAL"));
 
+        // Endless: hint and start button above the decks
+        this.endlessBar = this.content.createDiv("sr-endless-bar sr-is-hidden");
+
         // Prep tree container
         this.treeContainer = this.content.createDiv("sr-tree-container");
     }
@@ -114,8 +131,15 @@ export default class DeckListComponent {
      * @param settings - The settings object.
      * @param reviewSequencer - The review sequencer object.
      */
-    redraw(reviewSequencer: IFlashcardReviewSequencer, settings: SRSettings) {
+    redraw(
+        reviewSequencer: IFlashcardReviewSequencer,
+        settings: SRSettings,
+        endless: EndlessDeckSelection | null = null,
+    ) {
+        this.endless = endless;
         this.treeContainer.empty();
+        this.treeContainer.toggleClass("is-endless", endless !== null);
+        this._drawEndlessBar();
 
         const originDeckStats = reviewSequencer.getDeckStats(
             reviewSequencer.originalDeckTree.getTopicPath(),
@@ -222,7 +246,30 @@ export default class DeckListComponent {
         const treeRowChildren: HTMLDivElement = treeRow.createDiv("tree-item-children");
         treeRowChildren.setCssProps({ display: collapsed ? "none" : "block" });
 
-        if (disableInteraction || (deckStats.dueCount === 0 && deckStats.newCount === 0)) {
+        // Endless: a tick box in front of the name; the row ticks the deck
+        const endless = this.endless;
+        const key = deck ? deckKey(deck.getTopicPath().path) : "";
+        if (endless && deck && deckStats.totalCount > 0) {
+            const covered = isDeckCovered(endless.selected, key);
+            const byParent = covered && !endless.selected.includes(key);
+            const box = createEl("input", {
+                cls: "sr-endless-check",
+                attr: {
+                    type: "checkbox",
+                    "aria-label": en("SELECT_DECK", { deck: deckName }),
+                },
+            });
+            box.checked = covered;
+            box.disabled = byParent;
+            treeRowSelf.insertBefore(box, treeRowInner);
+            treeRowSelf.toggleClass("is-endless-selected", covered);
+        }
+
+        const selectable = endless !== null && deckStats.totalCount > 0;
+        if (
+            disableInteraction ||
+            (!selectable && deckStats.dueCount === 0 && deckStats.newCount === 0)
+        ) {
             if (!disableInteraction) {
                 treeRowSelf.addClass("is-disabled");
             }
@@ -249,13 +296,40 @@ export default class DeckListComponent {
         // https://github.com/st3v3nmw/obsidian-spaced-repetition/issues/709
 
         if (!disableInteraction) {
-            treeRowSelf.addEventListener("click", () => {
+            treeRowSelf.addEventListener("click", (e) => {
+                if (this.endless) {
+                    // a deck ticked through its parent is changed on the parent
+                    const selected = this.endless.selected;
+                    if (!selectable || (isDeckCovered(selected, key) && !selected.includes(key)))
+                        return;
+                    e.preventDefault();
+                    this.endless.toggle(key);
+                    return;
+                }
                 startReviewOfDeck(deck);
             });
         }
 
         this._createStatsInRow(treeRowOuter, deckStats);
         return treeRowChildren;
+    }
+
+    private _drawEndlessBar() {
+        const bar = this.endlessBar;
+        bar.empty();
+        bar.toggleClass("sr-is-hidden", this.endless === null);
+        if (!this.endless) return;
+        const endless = this.endless;
+        bar.createDiv({ cls: "sr-endless-hint", text: en("HINT") });
+        const button = bar.createEl("button", {
+            cls: "sr-endless-start sr-bg-accent",
+            text: endless.cardCount > 0 ? en("START_N", { n: endless.cardCount }) : en("START"),
+        });
+        if (endless.cardCount === 0) {
+            button.disabled = true;
+            button.setAttr("title", en("NOTHING_SELECTED"));
+        }
+        button.addEventListener("click", () => endless.start());
     }
 
     private _createStatsInRow(parentEl: HTMLDivElement, deckStats: DeckStats) {

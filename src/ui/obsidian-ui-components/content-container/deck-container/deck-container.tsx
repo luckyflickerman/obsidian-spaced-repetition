@@ -4,7 +4,10 @@ import h from "vhtml";
 
 import { DailyGoalView } from "src/card-authoring/daily-goal-view";
 import { Deck } from "src/data/data-structures/deck/deck";
+import { TopicPath } from "src/data/data-structures/deck/topic-path";
 import { SRSettings } from "src/data/settings";
+import { cardsOfDecks } from "src/endless/endless-sequencer";
+import { normalizeEndlessSettings, toggleDeck } from "src/endless/endless-settings";
 import { getHeatmapSettings, HeatmapView } from "src/heatmap/heatmap-view";
 import type SRPlugin from "src/main";
 import type { ReviewWindowControls } from "src/review-window/review-window-controller";
@@ -24,16 +27,20 @@ export class DeckContainer {
     private heatmap: HeatmapView;
     private dailyGoal: DailyGoalView;
     private lastReviewSequencer: IFlashcardReviewSequencer | null = null;
+    private reviewMode: FlashcardReviewMode = FlashcardReviewMode.Review;
+    private startEndless: (decks: Deck[]) => void;
 
     constructor(
         parentEl: HTMLElement,
         plugin: SRPlugin,
         changeReviewMode: (reviewMode: FlashcardReviewMode) => void,
         startReviewOfDeck: (deck: Deck) => void,
+        startEndless: (decks: Deck[]) => void,
         closeModal?: () => void,
         windowControls?: ReviewWindowControls,
     ) {
         this.plugin = plugin;
+        this.startEndless = startEndless;
         // Build ui
         this.containerEl = parentEl.createDiv();
         this.containerEl.addClasses(["sr-container", "sr-deck-container", "sr-is-hidden"]);
@@ -88,9 +95,10 @@ export class DeckContainer {
         reviewMode: FlashcardReviewMode,
     ) {
         // Redraw in case the stats have changed
+        this.reviewMode = reviewMode;
         this.deckListHeader.updateReviewMode(reviewMode);
 
-        this.deckList.redraw(reviewSequencer, settings);
+        this.redrawDecks(reviewSequencer, settings);
         this.redrawHeatmap(reviewSequencer);
 
         if (this.containerEl.hasClass("sr-is-hidden")) {
@@ -108,7 +116,41 @@ export class DeckContainer {
     }
 
     redrawWithNewData(reviewSequencer: IFlashcardReviewSequencer, settings: SRSettings) {
-        this.deckList.redraw(reviewSequencer, settings);
+        this.redrawDecks(reviewSequencer, settings);
         this.redrawHeatmap(reviewSequencer);
+    }
+
+    /** The deck tree; in Endless mode with tick boxes and the start bar. */
+    private redrawDecks(reviewSequencer: IFlashcardReviewSequencer, settings: SRSettings) {
+        if (this.reviewMode !== FlashcardReviewMode.Endless) {
+            this.deckList.redraw(reviewSequencer, settings);
+            return;
+        }
+        const tree = reviewSequencer.originalDeckTree;
+        const endless = normalizeEndlessSettings(settings.endless);
+        const decks = this.selectedDecks(tree, endless.selectedDecks);
+        this.deckList.redraw(reviewSequencer, settings, {
+            selected: endless.selectedDecks,
+            cardCount: cardsOfDecks(decks).length,
+            toggle: (key) => {
+                settings.endless = {
+                    ...endless,
+                    selectedDecks: toggleDeck(endless.selectedDecks, key),
+                };
+                void this.plugin.dataManager.settingsManager.save();
+                this.redrawDecks(reviewSequencer, settings);
+            },
+            start: () => this.startEndless(decks),
+        });
+    }
+
+    /** Ticked decks that still exist (a renamed tag is simply skipped). */
+    private selectedDecks(tree: Deck, keys: string[]): Deck[] {
+        const decks: Deck[] = [];
+        for (const key of keys) {
+            const deck = tree.getDeck(new TopicPath(key === "" ? [] : key.split("/")));
+            if (deck) decks.push(deck);
+        }
+        return decks;
     }
 }

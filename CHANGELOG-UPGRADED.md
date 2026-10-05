@@ -5,8 +5,11 @@ The release workflow uses the section whose heading matches the git tag as the r
 
 ## 0.9.3
 
+- **Endless mode** (new item in the mode menu of the deck list, also a command): tick the decks you want, press **Start Endless**, and their cards repeat without end in shuffled rounds. "Again" brings a card back after 3 cards, "Hard" after 7, "Good" / "Easy" finish it for the round. **Nothing is scheduled and the notes are never changed.** Ticked decks are remembered.
+- **Speed Streak in Endless**: its own all-time record of cards in a row (kept apart from the normal review records) and "This session: N cards" in the bar.
 - **Options window**: the puzzle "Add-ons" button in the deck list header is now an **Options** button (gear). Like Obsidian's settings, the window lists **Options** (every settings page of the plugin, opened right in the window) and **Built-in plugins** (review calendar, daily goal, read aloud, Speed Streak — each with its on/off switch and settings). The main settings page uses the same two groups.
 - **Daily goal**: a » button minimizes the block to a small "🎯 4/10" badge on the right of the deck list; tap the badge to show it again. Remembered between sessions.
+- **Readability and touch fixes** (from the 0.9.2 screenshot measurements): readable "Resume" button on the pause screen, darker green numbers in the review calendar in the light theme, 44 px tap areas for the card icons and schedule icon in the editor and for words read aloud, the settings back button has a name for screen readers, clearer Polish text for the file menu review option.
 
 ## 0.9.2
 

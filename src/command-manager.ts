@@ -1,6 +1,7 @@
 import { Editor, Menu, Notice, Platform, TFile } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
+import { en } from "src/endless/endless-i18n";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
 import { ReviewWindowController } from "src/review-window/review-window-controller";
@@ -497,6 +498,15 @@ export class CommandManager {
             callback: async () => {
                 if (!this.plugin.isInitialized) return;
                 await this.uiManager.openDeckContainer(FlashcardReviewMode.Cram);
+            },
+        });
+
+        this.plugin.addCommand({
+            id: "srs-endless-flashcards",
+            name: en("COMMAND"),
+            callback: async () => {
+                if (!this.plugin.isInitialized) return;
+                await this.uiManager.openDeckContainer(FlashcardReviewMode.Endless);
             },
         });
 

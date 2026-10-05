@@ -17,6 +17,7 @@ import {
     FlashcardReviewMode,
     FlashcardReviewSequencer,
     IFlashcardReviewSequencer,
+    showsAllCards,
 } from "src/scheduling/flashcard-review-sequencer";
 
 export class ReviewQueueLoader {
@@ -70,10 +71,9 @@ export class ReviewQueueLoader {
             remainingDeckTree = singleNoteDeckData.remainingDeckTree;
         } else {
             deckTree = this.osrCore.reviewableDeckTree;
-            remainingDeckTree =
-                this.reviewMode === FlashcardReviewMode.Cram
-                    ? this.osrCore.reviewableDeckTree
-                    : this.osrCore.remainingDeckTree;
+            remainingDeckTree = showsAllCards(this.reviewMode)
+                ? this.osrCore.reviewableDeckTree
+                : this.osrCore.remainingDeckTree;
         }
 
         const reviewSequencerData = this.getPreparedReviewSequencer(

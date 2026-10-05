@@ -230,6 +230,8 @@ export interface SpeedStreakRunRecord {
 export interface SpeedStreakData {
     version: number;
     runs: SpeedStreakRunRecord[];
+    /** Runs of the Endless mode: its own records, apart from the normal review */
+    endlessRuns: SpeedStreakRunRecord[];
     totals: {
         cardsAnswered: number;
         timeouts: number;
@@ -245,6 +247,7 @@ export function createDefaultSpeedStreakData(): SpeedStreakData {
     return {
         version: 1,
         runs: [],
+        endlessRuns: [],
         totals: { cardsAnswered: 0, timeouts: 0, boostsUsed: 0, activeMs: 0, sessions: 0 },
     };
 }
@@ -257,6 +260,9 @@ export function normalizeSpeedStreakData(
     return {
         version: 1,
         runs: Array.isArray(stored.runs) ? stored.runs.slice(-MAX_STORED_RUNS) : [],
+        endlessRuns: Array.isArray(stored.endlessRuns)
+            ? stored.endlessRuns.slice(-MAX_STORED_RUNS)
+            : [],
         totals: Object.assign(def.totals, stored.totals ?? {}),
     };
 }

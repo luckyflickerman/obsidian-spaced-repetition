@@ -4,6 +4,7 @@ import {
     normalizeCardAuthoringSettings,
 } from "src/card-authoring/card-authoring-settings";
 import { StorageType } from "src/data/data-store/base/data-store";
+import { DEFAULT_ENDLESS_SETTINGS, EndlessSettings } from "src/endless/endless-settings";
 import { DEFAULT_HEATMAP_SETTINGS, HeatmapSettings } from "src/heatmap/heatmap-data";
 import { t } from "src/lang/helpers";
 import {
@@ -123,6 +124,9 @@ export interface SRSettings {
 
     // Card authoring: decks, templates, editor icons, daily counter, images
     cardAuthoring: CardAuthoringSettings;
+
+    // Endless mode: decks ticked last time
+    endless: EndlessSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -218,6 +222,7 @@ export const DEFAULT_SETTINGS: SRSettings = {
     heatmap: { ...DEFAULT_HEATMAP_SETTINGS },
     reviewWindow: { ...DEFAULT_REVIEW_WINDOW_SETTINGS },
     cardAuthoring: normalizeCardAuthoringSettings(DEFAULT_CARD_AUTHORING_SETTINGS),
+    endless: { ...DEFAULT_ENDLESS_SETTINGS, selectedDecks: [] },
 };
 
 export function upgradeSettings(settings: SRSettings) {

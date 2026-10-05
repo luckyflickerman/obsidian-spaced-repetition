@@ -38,6 +38,7 @@ Oryginalny kod pluginu: `src/data`, `src/note`, `src/scheduling` (algorytmy SM-2
 | `src/heatmap/`         | kalendarz aktywności                                                                                                |
 | `src/review-window/`   | okno powtórek                                                                                                       |
 | `src/addons/addons.ts` | rejestr „wbudowanych wtyczek” (przełączniki w oknie „Opcje” i na głównej stronie Ustawień)                          |
+| `src/endless/`         | tryb Endless: wybrane talie bez końca w rundach (kolejka, sekwencer bez zapisu harmonogramu, wybór talii)           |
 | `src/migration/`       | jednorazowy import danych z oryginalnego pluginu (okno Tak/Nie/Później + komenda)                                   |
 
 Wzorzec każdego modułu:

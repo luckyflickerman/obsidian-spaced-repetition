@@ -103,6 +103,13 @@ export class DeckStats {
 export enum FlashcardReviewMode {
     Cram,
     Review,
+    /** Chosen decks over and over, nothing is scheduled (src/endless/) */
+    Endless,
+}
+
+/** Modes that show every card, not only the due and new ones. */
+export function showsAllCards(mode: FlashcardReviewMode): boolean {
+    return mode === FlashcardReviewMode.Cram || mode === FlashcardReviewMode.Endless;
 }
 
 interface PendingCard {
@@ -276,6 +283,12 @@ export class FlashcardReviewSequencer implements IFlashcardReviewSequencer {
 
             case FlashcardReviewMode.Cram:
                 this.processReviewCramMode(response);
+                break;
+
+            case FlashcardReviewMode.Endless:
+                // Endless sessions use EndlessReviewSequencer; never write a schedule here
+                this.cardSequencer.moveCurrentRepItemToEndOfList();
+                this.cardSequencer.nextRepItem();
                 break;
         }
     }

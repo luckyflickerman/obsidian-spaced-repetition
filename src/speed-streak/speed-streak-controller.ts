@@ -26,6 +26,7 @@ import {
     formatRunDate,
     listedRuns,
     recordProgress,
+    RecordsOptions,
     runBadge,
 } from "src/speed-streak/speed-streak-records";
 import {
@@ -145,6 +146,8 @@ export class SpeedStreakController {
     private listed: ListedRun[] = [];
     private newRecordThisSession = false;
     private bestAllTimeAtStart = 0;
+    /** Endless session: own all-time record and "cards this session" */
+    private endless = false;
 
     private themeRgb: { good: RGB; hard: RGB; again: RGB } | null = null;
 
@@ -180,7 +183,8 @@ export class SpeedStreakController {
         return this.settings.enabled;
     }
 
-    startSession(deckName: string) {
+    startSession(deckName: string, endless: boolean = false) {
+        this.endless = endless;
         this.refreshSettings();
         if (!this.settings.enabled) {
             this.teardownScene();
@@ -454,18 +458,30 @@ export class SpeedStreakController {
 
     // MARK: Records
 
+    /** Runs of the current kind of session (Endless has its own list). */
+    private sessionRuns(data: SpeedStreakData): SpeedStreakRunRecord[] {
+        return this.endless ? data.endlessRuns : data.runs;
+    }
+
+    /** Endless: always the all-time ranking of all runs. */
+    private get recordsOptions(): RecordsOptions {
+        if (!this.endless) return this.settings;
+        return { recordScope: "all_time", recordsList: "ranking", recordsFilter: "all" };
+    }
+
     private loadRecords() {
-        const data = getSpeedStreakData(this.plugin);
-        this.recomputeRecords(data.runs);
-        this.bestAllTimeAtStart = Math.max(0, ...data.runs.map((r) => r.streak));
+        const runs = this.sessionRuns(getSpeedStreakData(this.plugin));
+        this.recomputeRecords(runs);
+        this.bestAllTimeAtStart = Math.max(0, ...runs.map((r) => r.streak));
     }
 
     private recomputeRecords(runs: SpeedStreakRunRecord[]) {
         const now = Date.now();
-        this.best = bestRunOf(runs, this.settings, now);
+        const options = this.recordsOptions;
+        this.best = bestRunOf(runs, options, now);
         this.bestStreak = this.best?.streak ?? 0;
         const polish = isPolish();
-        this.listed = listedRuns(runs, this.settings, now).map((run, i) => ({
+        this.listed = listedRuns(runs, options, now).map((run, i) => ({
             run,
             rank: i + 1,
             date: formatRunDate(run.endedAt, now, polish),
@@ -474,17 +490,17 @@ export class SpeedStreakController {
     }
 
     private listTitle(): string {
+        if (this.endless) return ss("ENDLESS_BEST_5");
         if (this.settings.recordsList === "recent") return ss("RECENT_5");
         return this.settings.recordScope === "today" ? ss("BEST_5_TODAY") : ss("BEST_5_ALL");
     }
 
     private recordRun(run: SpeedStreakRunRecord) {
-        const data = getSpeedStreakData(this.plugin);
-        data.runs.push(run);
-        if (data.runs.length > MAX_STORED_RUNS)
-            data.runs.splice(0, data.runs.length - MAX_STORED_RUNS);
+        const runs = this.sessionRuns(getSpeedStreakData(this.plugin));
+        runs.push(run);
+        if (runs.length > MAX_STORED_RUNS) runs.splice(0, runs.length - MAX_STORED_RUNS);
         if (run.streak > this.bestAllTimeAtStart) this.newRecordThisSession = true;
-        this.recomputeRecords(data.runs);
+        this.recomputeRecords(runs);
         this.engine.bestToBeat = this.bestStreak;
     }
 
@@ -522,8 +538,9 @@ export class SpeedStreakController {
         if (this.settings.gameplayMode === "points")
             lines.push(ss("SUMMARY_SCORE", { score: summary.score }));
         if (this.newRecordThisSession) {
-            const best = Math.max(...getSpeedStreakData(this.plugin).runs.map((r) => r.streak));
-            lines.push(ss("SUMMARY_RECORD", { n: best }));
+            const runs = this.sessionRuns(getSpeedStreakData(this.plugin));
+            const best = Math.max(...runs.map((r) => r.streak));
+            lines.push(ss(this.endless ? "ENDLESS_SUMMARY_RECORD" : "SUMMARY_RECORD", { n: best }));
         }
         new Notice(lines.join("\n"), 8000);
     }
@@ -708,6 +725,16 @@ export class SpeedStreakController {
         return timerColor(fraction, good, hard, again);
     }
 
+    /** Points (points mode) and, in Endless, the cards done in this session. */
+    private scoreText(): string {
+        const e = this.engine;
+        const parts: string[] = [];
+        if (this.endless) parts.push(ss("ENDLESS_SESSION", { n: e.summary.cards }));
+        if (this.settings.gameplayMode === "points")
+            parts.push(`${ss("SCORE")} ${e.score} · ×${e.multiplier().toFixed(2)}`);
+        return parts.join(" · ");
+    }
+
     private render() {
         if (!this.layout || !this.engine.sessionActive) return;
         const e = this.engine;
@@ -767,12 +794,13 @@ export class SpeedStreakController {
             liveBadge: runBadge({ pauses: e.livePauses, boostsUsed: e.liveBoosts }),
             trail: e.ratingTrail,
             showTrail: s.showRatingTrail,
-            scoreText:
-                s.gameplayMode === "points"
-                    ? `${ss("SCORE")} ${e.score} · ×${e.multiplier().toFixed(2)}`
-                    : "",
+            scoreText: this.scoreText(),
             recordsView: s.recordsView,
-            recordLabel: s.recordScope === "today" ? ss("TODAY_BEST") : ss("ALL_TIME_BEST"),
+            recordLabel: this.endless
+                ? ss("ENDLESS_RECORD")
+                : s.recordScope === "today"
+                  ? ss("TODAY_BEST")
+                  : ss("ALL_TIME_BEST"),
             recordValue,
             recordProgress: recordProgress(e.streak, this.bestStreak),
             recordBarText: newBest

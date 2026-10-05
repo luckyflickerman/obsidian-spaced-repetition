@@ -1,6 +1,7 @@
 import "src/ui/obsidian-ui-components/content-container/card-container/response-section/response-section.css";
 
 import { SRSettings } from "src/data/settings";
+import { en } from "src/endless/endless-i18n";
 import { t } from "src/lang/helpers";
 import { displayRatingLabel, localizeInterval } from "src/review-window/rating-labels";
 import { RepItemScheduleInfo } from "src/scheduling/algorithms/base/rep-item-schedule-info";
@@ -107,6 +108,7 @@ export default class ResponseSectionComponent {
         this.answerButton.buttonEl.addClass("sr-is-hidden");
 
         if (reviewMode === FlashcardReviewMode.Cram) {
+            this.responseEl.removeClass("is-endless");
             this.responseEl.addClass("is-cram");
             this.againButton.setButtonText(`${againButtonText}`);
             this.easyButton.setButtonText(`${easyButtonText}`);
@@ -124,8 +126,23 @@ export default class ResponseSectionComponent {
             if (!this.hardButton.buttonEl.hasClass("sr-is-hidden")) {
                 this.hardButton.buttonEl.addClass("sr-is-hidden");
             }
+        } else if (reviewMode === FlashcardReviewMode.Endless) {
+            // Nothing is scheduled: the second line says when the card comes back
+            this.responseEl.removeClass("is-cram");
+            this.responseEl.addClass("is-endless");
+            const lines: [SRResponseButtonComponent, string, string][] = [
+                [this.againButton, againButtonText, en("SOON")],
+                [this.hardButton, hardButtonText, en("LATER")],
+                [this.goodButton, goodButtonText, en("ROUND_END")],
+                [this.easyButton, easyButtonText, en("ROUND_END")],
+            ];
+            for (const [button, name, when] of lines) {
+                button.buttonEl.removeClass("sr-is-hidden");
+                this._setTwoLines(button, name, when);
+            }
         } else {
             if (this.responseEl.hasClass("is-cram")) this.responseEl.removeClass("is-cram");
+            this.responseEl.removeClass("is-endless");
             this.againButton.buttonEl.removeClass("sr-is-hidden");
             this.hardButton.buttonEl.removeClass("sr-is-hidden");
             this.goodButton.buttonEl.removeClass("sr-is-hidden");
@@ -167,12 +184,7 @@ export default class ResponseSectionComponent {
             // Two lines on every device: the rating name, and the full interval under it
             // ("1 min", "8 dni"), so the buttons are never told apart by colour alone
             const interval = localizeInterval(formatScheduleInterval(schedule, false), isPolish());
-            button.setLargeText(buttonName);
-            button.setSmallText(interval);
-            button.buttonEl.addClass("sr-show-large-text");
-            button.buttonEl.addClass("sr-show-small-text");
-            button.buttonEl.addClass("sr-two-line");
-            button.buttonEl.setAttr("aria-label", `${buttonName}, ${interval}`);
+            this._setTwoLines(button, buttonName, interval);
         } else {
             button.buttonEl.removeClass("sr-two-line");
             if (button.buttonEl.hasClass("sr-show-small-text")) {
@@ -184,5 +196,15 @@ export default class ResponseSectionComponent {
             button.setLargeText(buttonName);
             button.buttonEl.setAttr("aria-label", buttonName);
         }
+    }
+
+    /** Rating name, and under it the interval (or when the card comes back). */
+    private _setTwoLines(button: SRResponseButtonComponent, name: string, second: string) {
+        button.setLargeText(name);
+        button.setSmallText(second);
+        button.buttonEl.addClass("sr-show-large-text");
+        button.buttonEl.addClass("sr-show-small-text");
+        button.buttonEl.addClass("sr-two-line");
+        button.buttonEl.setAttr("aria-label", `${name}, ${second}`);
     }
 }

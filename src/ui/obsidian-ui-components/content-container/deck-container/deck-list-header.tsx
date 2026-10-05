@@ -2,6 +2,7 @@ import "src/ui/obsidian-ui-components/content-container/deck-container/deck-list
 import { DropdownComponent, Platform, setIcon } from "obsidian";
 
 import { ad } from "src/addons/addons-i18n";
+import { en } from "src/endless/endless-i18n";
 import { t } from "src/lang/helpers";
 import type { ReviewWindowControls } from "src/review-window/review-window-controller";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
@@ -40,6 +41,7 @@ export default class DeckListHeaderComponent {
         const reviewModeOptions: Record<string, string> = {
             Review: t("REVIEW_MODE"),
             Cram: t("CRAM_MODE"),
+            Endless: en("MODE"),
         };
         this.reviewModeDropdown.addOptions(reviewModeOptions);
         this.reviewModeDropdown.setValue("Review");
@@ -48,6 +50,7 @@ export default class DeckListHeaderComponent {
             if (value === undefined) return;
             if (value === "Review") changeReviewMode(FlashcardReviewMode.Review);
             if (value === "Cram") changeReviewMode(FlashcardReviewMode.Cram);
+            if (value === "Endless") changeReviewMode(FlashcardReviewMode.Endless);
         });
 
         const isPhone = EmulatedPlatform().isPhone || Platform.isPhone;
@@ -87,7 +90,11 @@ export default class DeckListHeaderComponent {
 
     public updateReviewMode(reviewMode: FlashcardReviewMode) {
         this.reviewModeDropdown.setValue(
-            reviewMode === FlashcardReviewMode.Review ? "Review" : "Cram",
+            reviewMode === FlashcardReviewMode.Review
+                ? "Review"
+                : reviewMode === FlashcardReviewMode.Endless
+                  ? "Endless"
+                  : "Cram",
         );
     }
 }

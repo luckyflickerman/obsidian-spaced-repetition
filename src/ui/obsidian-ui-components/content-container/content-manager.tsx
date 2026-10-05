@@ -6,6 +6,8 @@ import { Card } from "src/data/data-structures/card/card";
 import { Question } from "src/data/data-structures/card/questions/question";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
+import { en } from "src/endless/endless-i18n";
+import { cardsOfDecks, EndlessReviewSequencer } from "src/endless/endless-sequencer";
 import { flushReviewLog, recordCardReview } from "src/heatmap/heatmap-view";
 import { t } from "src/lang/helpers";
 import SRPlugin from "src/main";
@@ -64,6 +66,9 @@ export interface SessionData {
 
     currentQuestion: Question;
     currentNote: Note;
+
+    /** Endless session (src/endless/): own Speed Streak records */
+    endless?: boolean;
 }
 
 // TODO: Refactor/integrate this code with the backend
@@ -114,6 +119,7 @@ export default class ContentManager {
             this.plugin,
             this._changeReviewMode.bind(this),
             this._startReviewOfDeck.bind(this),
+            this._startEndless.bind(this),
             closeModal,
             windowControls,
         );
@@ -148,6 +154,12 @@ export default class ContentManager {
     public async open() {
         // Prepare a review queue to display
         this.reviewSequencer = await this.reviewQueueLoader.loadReviewQueue();
+
+        // Endless: the decks are ticked first
+        if (this.reviewMode === FlashcardReviewMode.Endless) {
+            await this._showDecksList();
+            return;
+        }
 
         // Determine if the card view should be opened immediately
         const subdecksWithCardsInQueue: Deck[] = this.reviewSequencer.getSubDecksWithCardsInQueue(
@@ -190,7 +202,8 @@ export default class ContentManager {
 
     private async _showDecksList(reloadReviewQueue: boolean = false): Promise<void> {
         this._clearPendingResumeTimeout();
-        if (reloadReviewQueue) {
+        // After an Endless session the deck list needs the normal queue again
+        if (reloadReviewQueue || this.reviewSequencer instanceof EndlessReviewSequencer) {
             this.reviewSequencer = await this.reviewQueueLoader.loadReviewQueue();
         }
         if (this.reviewSequencer === null) return;
@@ -203,6 +216,7 @@ export default class ContentManager {
         this.deckContainer.closeList();
         this.sessionData = this._getNewSessionData(deck);
         if (this.sessionData === null) return;
+        this.sessionData.endless = this.reviewSequencer instanceof EndlessReviewSequencer;
         this.uiManager.setUIState(UIState.CardFront);
         await this.cardContainer.openSession(this.sessionData, this.settings);
     }
@@ -516,6 +530,25 @@ export default class ContentManager {
         } else {
             await this._showDecksList();
         }
+    }
+
+    /** Endless: the ticked decks over and over (nothing is scheduled). */
+    private async _startEndless(decks: Deck[]) {
+        if (this.reviewSequencer === null) return;
+        const cards = cardsOfDecks(decks);
+        if (cards.length === 0) {
+            new Notice(en("NOTHING_SELECTED"));
+            return;
+        }
+        const name = decks.map((d) => (d.isRootDeck ? t("ALL_DECKS") : d.deckName)).join(", ");
+        const endless = new EndlessReviewSequencer(
+            this.reviewSequencer,
+            cards,
+            `∞ ${name}`,
+            this.settings,
+        );
+        this.reviewSequencer = endless;
+        await this._reviewDeck(endless.sessionDeck);
     }
 
     private async _changeReviewMode(reviewMode: FlashcardReviewMode) {

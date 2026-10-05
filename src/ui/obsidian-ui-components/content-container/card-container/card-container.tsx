@@ -170,7 +170,10 @@ export class CardContainer {
             return;
         }
 
-        this.speedStreak.startSession(sessionData.deckData.chosenDeck?.deckName ?? "");
+        this.speedStreak.startSession(
+            sessionData.deckData.chosenDeck?.deckName ?? "",
+            sessionData.endless === true,
+        );
         this.tts.startSession();
         await this.drawCardFront(sessionData, settings);
 

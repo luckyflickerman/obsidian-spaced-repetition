@@ -1,0 +1,62 @@
+/* Endless mode: tick boxes in the deck list and the start bar */
+
+.sr-endless-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--size-4-2) var(--size-4-3);
+    margin: 0 0 var(--size-4-3);
+    padding: var(--size-4-2) var(--size-4-3);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-m);
+    background-color: var(--background-secondary);
+}
+
+.sr-endless-hint {
+    flex: 1 1 220px;
+    color: var(--text-muted);
+    font-size: var(--font-ui-small);
+}
+
+.sr-endless-start {
+    flex: 0 0 auto;
+    min-height: 36px;
+}
+
+.sr-endless-start:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sr-tree-container.is-endless .sr-endless-check {
+    flex: 0 0 auto;
+    margin: 0 var(--size-4-2) 0 var(--size-2-1);
+    cursor: pointer;
+}
+
+.sr-tree-container.is-endless .sr-endless-check:disabled {
+    cursor: default;
+    opacity: 0.7;
+}
+
+.sr-tree-container.is-endless .is-endless-selected {
+    background-color: var(--background-modifier-hover);
+}
+
+/* Touch: the whole row ticks the deck; a bigger box and a 44 px row */
+.is-mobile .sr-tree-container.is-endless .sr-tree-item-row {
+    min-height: 44px;
+}
+
+.is-mobile .sr-tree-container.is-endless .sr-endless-check {
+    width: 22px;
+    height: 22px;
+}
+
+.is-mobile .sr-endless-start {
+    min-height: 44px;
+}
+
+.is-phone .sr-endless-bar {
+    margin-inline: var(--size-4-2);
+}

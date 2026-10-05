@@ -225,6 +225,27 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 - Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
 - Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
 
+## Tryb Endless
+
+Ćwiczenie wybranych talii bez końca, bez zmieniania harmonogramu.
+
+1. Na liście talii, w menu trybu (tam, gdzie „Tryb powtórek”), wybierz **Endless**. Możesz też użyć polecenia „Endless: ćwicz wybrane talie bez końca”.
+2. Przy każdej talii pojawia się kwadrat. Zaznacz talie, które chcesz ćwiczyć: dotknij wiersza albo kwadratu. Zaznaczenie talii obejmuje też jej podtalie. „Wszystkie talie” zaznacza wszystko. Plugin pamięta wybór na następny raz.
+3. Naciśnij **Zacznij Endless**. Na przycisku widać, ile fiszek jest w wybranych taliach.
+
+Jak to działa:
+
+- Fiszki idą w rundach: w każdej rundzie każda fiszka pojawia się w losowej kolejności. Po ostatniej zaczyna się nowa runda i tak bez końca. Nad kartą widać postęp rundy, np. „6/20”.
+- **Ponownie**: fiszka wraca po 3 kartach. **Trudne**: po 7 kartach. **Dobre** i **Łatwe**: fiszka jest zaliczona w tej rundzie.
+- **Endless nic nie zapisuje w notatkach.** Komentarze `<!--SR:…-->` i terminy powtórek zostają takie, jakie były. Do kalendarza powtórek liczy się tylko czas nauki i liczba kart.
+- Strzałka w lewo wraca do listy talii.
+
+**Speed Streak w Endless** działa jak zwykle (timer, Boosty, pauza), ale ma:
+
+- **własny rekord wszech czasów**: najdłuższą serię kart z rzędu w Endless (🏆 w pasku), osobny od rekordów zwykłych powtórek,
+- **licznik „W tej sesji: N fiszek”**: ile kart oceniono od startu tej sesji Endless,
+- osobną listę „Najlepsze 5 w Endless” (dotknij pucharu).
+
 ## Opcje (przycisk z kołem zębatym)
 
 W nagłówku listy talii, obok X, jest przycisk **Opcje** (koło zębate). Otwiera okno „Opcje Upgraded Spaced Repetition”, ułożone jak ustawienia Obsidiana:
