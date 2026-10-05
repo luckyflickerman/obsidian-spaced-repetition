@@ -71,12 +71,10 @@ export class UIPreferencesPage extends SettingsPage {
                     .setName(rw("CENTER_SHORT"))
                     .setDesc(rw("CENTER_SHORT_DESC"))
                     .addToggle((toggle) =>
-                        toggle
-                            .setValue(reviewWindow().centerShortCards)
-                            .onChange(async (value) => {
-                                reviewWindow().centerShortCards = value;
-                                await this.settingsManager.save();
-                            }),
+                        toggle.setValue(reviewWindow().centerShortCards).onChange(async (value) => {
+                            reviewWindow().centerShortCards = value;
+                            await this.settingsManager.save();
+                        }),
                     );
             });
 

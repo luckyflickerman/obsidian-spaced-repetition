@@ -14,7 +14,8 @@ const EN = {
     SIZE_LARGE: "Large",
     SIZE_XLARGE: "Extra large",
     CENTER_SHORT: "Center short cards",
-    CENTER_SHORT_DESC: "A word and its translation in the middle of the window instead of the top-left corner.",
+    CENTER_SHORT_DESC:
+        "A word and its translation in the middle of the window instead of the top-left corner.",
 };
 
 type Keys = keyof typeof EN;

@@ -382,6 +382,8 @@ describe("visibleWeekRange / monthLabelAt (phone: last half year)", () => {
         const firstDay = grid.weeks[r.start].find((c) => !c.outside)!;
         const next = grid.monthStarts[firstDay.date.getMonth() + 1];
         expect(first).toBe(next - r.start < 3 ? -1 : firstDay.date.getMonth());
-        expect(monthLabelAt(grid, r.start + 1, r.start)).toBe(grid.monthStarts.indexOf(r.start + 1));
+        expect(monthLabelAt(grid, r.start + 1, r.start)).toBe(
+            grid.monthStarts.indexOf(r.start + 1),
+        );
     });
 });

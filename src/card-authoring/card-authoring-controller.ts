@@ -63,11 +63,16 @@ import {
 } from "src/card-authoring/daily-counter";
 import { refreshDailyGoalViews } from "src/card-authoring/daily-goal-view";
 import { cardEditorExtension, refreshCardIcons } from "src/card-authoring/editor-extension";
+import {
+    refreshScheduleIcons,
+    scheduleCommentExtension,
+} from "src/card-authoring/schedule-comment-extension";
 import { Card } from "src/data/data-structures/card/card";
 import { CardType, Question } from "src/data/data-structures/card/questions/question";
 import { SettingsUtil, SRSettings } from "src/data/settings";
 import type SRPlugin from "src/main";
 import { RepItemState } from "src/scheduling/algorithms/base/repetition-item";
+import { isPolish } from "src/speed-streak/speed-streak-i18n";
 import { chosenVoiceId, getTtsSettings, ttsLanguageRules } from "src/tts/tts-controller";
 import { createTtsProvider, TtsProvider } from "src/tts/tts-provider";
 import { resolveCardLanguage, TtsFallbackSide } from "src/tts/tts-settings";
@@ -205,6 +210,13 @@ export class CardAuthoringController {
                 iconLabel: (kind) => (kind === "card" ? ca("PREVIEW") : ca("UNFINISHED")),
             }),
         );
+        // <!--SR:…--> schedule comments as a small calendar icon (display only)
+        p.registerEditorExtension(
+            scheduleCommentExtension({
+                enabled: () => this.settings.compactScheduleComments,
+                label: (dates) => this.scheduleLabel(dates),
+            }),
+        );
 
         p.registerEvent(
             this.app.workspace.on("editor-menu", (menu: Menu, editor: Editor, info) => {
@@ -266,6 +278,29 @@ export class CardAuthoringController {
             }
         });
         refreshCardIcons(views);
+        refreshScheduleIcons(views);
+    }
+
+    /** "Next review: 8 Oct 2026 · 12 Oct 2026" for the schedule comment icon. */
+    private scheduleLabel(dates: string[]): string {
+        if (dates.length === 0) return ca("SCHEDULE_COMMENT");
+        let format: Intl.DateTimeFormat | null = null;
+        try {
+            format = new Intl.DateTimeFormat(isPolish() ? "pl-PL" : "en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+            });
+        } catch {
+            format = null;
+        }
+        const text = dates
+            .map((d) => {
+                const [y, m, day] = d.split("-").map(Number);
+                return format ? format.format(new Date(y, m - 1, day)) : d;
+            })
+            .join(" · ");
+        return ca("SCHEDULE_NEXT", { dates: text });
     }
 
     private collectVaultRefs(): CardRef[] {

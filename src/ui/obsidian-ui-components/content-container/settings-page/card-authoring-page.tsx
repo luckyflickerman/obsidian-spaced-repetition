@@ -109,6 +109,7 @@ export class CardAuthoringPage extends SettingsPage {
         const sep = this.settingsManager.settings.singleLineReversedCardSeparator;
         this.addToggle(writing, "bothDirections", ca("BOTH"), ca("BOTH_DESC", { sep }));
         this.addToggle(writing, "editorIcons", ca("ICONS"), ca("ICONS_DESC"));
+        this.addToggle(writing, "compactScheduleComments", ca("COMPACT_SR"), ca("COMPACT_SR_DESC"));
 
         // Counter
         const counter = new SettingGroup(this.containerEl).setHeading(ca("G_COUNTER"));

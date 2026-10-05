@@ -10,19 +10,19 @@ import {
 import {
     buildMonthGrid,
     buildYearGrid,
-    monthLabelAt,
-    PHONE_WEEKS,
-    visibleWeekRange,
     computeStats,
     estimateMinutesLeft,
     HEATMAP_COLORS,
     HeatmapCell,
     HeatmapSettings,
+    monthLabelAt,
     normalizeHeatmapSettings,
     normalizeReviewLog,
+    PHONE_WEEKS,
     recordReview,
     ReviewLog,
     todayProgress,
+    visibleWeekRange,
     yearRange,
 } from "src/heatmap/heatmap-data";
 import { countOf, formatNumber, hm } from "src/heatmap/heatmap-i18n";

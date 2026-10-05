@@ -35,6 +35,8 @@ export interface CardAuthoringSettings {
     /** Shrink large photos before saving them */
     resizeImages: boolean;
     maxImageWidth: number;
+    /** Show a small icon instead of the long <!--SR:…--> text in the editor (display only) */
+    compactScheduleComments: boolean;
 }
 
 export const DEFAULT_CARD_AUTHORING_SETTINGS: CardAuthoringSettings = {
@@ -51,6 +53,7 @@ export const DEFAULT_CARD_AUTHORING_SETTINGS: CardAuthoringSettings = {
     renamePastedImages: true,
     resizeImages: true,
     maxImageWidth: 800,
+    compactScheduleComments: true,
 };
 
 /** `ENG`, ` #ENG ` → `#ENG`; "" when empty or invalid. */
@@ -107,6 +110,7 @@ export function normalizeCardAuthoringSettings(
         renamePastedImages: bool(s.renamePastedImages, d.renamePastedImages),
         resizeImages: bool(s.resizeImages, d.resizeImages),
         maxImageWidth: num(s.maxImageWidth, d.maxImageWidth, 200, 4000),
+        compactScheduleComments: bool(s.compactScheduleComments, d.compactScheduleComments),
     };
 }
 

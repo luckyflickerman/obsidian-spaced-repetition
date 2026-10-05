@@ -215,3 +215,44 @@ button.sr-ca-notice-btn {
 .sr-ca-deck-lang {
     width: 6em;
 }
+
+/* <!--SR:…--> schedule comments shown as a small calendar icon (display only, Live Preview) */
+.usr-sr-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    width: 1.3em;
+    height: 1.3em;
+    margin-inline: 0.15em;
+    color: var(--text-faint);
+    cursor: pointer;
+    border-radius: var(--radius-s);
+}
+
+.usr-sr-chip:hover {
+    color: var(--text-muted);
+    background: var(--background-modifier-hover);
+}
+
+.usr-sr-chip svg {
+    width: 0.9em;
+    height: 0.9em;
+}
+
+/* A bigger area to tap on touch screens (the icon itself stays small) */
+.is-mobile .usr-sr-chip {
+    position: relative;
+}
+
+.is-mobile .usr-sr-chip::after {
+    content: "";
+    position: absolute;
+    inset: -10px -12px;
+}
+
+/* A line that holds only the schedule comment takes little room */
+.markdown-source-view.mod-cm6 .cm-line.usr-sr-only-line {
+    font-size: 0.8em;
+    line-height: 1.3;
+}

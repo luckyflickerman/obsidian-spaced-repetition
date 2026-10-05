@@ -57,6 +57,11 @@ const EN = {
     BOTH: "Second direction right away (PL → foreign)",
     BOTH_DESC:
         "New cards use the two-way separator (${sep}), so each word is also asked from Polish.",
+    COMPACT_SR: "Compact schedule comments in the editor",
+    COMPACT_SR_DESC:
+        "Instead of the long <!--SR:…--> text a small calendar icon; its tooltip says when the next review is. The note itself is not changed. With the cursor on the line the text is shown as it is.",
+    SCHEDULE_NEXT: "Next review: ${dates}",
+    SCHEDULE_COMMENT: "Review schedule",
     ICONS: "Show card icons in the editor",
     ICONS_DESC:
         "A preview icon next to every card (tap: preview with sound), an icon with “!” next to unfinished ones.",
@@ -137,6 +142,11 @@ const PL: Record<Keys, string> = {
     BOTH: "Od razu drugi kierunek (PL → obcy)",
     BOTH_DESC:
         "Nowe fiszki mają separator dwukierunkowy (${sep}), więc każde słowo jest też odpytywane z polskiego.",
+    COMPACT_SR: "Zwijaj komentarze harmonogramu w edytorze",
+    COMPACT_SR_DESC:
+        "Zamiast długiego tekstu <!--SR:…--> mała ikonka kalendarza; w dymku data następnej powtórki. Sama notatka się nie zmienia. Gdy kursor jest w tej linii, widać zwykły tekst.",
+    SCHEDULE_NEXT: "Następna powtórka: ${dates}",
+    SCHEDULE_COMMENT: "Harmonogram powtórek",
     ICONS: "Pokazuj ikonki fiszek w edytorze",
     ICONS_DESC:
         "Ikonka podglądu przy każdej fiszce (dotknięcie: podgląd z odsłuchem), ikonka z „!” przy niedokończonych.",
