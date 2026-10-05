@@ -3,6 +3,22 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.2
+
+Design pass after the visual review: easier to read, easier to tap, fully in Polish.
+
+- **Rating buttons** show the name and the full interval on every device ("Hard / 6 min" instead of "6m"), so they are never told apart by colour alone.
+- **Readable colours**: white text on the rating buttons and the deck counts has a contrast of at least 4.5:1. Coloured text has separate shades for light and dark themes.
+- **One accent colour**: "Show answer" and the deck badge use your vault's accent colour.
+- **Pause**: rating buttons are greyed out and inactive while the Speed Streak pause screen is shown; a big "Resume" button.
+- **Bigger cards**: new options in Settings → Appearance → Card in the review: card text size (normal / large / extra large) and centering of short cards.
+- **Schedule comments**: in Live Preview `<!--SR:…-->` is shown as a small calendar icon with the next review date. The note is not changed (Settings → Card authoring).
+- **Trail above the card**: readable, one line; tap to see all of it.
+- **Speed Streak bar**: bigger labels in the timer ring, "Free" instead of the cut-off "Free card", described rating trail, clearer badges and boost diamonds.
+- **Touch**: every icon button is at least 44×44 px on phones and tablets.
+- **Phone deck list**: the calendar shows the last half year without sideways scrolling; statistics centred.
+- **Polish translation**: about 170 missing texts translated (deck list, modes, settings, messages); "Again" and the old "Średnio Trudne" now show as "Ponownie" and "Dobre" (your own button names are kept).
+
 ## 0.9.1
 
 - **Faster loading on phones and tablets**: `main.js` is about 3 times smaller (3.4 MB → 1.2 MB). The release build no longer contains debugging data (source map) and the code is minified. Styles are unchanged.

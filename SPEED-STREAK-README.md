@@ -73,7 +73,7 @@ Po zatrzymaniu (klawisz **P**, przycisk albo dotknięcie timera) zasłona nad ka
 - bieżącą serię,
 - sumę ocen (Ponownie / Trudne / Dobre / Łatwe) z kolorowym paskiem.
 
-Dotknij zasłony, żeby wrócić do nauki.
+Naciśnij **Wznów** albo dotknij zasłony w dowolnym miejscu, żeby wrócić do nauki. W czasie pauzy przyciski ocen są przygaszone i nie da się nimi (ani klawiszami) ocenić karty.
 
 ## Wydajność
 
@@ -199,6 +199,24 @@ Po instalacji otwórz stronę „Czytanie na głos” jeszcze raz. Diagnostyka p
 
 Kod jest w `src/tts/`. Czysta logika (bez DOM, z testami) jest w `tts-text.ts` i `tts-settings.ts`. Głosy dostarcza „dostawca” (`TtsProvider`).
 Na górze `tts-provider.ts` jest instrukcja krok po kroku, jak dodać nowego dostawcę, np. głosy AI.
+
+## Karta w powtórce
+
+Ustawienia → Upgraded Spaced Repetition → **Wygląd** → **Karta w powtórce**:
+
+- **Rozmiar tekstu karty**: normalny, duży (domyślnie) albo bardzo duży. Krótkie fiszki (słowo i tłumaczenie) dostają pełne powiększenie, dłuższe (zdania, listy, obrazki) tylko lekkie, żeby mieściły się na telefonie.
+- **Wyśrodkuj krótkie fiszki** (domyślnie włączone): słowo i tłumaczenie stoją na środku okna. Ścieżka „notatka > nagłówek” zostaje u góry. Jest w jednej linii, a dotknięcie pokazuje ją całą.
+
+Przyciski ocen pokazują nazwę i czas następnej powtórki, np. **Trudne** / 6 min, na każdym urządzeniu. Kolory mają mocniejszy kontrast, a „Pokaż odpowiedź” i plakietka talii mają kolor akcentu Twojego motywu (Ustawienia → Wygląd w Obsidianie).
+
+## Komentarze harmonogramu w edytorze
+
+Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą następnej powtórki. W podglądzie na żywo zamiast tego długiego tekstu widać małą ikonkę kalendarza, a w dymku datę („Następna powtórka: 8 paź 2026”).
+
+- Notatka się **nie zmienia**: komentarz jest w pliku dokładnie tak jak wcześniej, zmienia się tylko wyświetlanie.
+- Gdy kursor jest w tej linii (albo dotkniesz ikonki), widać zwykły tekst.
+- W trybie źródłowym zawsze widać pełny tekst.
+- Wyłączysz to w Ustawieniach → Tworzenie fiszek → **Zwijaj komentarze harmonogramu w edytorze**.
 
 ## Okno powtórek: pełny ekran i przesuwanie
 
