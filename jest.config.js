@@ -93,6 +93,12 @@ export default {
         "src/endless/endless-i18n.ts",
         "src/endless/endless.css",
 
+        // Background photo UI glue (DOM, canvas, settings group, texts); the palette logic is tested
+        "src/appearance/background-controller.ts",
+        "src/appearance/background-settings-group.ts",
+        "src/appearance/background-i18n.ts",
+        "src/appearance/background.css",
+
         // Import from the original plugin: window, command and texts
         "src/migration/legacy-import-controller.ts",
         "src/migration/legacy-import-i18n.ts",

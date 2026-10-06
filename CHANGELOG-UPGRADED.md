@@ -3,6 +3,16 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.5
+
+A calmer, nicer look: your own photo behind the review.
+
+- **Background photo** (Settings → Appearance → Background photo, off by default): a photo from your vault behind the deck list and the cards, with see-through glass panels. Optional separate photo for phones, the visible part (top / middle / bottom), and sliders for the panel cover, darkening and blur.
+- **Colours taken from the photo** (70 / 20 / 10): the panels get the photo's main colour, the text a light tint of it, and one accent colour picked from the photo is used only in a few key places (today's counts, the daily goal, the main answer button, the hourglass sand). A lake at golden hour gives teal with gold, a purple dusk violet with pink. Text always keeps a readable contrast.
+- **Answer buttons in one colour family** with the background on: see-through buttons, only the main answer ("Good" / "Got it") in the accent colour. Deck counts as plain numbers instead of coloured pills.
+- **The card in a book-like serif** with the background on (fonts already on your device).
+- **Endless: three answers** — "Error" (resets the score), "Hard" (comes back later) and "Got it" (+1 to the score).
+
 ## 0.9.4
 
 Endless, part 2.

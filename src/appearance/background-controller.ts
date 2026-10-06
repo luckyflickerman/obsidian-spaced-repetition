@@ -9,7 +9,6 @@
  */
 
 import "src/appearance/background.css";
-
 import { Platform, TFile } from "obsidian";
 
 import {
@@ -97,7 +96,7 @@ export class BackgroundController {
         this.plugin = plugin;
         this.hostEl = hostEl;
         // the whole review window (modal) or the tab's content
-        this.frameEl = (hostEl.closest(".modal") as HTMLElement | null) ?? hostEl;
+        this.frameEl = hostEl.closest(".modal") ?? hostEl;
     }
 
     /** Shows (or removes) the photo for the current settings. */
@@ -123,10 +122,12 @@ export class BackgroundController {
             this.frameEl.prepend(this.layerEl);
         }
         this.layerEl.empty();
-        this.layerEl.createEl("img", {
-            cls: "usr-bg-photo",
-            attr: { src: this.plugin.app.vault.getResourcePath(file), alt: "" },
-        }).setCssProps({ "object-position": objectPosition(s.position) });
+        this.layerEl
+            .createEl("img", {
+                cls: "usr-bg-photo",
+                attr: { src: this.plugin.app.vault.getResourcePath(file), alt: "" },
+            })
+            .setCssProps({ "object-position": objectPosition(s.position) });
         this.layerEl.createDiv({ cls: "usr-bg-scrim" });
 
         applyPalette(this.frameEl, palette);

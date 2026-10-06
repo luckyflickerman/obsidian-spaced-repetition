@@ -26,7 +26,12 @@ const hueOf = (c: RGB) => rgbToHsl(c)[0];
 
 describe("photo palette", () => {
     test("HSL round trip", () => {
-        for (const c of [[234, 176, 90], [30, 20, 56], [12, 200, 140], [128, 128, 128]] as RGB[]) {
+        for (const c of [
+            [234, 176, 90],
+            [30, 20, 56],
+            [12, 200, 140],
+            [128, 128, 128],
+        ] as RGB[]) {
             const [h, s, l] = rgbToHsl(c);
             const back = hslToRgb(h, s, l);
             back.forEach((v, i) => expect(Math.abs(v - c[i])).toBeLessThanOrEqual(1));

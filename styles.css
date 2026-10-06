@@ -1454,6 +1454,8 @@ body {
   --usr-orange-fg: #b84a12;
   --usr-accent: var(--interactive-accent);
   --usr-accent-hover: var(--interactive-accent-hover);
+  --usr-serif:
+    "Iowan Old Style", "New York", "Palatino Linotype", Palatino, Georgia, serif;
 }
 @supports (color: color-mix(in srgb, red 50%, black)) {
   body {
@@ -1625,6 +1627,213 @@ body.theme-dark {
 }
 .sr-tab-view-content.sr-center-view {
   margin: auto;
+}
+
+/* src/appearance/background.css */
+.usr-bg-on {
+  position: relative;
+  isolation: isolate;
+  background: rgb(var(--usr-bg-base)) !important;
+  color: var(--usr-bg-ink);
+  --text-normal: var(--usr-bg-ink);
+  --text-muted: var(--usr-bg-soft);
+  --text-faint: var(--usr-bg-soft);
+  --icon-color: var(--usr-bg-soft);
+  --icon-color-hover: var(--usr-bg-ink);
+  --background-primary: transparent;
+  --background-secondary: rgba(255, 255, 255, 0.07);
+  --background-modifier-border: rgba(255, 255, 255, 0.16);
+  --background-modifier-hover: rgba(255, 255, 255, 0.09);
+  --background-modifier-form-field: rgba(255, 255, 255, 0.08);
+  --interactive-normal: rgba(255, 255, 255, 0.08);
+  --interactive-hover: rgba(255, 255, 255, 0.14);
+  --interactive-accent: var(--usr-bg-accent);
+  --interactive-accent-hover: var(--usr-bg-accent);
+  --text-on-accent: var(--usr-bg-on-accent);
+  --text-accent: var(--usr-bg-accent);
+  --usr-accent: var(--usr-bg-accent);
+  --usr-accent-hover: var(--usr-bg-accent);
+  --usr-glass: rgba(var(--usr-bg-base), var(--usr-bg-glass));
+  --usr-glass-line: rgba(255, 255, 255, 0.16);
+  --checkbox-color: var(--usr-bg-accent);
+  --checkbox-color-hover: var(--usr-bg-accent);
+  --checkbox-marker-color: var(--usr-bg-on-accent);
+  --checkbox-border-color: rgba(255, 255, 255, 0.45);
+}
+.usr-bg-on .sr-bg-accent:not(.sr-deck-info) {
+  background-color: var(--usr-bg-accent) !important;
+  color: var(--usr-bg-on-accent) !important;
+}
+.usr-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.usr-bg-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.usr-bg-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--usr-bg-base), var(--usr-bg-dim));
+}
+.usr-bg-on .sr-deck-container,
+.usr-bg-on .sr-card-container {
+  background: transparent;
+}
+.usr-bg-on .sr-header,
+.usr-bg-on .sr-card-toolbar,
+.usr-bg-on .sr-deck-container .sr-content,
+.usr-bg-on .sr-card-container .sr-content,
+.usr-bg-on .sr-ss-hud {
+  background: var(--usr-glass) !important;
+  -webkit-backdrop-filter: blur(var(--usr-bg-blur)) saturate(1.3);
+  backdrop-filter: blur(var(--usr-bg-blur)) saturate(1.3);
+  border: 1px solid var(--usr-glass-line) !important;
+  border-radius: 18px;
+  box-shadow: none;
+}
+.usr-bg-on .sr-header,
+.usr-bg-on .sr-card-toolbar {
+  margin: 10px 10px 0;
+}
+.usr-bg-on .sr-deck-container .sr-scroll-wrapper,
+.usr-bg-on .sr-card-container .sr-scroll-wrapper {
+  padding: 10px;
+}
+.usr-bg-on .sr-ss-hud {
+  margin-inline: 10px;
+}
+.usr-bg-on .sr-response {
+  border-top: none;
+  background: transparent;
+}
+.usr-bg-on .sr-deck-container .sr-tree-stats-count.sr-bg-green,
+.usr-bg-on .sr-deck-container .sr-tree-stats-count.sr-bg-blue,
+.usr-bg-on .sr-deck-container .sr-tree-stats-count.sr-bg-yellow,
+.usr-bg-on .sr-deck-container .sr-tree-stats-count.sr-bg-red {
+  background: transparent !important;
+  color: var(--usr-bg-soft) !important;
+  font-variant-numeric: tabular-nums;
+}
+.usr-bg-on .sr-deck-container .sr-tree-stats-count.sr-bg-green {
+  color: var(--usr-bg-accent) !important;
+  font-weight: 700;
+}
+.usr-bg-on .sr-deck-container .sr-tree-stats-count.sr-bg-blue {
+  color: var(--usr-bg-ink) !important;
+}
+.usr-bg-on .sr-fg-green,
+.usr-bg-on .sr-fg-blue,
+.usr-bg-on .sr-fg-red,
+.usr-bg-on .sr-fg-yellow {
+  color: var(--usr-bg-soft) !important;
+}
+.usr-bg-on .sr-header-row .sr-fg-green {
+  color: var(--usr-bg-accent) !important;
+}
+.usr-bg-on .sr-header-row .tree-item-self {
+  border-bottom-style: solid;
+}
+.usr-bg-on .sr-hm.sr-hm.sr-hm {
+  --sr-hm-1: var(--usr-bg-heat-1);
+  --sr-hm-2: var(--usr-bg-heat-2);
+  --sr-hm-3: var(--usr-bg-heat-3);
+  --sr-hm-4: var(--usr-bg-heat-4);
+  --sr-hm-5: var(--usr-bg-heat-5);
+  --sr-hm-accent-color: var(--usr-bg-accent);
+  --sr-hm-text-color: var(--usr-bg-accent);
+  --sr-hm-empty: rgba(255, 255, 255, 0.1);
+}
+.usr-bg-on .sr-goal {
+  --sr-goal-color: var(--usr-bg-accent);
+  background: rgba(255, 255, 255, 0.06);
+}
+.usr-bg-on .sr-deck-info.sr-bg-accent {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--usr-bg-ink) !important;
+  border: 1px solid var(--usr-glass-line);
+}
+.usr-bg-on .sr-card-container .sr-content {
+  font-family: var(--usr-serif);
+}
+.usr-bg-on .sr-card-container .sr-context {
+  font-family: var(--font-interface);
+  color: var(--usr-bg-soft);
+}
+.usr-bg-on .sr-card-container .sr-content hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+.usr-bg-on .sr-response-button.sr-bg-red,
+.usr-bg-on .sr-response-button.sr-bg-yellow,
+.usr-bg-on .sr-response-button.sr-bg-green {
+  background: rgba(var(--usr-bg-base), 0.62) !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  color: var(--usr-bg-ink) !important;
+}
+.usr-bg-on .sr-response-button.sr-bg-red:hover,
+.usr-bg-on .sr-response-button.sr-bg-yellow:hover,
+.usr-bg-on .sr-response-button.sr-bg-green:hover {
+  background: rgba(var(--usr-bg-base), 0.78) !important;
+}
+.usr-bg-on .sr-response-button.sr-bg-blue,
+.usr-bg-on .sr-response-button.sr-bg-accent {
+  background: var(--usr-bg-accent) !important;
+  color: var(--usr-bg-on-accent) !important;
+  border: 0 !important;
+}
+.usr-bg-on .sr-response-button.sr-bg-blue:hover,
+.usr-bg-on .sr-response-button.sr-bg-accent:hover {
+  background: rgba(var(--usr-bg-accent-rgb), 0.88) !important;
+}
+.usr-bg-on .sr-response-button .sr-small-text {
+  opacity: 0.85;
+}
+.usr-bg-on .sr-header .mod-raised,
+.usr-bg-on .sr-card-toolbar .mod-raised,
+.usr-bg-on .sr-header select.dropdown {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: none !important;
+  color: var(--usr-bg-ink);
+}
+.usr-bg-on .sr-ss-hud {
+  --ss-good: var(--usr-bg-accent) !important;
+  --ss-text: var(--usr-bg-ink) !important;
+  --ss-muted: var(--usr-bg-soft) !important;
+  --ss-faint: var(--usr-bg-soft) !important;
+  --ss-track: rgba(255, 255, 255, 0.14) !important;
+  --ss-border: var(--usr-glass-line) !important;
+  --ss-boost: var(--usr-bg-soft) !important;
+  --ss-gold: var(--usr-bg-accent) !important;
+}
+.usr-bg-preview-card {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgb(var(--usr-bg-base));
+  color: var(--usr-bg-ink);
+}
+.usr-bg-preview-word {
+  font-family: var(--usr-serif);
+  font-size: 18px;
+}
+.usr-bg-preview-soft {
+  color: var(--usr-bg-soft);
+}
+.usr-bg-preview-accent {
+  font-weight: 700;
+  color: var(--usr-bg-accent);
 }
 
 /* src/heatmap/heatmap.css */

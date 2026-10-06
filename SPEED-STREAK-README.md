@@ -225,6 +225,24 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 - Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
 - Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
 
+## Tło ze zdjęciem
+
+Twoje zdjęcie za listą talii i fiszkami, a na nim przezroczyste, „szklane” panele. Domyślnie wyłączone.
+
+1. Wrzuć zdjęcie do sejfu, np. do folderu `Tła`. Na komputer i iPada najlepiej poziome, na telefon może być osobne, pionowe.
+2. Ustawienia → Upgraded Spaced Repetition → **Wygląd** → **Tło ze zdjęciem**: włącz **Zdjęcie za powtórką** i przy **Zdjęcie** kliknij **Wybierz…**.
+3. Opcjonalnie: **Zdjęcie na telefonie**, **Część zdjęcia** (góra, środek, dół) i trzy suwaki: **Zakrycie paneli** (mniej = zdjęcie bardziej prześwituje), **Przyciemnienie zdjęcia** i **Rozmycie za panelami**.
+
+**Kolory biorą się ze zdjęcia** według zasady 70/20/10:
+
+- 70%: panele w głównym kolorze zdjęcia, przyciemnionym,
+- 20%: tekst i linie w jasnym odcieniu tego samego koloru,
+- 10%: jeden akcent wybrany ze zdjęcia, tylko w kilku miejscach: liczby „Dziś”, cel dzienny, główny przycisk odpowiedzi, piasek w klepsydrze.
+
+Jezioro o złotej godzinie daje turkus ze złotem, a fioletowy zmierzch nad miastem fiolet z różem. Tekst zawsze zostaje czytelny. Przy włączonym tle przyciski odpowiedzi są w jednej rodzinie kolorów: przezroczyste, a tylko „Dobre” (w Endless „Wiem”) ma kolor akcentu. Słowo na karcie jest zapisane książkową czcionką.
+
+Zdjęcia do tła bez znaku wodnego, do dowolnego użytku, znajdziesz na Unsplash albo Pexels.
+
 ## Tryb Endless
 
 Ćwiczenie wybranych talii bez końca, bez zmieniania harmonogramu.
@@ -238,7 +256,7 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 Jak to działa:
 
 - Fiszki idą w rundach: w każdej rundzie każda fiszka pojawia się w losowej kolejności. Po ostatniej zaczyna się nowa runda i tak bez końca. Nad kartą widać postęp rundy, np. „6/20”.
-- **Błąd** (czerwony przycisk, w zwykłej powtórce „Ponownie”): fiszka wraca po 3 kartach, a **wynik spada do 0**. **Trudne**: fiszka wraca po 7 kartach. **Dobre** i **Łatwe**: fiszka jest zaliczona w tej rundzie. „Reset” z paska nad kartą działa jak „Błąd”.
+- **Błąd** (czerwony przycisk, w zwykłej powtórce „Ponownie”): fiszka wraca po 3 kartach, a **wynik spada do 0**. **Trudne**: fiszka wraca po 7 kartach. **Wiem**: fiszka jest zaliczona w tej rundzie. W Endless są tylko te trzy przyciski. „Reset” z paska nad kartą działa jak „Błąd”.
 - **Karty z jednej fiszki są od siebie daleko.** Fiszka z `:::` albo `??` daje dwie karty (np. „forestalled → uprzedzić” i „uprzedzić → forestalled”). Takie karty pojawiają się w odstępie co najmniej 5% wszystkich kart: przy 100 kartach co najmniej co 5, przy 400 co 20, przy małej puli co najmniej co 2. Obowiązuje to też na przełomie rund i po „Błąd” i „Trudne”. Gdy kart jest za mało, plugin rozsuwa je najlepiej, jak się da.
 - Gdy ostatnia karta rundy dostanie „Błąd” albo „Trudne”, nie wraca od razu: zaczyna się nowa runda, a ta karta przychodzi po co najmniej 3 (albo 7) innych.
 - **Endless nic nie zapisuje w notatkach.** Komentarze `<!--SR:…-->` i terminy powtórek zostają takie, jakie były. Do kalendarza powtórek liczy się tylko czas nauki i liczba kart.
@@ -246,7 +264,7 @@ Jak to działa:
 
 ### Wynik i rekordy Endless
 
-**Wynik** to liczba odpowiedzi bez błędu z rzędu: „Trudne”, „Dobre” i „Łatwe” dodają 1, „Błąd” zeruje. Wynik działa także przy wyłączonym Speed Streak. Przekroczenie czasu w Speed Streak go nie zeruje.
+**Wynik** to liczba odpowiedzi bez błędu z rzędu: „Trudne” i „Wiem” dodają 1, „Błąd” zeruje. Wynik działa także przy wyłączonym Speed Streak. Przekroczenie czasu w Speed Streak go nie zeruje.
 
 > Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.
 

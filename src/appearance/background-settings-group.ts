@@ -6,12 +6,12 @@
 
 import { App, FuzzySuggestModal, Setting, SettingGroup, TFile } from "obsidian";
 
-import { bg } from "src/appearance/background-i18n";
 import {
     applyPalette,
     getBackgroundSettings,
     photoPalette,
 } from "src/appearance/background-controller";
+import { bg } from "src/appearance/background-i18n";
 import { BackgroundPosition, isImagePath } from "src/appearance/background-settings";
 import type SRPlugin from "src/main";
 
