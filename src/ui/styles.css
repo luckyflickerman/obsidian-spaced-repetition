@@ -35,6 +35,8 @@ body {
     --usr-orange-fg: #b84a12;
     --usr-accent: var(--interactive-accent);
     --usr-accent-hover: var(--interactive-accent-hover);
+    /* book-like serif already on every device (no font files to download) */
+    --usr-serif: "Iowan Old Style", "New York", "Palatino Linotype", Palatino, Georgia, serif;
 }
 
 @supports (color: color-mix(in srgb, red 50%, black)) {

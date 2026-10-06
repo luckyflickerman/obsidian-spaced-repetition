@@ -1,6 +1,7 @@
 import { now } from "moment";
 import { App, MarkdownView, Notice, Platform } from "obsidian";
 
+import { BackgroundController } from "src/appearance/background-controller";
 import { DataManager } from "src/data/data-manager";
 import { Card } from "src/data/data-structures/card/card";
 import { Question } from "src/data/data-structures/card/questions/question";
@@ -100,6 +101,7 @@ export default class ContentManager {
     private sessionData: SessionData | null = null;
 
     private lastPressedOnProcessReview: number = 0;
+    private background: BackgroundController;
     /** Endless: highest new all-time record set in this session (0 = none) */
     private endlessNewRecord = 0;
     /** Endless session whose records were already saved */
@@ -123,6 +125,9 @@ export default class ContentManager {
 
         this.uiManager = this.plugin.uiManager;
         this.dataManager = this.plugin.dataManager;
+
+        // Background photo behind the review (off by default)
+        this.background = new BackgroundController(this.plugin, parentEl);
 
         this.deckContainer = new DeckContainer(
             parentEl,
@@ -155,6 +160,7 @@ export default class ContentManager {
     public close() {
         this._clearPendingResumeTimeout();
         void this._finishEndlessSession();
+        this.background.destroy();
         this.uiManager.setSRViewInFocus(false);
         this.deckContainer.closeList();
         this.cardContainer.closeSession();
@@ -163,6 +169,8 @@ export default class ContentManager {
     }
 
     public async open() {
+        void this.background.apply();
+
         // Prepare a review queue to display
         this.reviewSequencer = await this.reviewQueueLoader.loadReviewQueue();
 

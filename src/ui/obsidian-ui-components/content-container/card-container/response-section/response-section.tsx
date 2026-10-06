@@ -131,16 +131,17 @@ export default class ResponseSectionComponent {
             // The red button is "Error": it sets the Endless score back to 0.
             this.responseEl.removeClass("is-cram");
             this.responseEl.addClass("is-endless");
+            // Three answers are enough: Error / Hard / Got it ("Easy" would do the same as "Got it")
             const lines: [SRResponseButtonComponent, string, string][] = [
                 [this.againButton, en("ERROR"), en("ERROR_RESETS")],
                 [this.hardButton, hardButtonText, en("LATER")],
-                [this.goodButton, goodButtonText, en("ROUND_END")],
-                [this.easyButton, easyButtonText, en("ROUND_END")],
+                [this.goodButton, en("KNOW"), en("KNOW_SUB")],
             ];
             for (const [button, name, when] of lines) {
                 button.buttonEl.removeClass("sr-is-hidden");
                 this._setTwoLines(button, name, when);
             }
+            this.easyButton.buttonEl.addClass("sr-is-hidden");
         } else {
             if (this.responseEl.hasClass("is-cram")) this.responseEl.removeClass("is-cram");
             this.responseEl.removeClass("is-endless");

@@ -1,5 +1,6 @@
 import { Platform, Setting, SettingGroup } from "obsidian";
 
+import { addBackgroundSettings } from "src/appearance/background-settings-group";
 import { DataManager } from "src/data/data-manager";
 import { DEFAULT_SETTINGS } from "src/data/settings";
 import { SettingsManager } from "src/data/settings-manager";
@@ -39,6 +40,9 @@ export class UIPreferencesPage extends SettingsPage {
         );
 
         this.uiManager = uiManager;
+
+        // Upgraded Spaced Repetition: photo behind the review, colours from the photo
+        addBackgroundSettings(this.containerEl, this.plugin);
 
         // Upgraded Spaced Repetition: size and centering of the card text in the review
         const reviewWindow = () => {

@@ -1,4 +1,8 @@
 import {
+    BackgroundSettings,
+    DEFAULT_BACKGROUND_SETTINGS,
+} from "src/appearance/background-settings";
+import {
     CardAuthoringSettings,
     DEFAULT_CARD_AUTHORING_SETTINGS,
     normalizeCardAuthoringSettings,
@@ -127,6 +131,9 @@ export interface SRSettings {
 
     // Endless mode: decks ticked last time
     endless: EndlessSettings;
+
+    // Background photo behind the review, colours taken from it
+    background: BackgroundSettings;
 }
 
 export const DEFAULT_SETTINGS: SRSettings = {
@@ -223,6 +230,7 @@ export const DEFAULT_SETTINGS: SRSettings = {
     reviewWindow: { ...DEFAULT_REVIEW_WINDOW_SETTINGS },
     cardAuthoring: normalizeCardAuthoringSettings(DEFAULT_CARD_AUTHORING_SETTINGS),
     endless: { ...DEFAULT_ENDLESS_SETTINGS, selectedDecks: [] },
+    background: { ...DEFAULT_BACKGROUND_SETTINGS },
 };
 
 export function upgradeSettings(settings: SRSettings) {

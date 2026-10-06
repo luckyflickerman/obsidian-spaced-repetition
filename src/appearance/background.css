@@ -1,0 +1,105 @@
+/* Background photo (src/appearance/). Everything here applies only with
+   `.usr-bg-on` on the review window (modal) or the review tab.
+   Colours 70 / 20 / 10, all taken from the photo:
+   --usr-bg-base (the glass, as "r, g, b"), --usr-bg-ink / --usr-bg-soft (text),
+   --usr-bg-accent (a few key places). The photo is under everything. */
+
+.usr-bg-on {
+    position: relative;
+    isolation: isolate;
+    background: rgb(var(--usr-bg-base)) !important;
+    color: var(--usr-bg-ink);
+    /* Obsidian's own colours inside the review follow the photo */
+    --text-normal: var(--usr-bg-ink);
+    --text-muted: var(--usr-bg-soft);
+    --text-faint: var(--usr-bg-soft);
+    --icon-color: var(--usr-bg-soft);
+    --icon-color-hover: var(--usr-bg-ink);
+    --background-primary: transparent;
+    --background-secondary: rgba(255, 255, 255, 0.07);
+    --background-modifier-border: rgba(255, 255, 255, 0.16);
+    --background-modifier-hover: rgba(255, 255, 255, 0.09);
+    --background-modifier-form-field: rgba(255, 255, 255, 0.08);
+    --interactive-normal: rgba(255, 255, 255, 0.08);
+    --interactive-hover: rgba(255, 255, 255, 0.14);
+    --interactive-accent: var(--usr-bg-accent);
+    --interactive-accent-hover: var(--usr-bg-accent);
+    --text-on-accent: var(--usr-bg-on-accent);
+    --text-accent: var(--usr-bg-accent);
+    --usr-accent: var(--usr-bg-accent);
+    --usr-accent-hover: var(--usr-bg-accent);
+    --usr-glass: rgba(var(--usr-bg-base), var(--usr-bg-glass));
+    --usr-glass-line: rgba(255, 255, 255, 0.16);
+}
+
+.usr-bg-layer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.usr-bg-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.usr-bg-scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(var(--usr-bg-base), var(--usr-bg-dim));
+}
+
+/* MARK: Glass panels */
+
+.usr-bg-on .sr-deck-container,
+.usr-bg-on .sr-card-container {
+    background: transparent;
+}
+
+.usr-bg-on .sr-deck-container .sr-content,
+.usr-bg-on .sr-card-container .sr-content {
+    background: var(--usr-glass);
+    -webkit-backdrop-filter: blur(var(--usr-bg-blur)) saturate(1.3);
+    backdrop-filter: blur(var(--usr-bg-blur)) saturate(1.3);
+    border: 1px solid var(--usr-glass-line);
+    border-radius: 20px;
+}
+
+.usr-bg-on .sr-header {
+    background: var(--usr-glass);
+    -webkit-backdrop-filter: blur(var(--usr-bg-blur)) saturate(1.3);
+    backdrop-filter: blur(var(--usr-bg-blur)) saturate(1.3);
+    border: 1px solid var(--usr-glass-line);
+    border-radius: 16px;
+}
+
+/* MARK: Colour preview in the settings */
+
+.usr-bg-preview-card {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: rgb(var(--usr-bg-base));
+    color: var(--usr-bg-ink);
+}
+
+.usr-bg-preview-word {
+    font-family: var(--usr-serif);
+    font-size: 18px;
+}
+
+.usr-bg-preview-soft {
+    color: var(--usr-bg-soft);
+}
+
+.usr-bg-preview-accent {
+    font-weight: 700;
+    color: var(--usr-bg-accent);
+}

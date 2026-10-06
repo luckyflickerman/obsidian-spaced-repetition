@@ -11,7 +11,9 @@ const EN = {
     // Rating buttons
     ERROR: "Error",
     ERROR_RESETS: "resets score",
-    LATER: "later",
+    LATER: "comes back later",
+    KNOW: "Got it",
+    KNOW_SUB: "+1 to score",
     ROUND_END: "done",
     HONESTY:
         "Be honest with yourself — a record only means something when you admit your mistakes.",
@@ -52,7 +54,9 @@ const PL: Record<Keys, string> = {
     SELECT_DECK: "Ćwicz talię ${deck} w trybie Endless",
     ERROR: "Błąd",
     ERROR_RESETS: "zeruje wynik",
-    LATER: "później",
+    LATER: "wróci później",
+    KNOW: "Wiem",
+    KNOW_SUB: "+1 do wyniku",
     ROUND_END: "zaliczone",
     HONESTY: "Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.",
     SCORE: "Wynik ${n}",
