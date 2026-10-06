@@ -240,6 +240,9 @@
 }
 
 .usr-bg-themes {
+    /* the width must not come from the tiles (size containment) — on phones the row is a column */
+    container: usr-bg-themes / inline-size;
+    width: 100%;
     flex-basis: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -268,9 +271,11 @@
     border-color: var(--interactive-accent);
 }
 
+/* keyboard focus: a thin grey ring, so it is never mistaken for the chosen theme */
 .usr-bg-themes .usr-bg-theme:focus-visible {
-    outline: 2px solid var(--interactive-accent);
-    outline-offset: 2px;
+    outline: 1px dashed var(--text-muted);
+    outline-offset: 3px;
+    box-shadow: none;
 }
 
 .usr-bg-theme-view {
@@ -300,7 +305,8 @@
     gap: 2px;
     padding: 6px 8px;
     border-radius: 10px;
-    background: rgba(var(--usr-bg-base), 0.62);
+    /* more solid than in the review: the small text stays readable on any part of the photo */
+    background: rgba(var(--usr-bg-base), 0.86);
     border: 1px solid rgba(255, 255, 255, 0.18);
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
@@ -347,12 +353,74 @@
 }
 
 .usr-bg-theme-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     padding: 7px 10px;
     font-size: var(--font-ui-small);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* the chosen theme: accent frame and a tick before its name */
+.usr-bg-theme-check {
+    display: none;
+    color: var(--interactive-accent);
+}
+
+.usr-bg-theme-check svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 3;
+}
+
+.usr-bg-themes .usr-bg-theme.is-selected .usr-bg-theme-check {
+    display: inline-flex;
+}
+
+/* Narrow space (phone, small window): a squarer photo and a smaller sample card */
+@container usr-bg-themes (max-width: 420px) {
+    .usr-bg-theme-view {
+        aspect-ratio: 1 / 1;
+    }
+
+    .usr-bg-theme-glass {
+        left: 8%;
+        right: 8%;
+        bottom: 8%;
+        padding: 4px 6px;
+        align-items: center;
+    }
+
+    .usr-bg-theme-word {
+        font-size: 13px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .usr-bg-theme-soft {
+        display: none;
+    }
+
+    /* the frame alone marks the chosen theme: the name keeps the whole width */
+    .usr-bg-themes .usr-bg-theme.is-selected .usr-bg-theme-check {
+        display: none;
+    }
+
+    .usr-bg-theme-name {
+        justify-content: center;
+        padding: 7px 4px;
+        font-size: var(--font-ui-smaller);
+    }
+}
+/* Very narrow: only the photo and the accent button */
+@container usr-bg-themes (max-width: 250px) {
+    .usr-bg-theme-word {
+        display: none;
+    }
 }
 
 .usr-bg-credit .setting-item-description {

@@ -4,7 +4,7 @@
  * the Appearance page and at the top of the "Options" window.
  */
 
-import { Setting, SettingGroup } from "obsidian";
+import { setIcon, Setting, SettingGroup } from "obsidian";
 
 import {
     applyPalette,
@@ -50,7 +50,9 @@ function addThemePicker(group: SettingGroup, plugin: SRPlugin) {
             glass.createSpan({ cls: "usr-bg-theme-word", text: bg("SAMPLE_WORD") });
             glass.createSpan({ cls: "usr-bg-theme-soft", text: bg("SAMPLE_SOFT") });
             glass.createSpan({ cls: "usr-bg-theme-button", text: bg("SAMPLE_BUTTON") });
-            tile.createSpan({ cls: "usr-bg-theme-name", text: name });
+            const nameEl = tile.createSpan({ cls: "usr-bg-theme-name" });
+            setIcon(nameEl.createSpan({ cls: "usr-bg-theme-check" }), "check");
+            nameEl.createSpan({ text: name });
             tile.setAttr("aria-label", desc ? `${name}: ${desc}` : name);
             tile.addEventListener("click", () => {
                 getBackgroundSettings(plugin).theme = id;
