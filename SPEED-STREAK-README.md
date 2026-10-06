@@ -225,23 +225,25 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 - Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
 - Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
 
-## Tło ze zdjęciem
+## Tło (motywy ze zdjęciem)
 
-Twoje zdjęcie za listą talii i fiszkami, a na nim przezroczyste, „szklane” panele. Domyślnie wyłączone.
+Zdjęcie za listą talii i fiszkami, a na nim przezroczyste, „szklane” panele. Domyślnie wyłączone. Do wyboru dwa gotowe motywy:
 
-1. Wrzuć zdjęcie do sejfu, np. do folderu `Tła`. Na komputer i iPada najlepiej poziome, na telefon może być osobne, pionowe.
-2. Ustawienia → Upgraded Spaced Repetition → **Wygląd** → **Tło ze zdjęciem**: włącz **Zdjęcie za powtórką** i przy **Zdjęcie** kliknij **Wybierz…**.
-3. Opcjonalnie: **Zdjęcie na telefonie**, **Część zdjęcia** (góra, środek, dół) i trzy suwaki: **Zakrycie paneli** (mniej = zdjęcie bardziej prześwituje), **Przyciemnienie zdjęcia** i **Rozmycie za panelami**.
+- **Jezioro**: górskie jezioro o świcie, turkusowe szkło i złoty akcent,
+- **Zmierzch**: fioletowy zmierzch nad miastem, fioletowe szkło i różowy akcent,
+- **Bez zdjęcia**: zwykłe kolory Obsidiana.
 
-**Kolory biorą się ze zdjęcia** według zasady 70/20/10:
+Jak wybrać: kliknij kafelek z motywem w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Upgraded Spaced Repetition → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
+
+W **Wyglądzie** są jeszcze trzy suwaki: **Zakrycie paneli** (mniej = zdjęcie bardziej prześwituje), **Przyciemnienie zdjęcia** i **Rozmycie za panelami**.
+
+Kolory trzymają się zasady 70/20/10:
 
 - 70%: panele w głównym kolorze zdjęcia, przyciemnionym,
 - 20%: tekst i linie w jasnym odcieniu tego samego koloru,
-- 10%: jeden akcent wybrany ze zdjęcia, tylko w kilku miejscach: liczby „Dziś”, cel dzienny, główny przycisk odpowiedzi, piasek w klepsydrze.
+- 10%: jeden akcent, tylko w kilku miejscach: liczby „Dziś”, cel dzienny, główny przycisk odpowiedzi, piasek w klepsydrze.
 
-Jezioro o złotej godzinie daje turkus ze złotem, a fioletowy zmierzch nad miastem fiolet z różem. Tekst zawsze zostaje czytelny. Przy włączonym tle przyciski odpowiedzi są w jednej rodzinie kolorów: przezroczyste, a tylko „Dobre” (w Endless „Wiem”) ma kolor akcentu. Słowo na karcie jest zapisane książkową czcionką.
-
-Zdjęcia do tła bez znaku wodnego, do dowolnego użytku, znajdziesz na Unsplash albo Pexels.
+Tekst zawsze zostaje czytelny. Przy włączonym tle przyciski odpowiedzi są w jednej rodzinie kolorów: przezroczyste, a tylko „Dobre” (w Endless „Wiem”) ma kolor akcentu. Słowo na karcie jest zapisane książkową czcionką.
 
 ## Tryb Endless
 

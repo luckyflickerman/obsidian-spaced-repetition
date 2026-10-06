@@ -11,3 +11,8 @@ declare module "*.css" {
     const content: string;
     export default content;
 }
+
+declare module "*.jpg" {
+    const dataUrl: string;
+    export default dataUrl;
+}

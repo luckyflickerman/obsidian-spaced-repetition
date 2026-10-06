@@ -3,6 +3,14 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.6
+
+Two ready background themes instead of picking a photo.
+
+- **Background themes** (Settings → Appearance → Background, and at the top of the "Options" window next to the deck list): **Lake** (a mountain lake at sunrise — teal glass with gold) and **Dusk** (a purple dusk over a city — violet glass with pink), or **No photo**. Each theme is a tile with a small preview; a click changes the review behind it at once.
+- The photos are **built into the plugin**: nothing to copy into the vault, works offline on every device. Picking your own photo from the vault is gone (it did not work reliably).
+- If the photo was switched on in 0.9.5, you get the Lake theme. The sliders (panel cover, darkening, blur) stay.
+
 ## 0.9.5
 
 A calmer, nicer look: your own photo behind the review.

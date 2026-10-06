@@ -1,9 +1,5 @@
-import {
-    isImagePath,
-    normalizeBackgroundSettings,
-    objectPosition,
-    photoFor,
-} from "src/appearance/background-settings";
+import { normalizeBackgroundSettings } from "src/appearance/background-settings";
+import { BACKGROUND_THEMES, findTheme, NO_THEME } from "src/appearance/background-themes";
 import {
     buildPalette,
     contrastRatio,
@@ -86,39 +82,56 @@ describe("photo palette", () => {
     });
 });
 
+describe("background themes", () => {
+    test("lake: teal glass with gold; dusk: violet glass with pink", () => {
+        const lake = findTheme("lake")!.palette;
+        expect(hueDistance(hueOf(lake.base), 203)).toBeLessThan(10);
+        expect(hueDistance(hueOf(lake.accent), 38)).toBeLessThan(10);
+        const dusk = findTheme("dusk")!.palette;
+        expect(hueDistance(hueOf(dusk.base), 263)).toBeLessThan(10);
+        expect(hueDistance(hueOf(dusk.accent), 323)).toBeLessThan(10);
+        expect(findTheme("nope")).toBeNull();
+    });
+
+    test("every theme has a photo, a unique id and readable colours", () => {
+        const ids = new Set<string>();
+        for (const theme of BACKGROUND_THEMES) {
+            expect(theme.id).not.toBe(NO_THEME);
+            expect(ids.has(theme.id)).toBe(false);
+            ids.add(theme.id);
+            expect(theme.photo.startsWith("data:image/")).toBe(true);
+            expect(theme.credit).not.toBe("");
+            const p = theme.palette;
+            expect(contrastRatio(p.ink, p.base)).toBeGreaterThanOrEqual(7);
+            expect(contrastRatio(p.accent, p.base)).toBeGreaterThanOrEqual(4.5);
+            expect(contrastRatio(p.onAccent, p.accent)).toBeGreaterThanOrEqual(4.5);
+        }
+    });
+});
+
 describe("background settings", () => {
-    test("old data.json loads with background off", () => {
+    test("old data.json loads with no photo", () => {
         const s = normalizeBackgroundSettings(undefined);
-        expect(s.enabled).toBe(false);
-        expect(s.photo).toBe("");
+        expect(s.theme).toBe(NO_THEME);
         expect(s.glass).toBe(0.55);
+        expect(normalizeBackgroundSettings({ enabled: false } as never).theme).toBe(NO_THEME);
+    });
+
+    test("0.9.5 with the photo switched on gets the lake theme", () => {
+        const s = normalizeBackgroundSettings({ enabled: true, photo: "Tła/x.jpg" } as never);
+        expect(s.theme).toBe("lake");
+        expect("photo" in s).toBe(false);
     });
 
     test("values are checked", () => {
-        const s = normalizeBackgroundSettings({
-            enabled: true,
-            photo: "/Tła/jezioro.JPG",
-            photoPhone: "notatka.md",
-            position: "nope" as never,
-            glass: 5,
-            dim: -1,
-            blur: 22.6,
-        });
-        expect(s.photo).toBe("Tła/jezioro.JPG");
-        expect(s.photoPhone).toBe("");
-        expect(s.position).toBe("center");
+        const s = normalizeBackgroundSettings({ theme: "dusk", glass: 5, dim: -1, blur: 22.6 });
+        expect(s.theme).toBe("dusk");
         expect(s.glass).toBe(0.9);
         expect(s.dim).toBe(0);
         expect(s.blur).toBe(23);
-        expect(isImagePath("a/b.webp")).toBe(true);
-        expect(isImagePath("a/b.pdf")).toBe(false);
-    });
-
-    test("phone photo and position", () => {
-        const s = normalizeBackgroundSettings({ photo: "a.jpg", photoPhone: "b.jpg" });
-        expect(photoFor(s, true)).toBe("b.jpg");
-        expect(photoFor(s, false)).toBe("a.jpg");
-        expect(photoFor({ ...s, photoPhone: "" }, true)).toBe("a.jpg");
-        expect(objectPosition("top")).toBe("center 20%");
+        expect(normalizeBackgroundSettings({ theme: "gone", enabled: true } as never).theme).toBe(
+            NO_THEME,
+        );
+        expect(normalizeBackgroundSettings({ glass: "0.4" as never }).glass).toBe(0.4);
     });
 });

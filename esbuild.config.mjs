@@ -72,6 +72,8 @@ const context = await esbuild.context({
     outfile: "build/main.js",
     loader: {
         ".css": "css",
+        // built-in background photos (src/appearance/themes/) — packed into main.js, work offline
+        ".jpg": "dataurl",
     },
     plugins: prod ? [moveToRootPlugin, minifyJsPlugin] : [moveToRootPlugin],
 });

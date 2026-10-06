@@ -126,7 +126,7 @@ export default class ContentManager {
         this.uiManager = this.plugin.uiManager;
         this.dataManager = this.plugin.dataManager;
 
-        // Background photo behind the review (off by default)
+        // Background theme behind the review (off by default)
         this.background = new BackgroundController(this.plugin, parentEl);
 
         this.deckContainer = new DeckContainer(
@@ -169,7 +169,7 @@ export default class ContentManager {
     }
 
     public async open() {
-        void this.background.apply();
+        this.background.apply();
 
         // Prepare a review queue to display
         this.reviewSequencer = await this.reviewQueueLoader.loadReviewQueue();

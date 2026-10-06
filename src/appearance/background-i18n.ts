@@ -1,59 +1,47 @@
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
 
 const EN = {
-    GROUP: "Background photo",
-    ENABLE: "Photo behind the review",
-    ENABLE_DESC:
-        "A photo from your vault behind the deck list and the cards. The colours of the panels, the calendar and the buttons are taken from the photo.",
-    PHOTO: "Photo",
-    PHOTO_DESC: "An image from your vault (jpg, png, webp). A wide one fits computers and tablets.",
-    PHOTO_PHONE: "Photo on phones",
-    PHOTO_PHONE_DESC: "Optional: an upright photo for phones. Empty = the same as above.",
-    CHOOSE: "Choose…",
-    CLEAR: "Remove",
-    NONE: "none",
-    PICK_PLACEHOLDER: "Type to find an image in your vault",
-    POSITION: "Part of the photo",
-    POSITION_DESC: "Which part stays visible when the screen is narrower than the photo.",
-    POS_TOP: "Top",
-    POS_CENTER: "Middle",
-    POS_BOTTOM: "Bottom",
+    GROUP: "Background",
+    THEME: "Theme",
+    THEME_DESC:
+        "A photo behind the deck list and the cards, with panels, calendar and buttons in its colours.",
+    THEME_NONE: "No photo",
+    THEME_NONE_DESC: "Obsidian's own colours",
+    THEME_LAKE: "Lake",
+    THEME_LAKE_DESC: "Mountain lake at sunrise: teal glass, golden accent",
+    THEME_DUSK: "Dusk",
+    THEME_DUSK_DESC: "Purple dusk over a city: violet glass, pink accent",
+    SAMPLE_WORD: "forestalled",
+    SAMPLE_SOFT: "to forestall",
+    SAMPLE_BUTTON: "Got it",
     GLASS: "Panel cover",
     GLASS_DESC: "Low = the photo shows through more; high = calmer and easier to read.",
     DIM: "Darken the photo",
     BLUR: "Blur behind the panels",
-    COLOURS: "Colours from the photo",
-    COLOURS_DESC: "Panel, text and accent picked from the photo.",
-    NOT_FOUND: "Background photo not found: ${path}",
+    CREDIT: "Photos: ${names} (Unsplash).",
 };
 
 type Keys = keyof typeof EN;
 
 const PL: Record<Keys, string> = {
-    GROUP: "Tło ze zdjęciem",
-    ENABLE: "Zdjęcie za powtórką",
-    ENABLE_DESC:
-        "Zdjęcie z sejfu za listą talii i fiszkami. Kolory paneli, kalendarza i przycisków plugin bierze ze zdjęcia.",
-    PHOTO: "Zdjęcie",
-    PHOTO_DESC: "Obrazek z sejfu (jpg, png, webp). Na komputer i tablet najlepiej poziomy.",
-    PHOTO_PHONE: "Zdjęcie na telefonie",
-    PHOTO_PHONE_DESC: "Opcjonalnie: pionowe zdjęcie na telefon. Puste = to samo co wyżej.",
-    CHOOSE: "Wybierz…",
-    CLEAR: "Usuń",
-    NONE: "brak",
-    PICK_PLACEHOLDER: "Wpisz, żeby znaleźć obrazek w sejfie",
-    POSITION: "Część zdjęcia",
-    POSITION_DESC: "Która część zostaje widoczna, gdy ekran jest węższy niż zdjęcie.",
-    POS_TOP: "Góra",
-    POS_CENTER: "Środek",
-    POS_BOTTOM: "Dół",
+    GROUP: "Tło",
+    THEME: "Motyw",
+    THEME_DESC:
+        "Zdjęcie za listą talii i fiszkami, a panele, kalendarz i przyciski w jego kolorach.",
+    THEME_NONE: "Bez zdjęcia",
+    THEME_NONE_DESC: "Kolory Obsidiana",
+    THEME_LAKE: "Jezioro",
+    THEME_LAKE_DESC: "Górskie jezioro o świcie: turkusowe szkło, złoty akcent",
+    THEME_DUSK: "Zmierzch",
+    THEME_DUSK_DESC: "Fioletowy zmierzch nad miastem: fioletowe szkło, różowy akcent",
+    SAMPLE_WORD: "forestalled",
+    SAMPLE_SOFT: "uprzedzić",
+    SAMPLE_BUTTON: "Wiem",
     GLASS: "Zakrycie paneli",
     GLASS_DESC: "Mniej = zdjęcie bardziej prześwituje; więcej = spokojniej i czytelniej.",
     DIM: "Przyciemnienie zdjęcia",
     BLUR: "Rozmycie za panelami",
-    COLOURS: "Kolory ze zdjęcia",
-    COLOURS_DESC: "Panel, tekst i akcent dobrane ze zdjęcia.",
-    NOT_FOUND: "Nie znaleziono zdjęcia tła: ${path}",
+    CREDIT: "Zdjęcia: ${names} (Unsplash).",
 };
 
 export function bg(key: Keys, params?: Record<string, string | number>): string {
@@ -64,4 +52,15 @@ export function bg(key: Keys, params?: Record<string, string | number>): string 
         }
     }
     return text;
+}
+
+/** Name and description of a theme ("none" = no photo). */
+export function themeText(id: string): { name: string; desc: string } {
+    const key = id.toUpperCase();
+    const name = `THEME_${key}` as Keys;
+    const desc = `THEME_${key}_DESC` as Keys;
+    return {
+        name: name in EN ? bg(name) : id,
+        desc: desc in EN ? bg(desc) : "",
+    };
 }

@@ -16,7 +16,7 @@ Each add-on is a **built-in plugin** that can be turned on or off in the **Optio
 - **Read aloud** — after the answer is shown, the foreign word or sentence is read with the voices installed on your device (works offline). Mark words with `<u>…</u>`, set a language per tag or deck.
 - **Card authoring** — add cards in seconds right in the note: `Ctrl+Shift+N` inserts a template (`#ENG |:::`), `Tab` jumps to the translation, `Ctrl+Enter` finishes the card. A preview icon next to every card, warnings for unfinished cards and duplicates, images from the clipboard, gallery or camera.
 - **Endless mode** — tick decks and practise them without end in shuffled rounds; nothing is scheduled, the notes are not changed. An Endless score ("Error" resets it) with its own records, the two directions of a card kept apart, and the Hourglass style for Speed Streak.
-- **Background photo** — your own photo behind the review with see-through glass panels; the colours of the panels, text and one accent are taken from the photo (70 / 20 / 10), always readable.
+- **Background themes** — "Lake" or "Dusk": a photo built into the plugin behind the review, with see-through glass panels in the photo's colours (70 / 20 / 10), always readable. One click in the Options window.
 - **Daily goal** — "New today: 4/10" and a progress bar for new cards.
 - **Review calendar** — a year heatmap below the deck list with pace, time and day streaks; collapses to a progress ring.
 - **Review window** — full screen on/off, drag the window by its header, position remembered.
@@ -30,11 +30,11 @@ Each add-on is a **built-in plugin** that can be turned on or off in the **Optio
 | --------------------------------------------------------------------- | --------------------------------------------------------- |
 | ![Endless with the Hourglass](docs/screenshots/endless-hourglass.png) | ![Endless on a phone](docs/screenshots/endless-phone.png) |
 
-| Background photo: lake (colours from the photo)                 | Purple dusk on an iPad                                                       | Phone                                                                 |
+| Background theme "Lake"                                         | Theme "Dusk" on an iPad                                                      | Phone                                                                 |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | ![Background photo, lake](docs/screenshots/background-lake.png) | ![Background photo, purple dusk](docs/screenshots/background-night-ipad.png) | ![Background photo on a phone](docs/screenshots/background-phone.png) |
 
-Background photos in the screenshots: Tobias Reich and Henry Lai on Unsplash.
+Background theme photos: Tobias Reich ("Lake") and Henry Lai ("Dusk") on Unsplash.
 
 Full description of the add-ons (in Polish): [SPEED-STREAK-README.md](SPEED-STREAK-README.md). Changes per version: [CHANGELOG-UPGRADED.md](CHANGELOG-UPGRADED.md).
 

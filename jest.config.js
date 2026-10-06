@@ -8,6 +8,8 @@ export default {
     testEnvironment: "jsdom",
     setupFilesAfterEnv: ["jest-expect-message"],
     moduleNameMapper: {
+        // bundled photos (esbuild "dataurl" loader)
+        "\\.jpg$": "<rootDir>/tests/unit/__mocks__/image.js",
         "src/(.*)": "<rootDir>/src/$1",
     },
     moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json", "node", "d.ts"],
@@ -93,7 +95,7 @@ export default {
         "src/endless/endless-i18n.ts",
         "src/endless/endless.css",
 
-        // Background photo UI glue (DOM, canvas, settings group, texts); the palette logic is tested
+        // Background theme UI glue (DOM, settings group, texts); palette, themes and settings are tested
         "src/appearance/background-controller.ts",
         "src/appearance/background-settings-group.ts",
         "src/appearance/background-i18n.ts",

@@ -3,6 +3,7 @@ import { Modal, SettingGroup } from "obsidian";
 
 import { isAddonPage } from "src/addons/addons";
 import { ad } from "src/addons/addons-i18n";
+import { addBackgroundThemeGroup } from "src/appearance/background-settings-group";
 import type SRPlugin from "src/main";
 import {
     addPageLinkSetting,
@@ -64,6 +65,8 @@ export class OptionsModal extends Modal {
         this.contentEl.empty();
 
         const open = (pageType: SettingsPageType) => this.showPage(pageType);
+        // background theme first: it changes the review behind this window at once
+        addBackgroundThemeGroup(this.contentEl, this.plugin);
         const options = new SettingGroup(this.contentEl).setHeading(ad("OPTIONS"));
         for (const pageType of OPTION_PAGES) addPageLinkSetting(options, pageType, open);
 

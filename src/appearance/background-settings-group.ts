@@ -1,122 +1,86 @@
 /**
- * Background photo — the settings group on the Appearance page: the switch,
- * the photo (and an optional phone photo) picked from the vault, the visible
- * part, the sliders and a preview of the colours taken from the photo.
+ * Background — the settings: the theme picker (a tile per built-in theme with
+ * a small preview of its glass and colours) and the sliders. The picker is on
+ * the Appearance page and at the top of the "Options" window.
  */
 
-import { App, FuzzySuggestModal, Setting, SettingGroup, TFile } from "obsidian";
+import { Setting, SettingGroup } from "obsidian";
 
 import {
     applyPalette,
     getBackgroundSettings,
-    photoPalette,
+    refreshBackgrounds,
 } from "src/appearance/background-controller";
-import { bg } from "src/appearance/background-i18n";
-import { BackgroundPosition, isImagePath } from "src/appearance/background-settings";
+import { bg, themeText } from "src/appearance/background-i18n";
+import { BACKGROUND_THEMES, BackgroundTheme, NO_THEME } from "src/appearance/background-themes";
 import type SRPlugin from "src/main";
 
-class ImagePickModal extends FuzzySuggestModal<TFile> {
-    private onPick: (file: TFile) => void;
-
-    constructor(app: App, onPick: (file: TFile) => void) {
-        super(app);
-        this.onPick = onPick;
-        this.setPlaceholder(bg("PICK_PLACEHOLDER"));
-    }
-
-    getItems(): TFile[] {
-        return this.app.vault.getFiles().filter((f) => isImagePath(f.path));
-    }
-
-    getItemText(file: TFile): string {
-        return file.path;
-    }
-
-    onChooseItem(file: TFile): void {
-        this.onPick(file);
-    }
+function save(plugin: SRPlugin) {
+    refreshBackgrounds();
+    void plugin.dataManager.settingsManager.save();
 }
 
+/** One row with the theme tiles: "No photo" and every built-in theme. */
+function addThemePicker(group: SettingGroup, plugin: SRPlugin) {
+    group.addSetting((setting: Setting) => {
+        setting.setName(bg("THEME")).setDesc(bg("THEME_DESC"));
+        setting.settingEl.addClass("usr-bg-theme-setting");
+        const tilesEl = setting.settingEl.createDiv({
+            cls: "usr-bg-themes",
+            attr: { role: "radiogroup", "aria-label": bg("THEME") },
+        });
+        const tiles: HTMLElement[] = [];
+
+        const addTile = (id: string, theme: BackgroundTheme | null) => {
+            const { name, desc } = themeText(id);
+            const tile = tilesEl.createEl("button", {
+                cls: "usr-bg-theme",
+                attr: { type: "button", role: "radio", "data-theme": id, title: desc },
+            });
+            const view = tile.createDiv({ cls: "usr-bg-theme-view" });
+            if (theme) {
+                applyPalette(tile, theme.palette);
+                view.createEl("img", { attr: { src: theme.photo, alt: "" } }).setCssProps({
+                    "object-position": theme.position,
+                });
+            } else {
+                tile.addClass("is-none");
+            }
+            const glass = view.createDiv({ cls: "usr-bg-theme-glass" });
+            glass.createSpan({ cls: "usr-bg-theme-word", text: bg("SAMPLE_WORD") });
+            glass.createSpan({ cls: "usr-bg-theme-soft", text: bg("SAMPLE_SOFT") });
+            glass.createSpan({ cls: "usr-bg-theme-button", text: bg("SAMPLE_BUTTON") });
+            tile.createSpan({ cls: "usr-bg-theme-name", text: name });
+            tile.setAttr("aria-label", desc ? `${name}: ${desc}` : name);
+            tile.addEventListener("click", () => {
+                getBackgroundSettings(plugin).theme = id;
+                mark();
+                save(plugin);
+            });
+            tiles.push(tile);
+        };
+
+        const mark = () => {
+            const current = getBackgroundSettings(plugin).theme;
+            for (const tile of tiles) {
+                const on = tile.dataset.theme === current;
+                tile.toggleClass("is-selected", on);
+                tile.setAttr("aria-checked", on ? "true" : "false");
+            }
+        };
+
+        addTile(NO_THEME, null);
+        for (const theme of BACKGROUND_THEMES) addTile(theme.id, theme);
+        mark();
+    });
+}
+
+/** The "Background" group of the Appearance page: theme, sliders, photo credits. */
 export function addBackgroundSettings(containerEl: HTMLElement, plugin: SRPlugin) {
     const s = () => getBackgroundSettings(plugin);
-    const save = () => plugin.dataManager.settingsManager.save();
     const group = new SettingGroup(containerEl).setHeading(bg("GROUP"));
-    let previewEl: HTMLElement | null = null;
+    addThemePicker(group, plugin);
 
-    const renderPreview = async () => {
-        if (!previewEl) return;
-        previewEl.empty();
-        const file = plugin.app.vault.getAbstractFileByPath(s().photo);
-        if (!(file instanceof TFile)) return;
-        const palette = await photoPalette(plugin, file);
-        if (!palette || !previewEl) return;
-        applyPalette(previewEl, palette);
-        const card = previewEl.createDiv({ cls: "usr-bg-preview-card" });
-        card.createSpan({ cls: "usr-bg-preview-word", text: "forestalled" });
-        card.createSpan({ cls: "usr-bg-preview-soft", text: "uprzedzić" });
-        card.createSpan({ cls: "usr-bg-preview-accent", text: "37" });
-    };
-
-    const photoSetting = (key: "photo" | "photoPhone", name: string, desc: string) => {
-        group.addSetting((setting: Setting) => {
-            const show = () => setting.setDesc(`${desc} — ${s()[key] || bg("NONE")}`);
-            setting.setName(name);
-            show();
-            setting.addButton((b) =>
-                b.setButtonText(bg("CHOOSE")).onClick(() => {
-                    new ImagePickModal(plugin.app, (file) => {
-                        s()[key] = file.path;
-                        void save();
-                        show();
-                        if (key === "photo") void renderPreview();
-                    }).open();
-                }),
-            );
-            setting.addExtraButton((b) =>
-                b
-                    .setIcon("x")
-                    .setTooltip(bg("CLEAR"))
-                    .onClick(() => {
-                        s()[key] = "";
-                        void save();
-                        show();
-                        if (key === "photo") void renderPreview();
-                    }),
-            );
-        });
-    };
-
-    group.addSetting((setting: Setting) => {
-        setting
-            .setName(bg("ENABLE"))
-            .setDesc(bg("ENABLE_DESC"))
-            .addToggle((t) =>
-                t.setValue(s().enabled).onChange(async (v) => {
-                    s().enabled = v;
-                    await save();
-                }),
-            );
-    });
-    photoSetting("photo", bg("PHOTO"), bg("PHOTO_DESC"));
-    photoSetting("photoPhone", bg("PHOTO_PHONE"), bg("PHOTO_PHONE_DESC"));
-    group.addSetting((setting: Setting) => {
-        setting
-            .setName(bg("POSITION"))
-            .setDesc(bg("POSITION_DESC"))
-            .addDropdown((d) =>
-                d
-                    .addOptions({
-                        top: bg("POS_TOP"),
-                        center: bg("POS_CENTER"),
-                        bottom: bg("POS_BOTTOM"),
-                    })
-                    .setValue(s().position)
-                    .onChange(async (v) => {
-                        s().position = v as BackgroundPosition;
-                        await save();
-                    }),
-            );
-    });
     const slider = (
         key: "glass" | "dim" | "blur",
         name: string,
@@ -133,9 +97,9 @@ export function addBackgroundSettings(containerEl: HTMLElement, plugin: SRPlugin
                     .setLimits(min, max, step)
                     .setValue(s()[key])
                     .setDynamicTooltip()
-                    .onChange(async (v) => {
+                    .onChange((v) => {
                         s()[key] = v;
-                        await save();
+                        save(plugin);
                     }),
             );
         });
@@ -143,8 +107,12 @@ export function addBackgroundSettings(containerEl: HTMLElement, plugin: SRPlugin
     slider("dim", bg("DIM"), "", 0, 0.6, 0.02);
     slider("blur", bg("BLUR"), "", 0, 40, 1);
     group.addSetting((setting: Setting) => {
-        setting.setName(bg("COLOURS")).setDesc(bg("COLOURS_DESC"));
-        previewEl = setting.controlEl.createDiv({ cls: "usr-bg-preview" });
-        void renderPreview();
+        setting.setDesc(bg("CREDIT", { names: BACKGROUND_THEMES.map((t) => t.credit).join(", ") }));
+        setting.settingEl.addClass("usr-bg-credit");
     });
+}
+
+/** Only the theme picker (top of the "Options" window). */
+export function addBackgroundThemeGroup(containerEl: HTMLElement, plugin: SRPlugin) {
+    addThemePicker(new SettingGroup(containerEl).setHeading(bg("GROUP")), plugin);
 }
