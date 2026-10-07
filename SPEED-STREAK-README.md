@@ -16,7 +16,7 @@ Plugin instaluje się przez **BRAT** — krok po kroku w [README.md](README.md#p
 - **Dwa timery**: czas na pytanie (domyślnie 12 s) i na odpowiedź (8 s). Pierścień i pasek zmieniają kolor z zielonego na czerwony.
 - **Seria**: każda karta skończona w czasie zwiększa serię (każda ocena się liczy, także „Ponownie”, jak w oryginale; można to zmienić).
   Przekroczenie czasu = seria stracona, karta zostaje i oceniasz ją uczciwie.
-- **Time Boost**: za co 10 kart dostajesz Boost (bank max 5, start 3). Boost dodaje +10 s do bieżącego timera. Klawisz **C**. Boosty można wyłączyć (Ustawienia → Speed Streak → Time Boost → **Boosty**). Wtedy liczy się tylko timer.
+- **Time Boost**: za co 10 kart dostajesz Boost (bank max 5, start 3). Boost dodaje +10 s do bieżącego timera. Klawisz **C**. Od wersji 0.9.9 Boosty są **domyślnie wyłączone** (liczy się tylko timer) i zostają wyłączone po aktualizacjach. Włączysz je w Ustawieniach → Speed Streak → Time Boost → **Boosty** — wtedy zostają włączone.
 - **Pauza**: klawisz **P**, przycisk lub kliknięcie w pierścień. Karta jest wtedy zasłonięta. Automatyczna pauza, gdy wychodzisz z Obsidiana, edytujesz kartę lub skaczesz do notatki.
 - **Pierwsza karta gratis**: rozgrzewka bez limitu po wejściu w powtórkę.
 - **Rekordy**: wszech czasów i dzisiejszy, „Czyste” serie (bez pauz i Boostów), top 5 (więcej niżej).
@@ -220,7 +220,7 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 
 ## Okno powtórek: pełny ekran i przesuwanie
 
-- Przycisk **⛶** w nagłówku (na liście talii i podczas powtórki) włącza i wyłącza pełny ekran (na telefonie go nie ma — tam okno i tak zajmuje cały ekran). Możesz też przypisać skrót do komendy „Okno powtórek: pełny ekran wł. / wył.”.
+- Przycisk **⛶** w nagłówku (na liście talii i podczas powtórki) włącza i wyłącza pełny ekran (na telefonie go nie ma — tam okno i tak zajmuje cały ekran). Okno przesuwa się, przeciągając pasek u góry, tylko gdy jest mniejsze niż ekran; na telefonie nigdy. Możesz też przypisać skrót do komendy „Okno powtórek: pełny ekran wł. / wył.”.
 - Okno przesuwasz, chwytając pasek u góry (nagłówek listy talii albo pasek karty) i przeciągając je w dowolne miejsce. Przyciski na pasku działają normalnie.
 - Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
 - Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
@@ -273,7 +273,7 @@ Jak to działa:
 > Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.
 
 - Nad kartą, w plakietce talii, widać **„Wynik 37”**, a przy pobiciu rekordu 🏆.
-- Na ekranie wyboru talii jest pasek **„🏆 Rekord: 112 · Dziś: 37”**. Dotknij go, żeby zobaczyć najlepsze 5 wyników, ostatnie 5 sesji (data, talie, liczba ocen, najlepszy wynik, błędy, czas) i sumy.
+- Na ekranie wyboru talii jest karta rekordu: po lewej **„Dziś najlepiej”** (w kolorze akcentu), po prawej **„Rekord”**, a pod spodem pasek od 0 do rekordu z flagą na końcu, progami po drodze (25, 50, 100…) i kropką w miejscu dzisiejszego wyniku. Dotknij karty, żeby zobaczyć najlepsze 5 wyników, ostatnie 5 sesji (data, talie, liczba ocen, najlepszy wynik, błędy, czas) i sumy.
 - Po powrocie do listy talii widać podsumowanie sesji: „Wynik najlepszy w sesji: 54 · Błędy: 3 · Oceny: 120”, a przy nowym rekordzie wyróżnienie.
 
 ### Speed Streak w Endless

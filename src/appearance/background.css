@@ -616,12 +616,22 @@ body:not(.is-phone) .usr-bg-on .sr-response {
     display: none;
 }
 
-.is-phone .usr-bg-on .sr-endless-records {
-    min-height: 44px;
-    padding: 0 14px;
-    border-radius: 14px;
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.06);
+/* the record card is a lighter strip on the glass */
+.usr-bg-on .sr-endless-record {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.usr-bg-on .sr-endless-record:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.usr-bg-on .sr-endless-track::before {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.usr-bg-on .sr-endless-track-tick {
+    background: rgba(255, 255, 255, 0.45);
 }
 
 .is-phone .usr-bg-on .sr-endless-start {

@@ -24,6 +24,8 @@ function setup(overrides: Partial<SpeedStreakSettings> = {}) {
     const settings = normalizeSpeedStreakSettings({
         ...DEFAULT_SPEED_STREAK_SETTINGS,
         freeFirstCard: false,
+        // the engine tests play with Boosts on (off by default since 0.9.9)
+        boostsEnabled: true,
         ...overrides,
     });
     const engine = new SpeedStreakEngine(settings, () => now);
@@ -112,14 +114,27 @@ describe("SpeedStreakEngine", () => {
     });
 
     test("boostsActive: only in Time Boost mode with Boosts on", () => {
-        const s = normalizeSpeedStreakSettings({});
+        const s = normalizeSpeedStreakSettings({ boostsEnabled: true, boostsOffApplied: true });
         expect(s.boostsEnabled).toBe(true);
         expect(boostsActive(s)).toBe(true);
         expect(boostsActive({ ...s, boostsEnabled: false })).toBe(false);
         expect(boostsActive({ ...s, gameplayMode: "points" })).toBe(false);
-        expect(normalizeSpeedStreakSettings({ boostsEnabled: "no" as never }).boostsEnabled).toBe(
-            true,
-        );
+        expect(
+            normalizeSpeedStreakSettings({ boostsEnabled: "no" as never, boostsOffApplied: true })
+                .boostsEnabled,
+        ).toBe(false);
+    });
+
+    test("Boosts: off by default, switched off once for old settings, then respected", () => {
+        expect(normalizeSpeedStreakSettings({}).boostsEnabled).toBe(false);
+        // saved before 0.9.9 (or imported from the original plugin) with Boosts on
+        const old = normalizeSpeedStreakSettings({ boostsEnabled: true });
+        expect(old.boostsEnabled).toBe(false);
+        expect(old.boostsOffApplied).toBe(true);
+        // switched on again afterwards: stays on after the next load
+        const again = normalizeSpeedStreakSettings({ ...old, boostsEnabled: true });
+        expect(again.boostsEnabled).toBe(true);
+        expect(normalizeSpeedStreakSettings(again).boostsEnabled).toBe(true);
     });
 
     test("auto pause (reading aloud) freezes the answer timer and keeps the run Pure", () => {

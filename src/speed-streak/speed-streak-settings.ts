@@ -57,8 +57,13 @@ export interface SpeedStreakSettings {
     specialTimerRules: string;
 
     // Time Boost
-    /** Boosts can be switched off entirely (Time Boost mode only) */
+    /** Boosts can be switched off entirely (Time Boost mode only). Off by default since 0.9.9. */
     boostsEnabled: boolean;
+    /**
+     * 0.9.9: Boosts were switched off once for everyone (the user asked for it; they kept coming
+     * back on). After that the switch is respected, so turning them on again stays on.
+     */
+    boostsOffApplied: boolean;
     boostSeconds: number;
     maxBoostCharges: number;
     startingBoostCharges: number;
@@ -118,7 +123,8 @@ export const DEFAULT_SPEED_STREAK_SETTINGS: SpeedStreakSettings = {
     againBreaksStreak: false,
     specialTimerRules: "",
 
-    boostsEnabled: true,
+    boostsEnabled: false,
+    boostsOffApplied: true,
     boostSeconds: 10,
     maxBoostCharges: 5,
     startingBoostCharges: 3,
@@ -217,7 +223,10 @@ export function normalizeSpeedStreakSettings(
     merged.recordsList = oneOf(merged.recordsList, ["ranking", "recent"] as const, "ranking");
     merged.recordsFilter = oneOf(merged.recordsFilter, ["all", "pure"] as const, "all");
     merged.celebrateNewBest = bool(merged.celebrateNewBest, true);
-    merged.boostsEnabled = bool(merged.boostsEnabled, true);
+    merged.boostsEnabled = bool(merged.boostsEnabled, false);
+    // settings saved before 0.9.9 (or imported from the original plugin): Boosts off once
+    if (source.boostsOffApplied !== true) merged.boostsEnabled = false;
+    merged.boostsOffApplied = true;
     merged.sidePanelCollapsed = bool(merged.sidePanelCollapsed, false);
     merged.pauseHotkey = String(merged.pauseHotkey ?? "").slice(0, 1);
     merged.boostHotkey = String(merged.boostHotkey ?? "").slice(0, 1);

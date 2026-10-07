@@ -1,3 +1,5 @@
+import { Platform } from "obsidian";
+
 import type SRPlugin from "src/main";
 import {
     clampPosition,
@@ -66,7 +68,8 @@ export class ReviewWindowController implements ReviewWindowControls {
         this.modalEl.addEventListener("pointerdown", this.onPointerDown);
         this.modalEl.addEventListener("dblclick", this.onDoubleClick);
         window.addEventListener("resize", this.onScreenResize);
-        this.modalEl.addClass("sr-movable");
+        // a phone has no room to move the window: the header only scrolls and taps there
+        this.modalEl.toggleClass("sr-movable", !this.isPhone);
         this.applyFullscreen();
         // after Obsidian's opening animation has placed the modal
         window.requestAnimationFrame(() => this.restorePosition());
@@ -141,9 +144,24 @@ export class ReviewWindowController implements ReviewWindowControls {
         });
     }
 
+    private get isPhone(): boolean {
+        return Platform.isPhone || activeDocument.body.hasClass("is-phone");
+    }
+
+    /**
+     * A window that fills the screen (every phone, an iPad at 100 %) is never moved: on a phone
+     * a swipe over the header used to push the window sideways and the spot was remembered.
+     */
+    private get canMove(): boolean {
+        if (this.isPhone) return false;
+        const size = this.windowSize;
+        const screen = this.screen;
+        return size.width < screen.width * 0.98 || size.height < screen.height * 0.98;
+    }
+
     private restorePosition() {
         const s = this.settings;
-        if (s.left === null || s.top === null) {
+        if (s.left === null || s.top === null || !this.canMove) {
             this.placeAt(null);
             return;
         }
@@ -173,6 +191,7 @@ export class ReviewWindowController implements ReviewWindowControls {
 
     private onPointerDown = (e: PointerEvent) => {
         if (this.settings.fullscreen || e.button !== 0 || !this.isHandle(e.target)) return;
+        if (!this.canMove) return;
         this.drag = {
             pointerId: e.pointerId,
             startX: e.clientX,

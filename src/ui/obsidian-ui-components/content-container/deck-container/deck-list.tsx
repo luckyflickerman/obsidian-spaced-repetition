@@ -6,6 +6,7 @@ import { bg, bgCount } from "src/appearance/background-i18n";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
 import { en } from "src/endless/endless-i18n";
+import { recordTrack } from "src/endless/endless-record-track";
 import { deckKey, isDeckCovered } from "src/endless/endless-settings";
 import { t } from "src/lang/helpers";
 import { DeckStats, IFlashcardReviewSequencer } from "src/scheduling/flashcard-review-sequencer";
@@ -369,15 +370,9 @@ export default class DeckListComponent {
             }
         }
 
-        // Records: tap for the top 5 and the last sessions
-        const records = bar.createEl("button", {
-            cls: "sr-endless-records",
-            text: en("RECORDS_BAR", { best: endless.best, today: endless.today }),
-            attr: {
-                "aria-label": en("RECORDS_BAR_ARIA", { best: endless.best, today: endless.today }),
-            },
-        });
-        records.addEventListener("click", () => endless.openRecords());
+        // Record card: today's best and the all-time record, with the way between them on a bar
+        // (tap for the top 5 and the last sessions)
+        this._drawRecordCard(bar, endless);
 
         bar.createDiv({ cls: "sr-endless-hint", text: en("HINT") });
         const button = bar.createEl("button", {
@@ -389,6 +384,55 @@ export default class DeckListComponent {
             button.setAttr("title", en("NOTHING_SELECTED"));
         }
         button.addEventListener("click", () => endless.start());
+    }
+
+    private _drawRecordCard(parentEl: HTMLElement, endless: EndlessDeckSelection) {
+        const track = recordTrack(endless.best, endless.today);
+        const card = parentEl.createEl("button", {
+            cls: "sr-endless-record",
+            attr: {
+                "aria-label": en("RECORDS_BAR_ARIA", { best: endless.best, today: endless.today }),
+            },
+        });
+        card.addEventListener("click", () => endless.openRecords());
+
+        const head = card.createDiv({
+            cls: "sr-endless-record-head",
+            attr: { "aria-hidden": "true" },
+        });
+        const todayEl = head.createDiv({ cls: "sr-endless-record-side" });
+        todayEl.createSpan({ cls: "sr-endless-record-label", text: en("TODAY_BEST") });
+        todayEl.createSpan({ cls: "sr-endless-record-value is-today", text: String(track.today) });
+        const bestEl = head.createDiv({ cls: "sr-endless-record-side is-end" });
+        bestEl.createSpan({ cls: "sr-endless-record-label", text: en("RECORD") });
+        bestEl.createSpan({ cls: "sr-endless-record-value", text: String(track.best) });
+
+        const pct = (f: number) => `${Math.round(f * 1000) / 10}%`;
+        const line = card.createDiv({ cls: "sr-endless-track", attr: { "aria-hidden": "true" } });
+        line.createDiv({ cls: "sr-endless-track-fill" }).setCssProps({
+            "--sr-track-at": pct(track.fraction),
+        });
+        for (const tick of track.ticks) {
+            line.createDiv({ cls: "sr-endless-track-tick" }).setCssProps({
+                "--sr-track-at": pct(tick.at),
+            });
+        }
+        line.createDiv({ cls: "sr-endless-track-dot" }).setCssProps({
+            "--sr-track-at": pct(track.fraction),
+        });
+        setIcon(line.createDiv({ cls: "sr-endless-track-flag" }), "flag");
+
+        const labels = card.createDiv({
+            cls: "sr-endless-track-labels",
+            attr: { "aria-hidden": "true" },
+        });
+        labels.createSpan({ text: "0" }).setCssProps({ "--sr-track-at": "0%" });
+        for (const tick of track.ticks) {
+            labels.createSpan({ text: String(tick.value) }).setCssProps({
+                "--sr-track-at": pct(tick.at),
+            });
+        }
+        labels.createSpan({ cls: "is-end", text: String(track.best) });
     }
 
     private _createStatsInRow(parentEl: HTMLDivElement, deckStats: DeckStats) {

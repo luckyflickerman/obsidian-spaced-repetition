@@ -3,6 +3,12 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.9
+
+- **Phone: the window is in place again.** On a phone a swipe over the top bar moved the whole window to the left or right (the bar is the handle for moving the window on a computer), and the plugin remembered that spot. Now a window that fills the screen (every phone, an iPad at full size) cannot be moved, and a remembered spot is ignored there.
+- **Endless record card** (design "C" from Claude Design): "Best today" in the accent colour on the left, "Record" on the right, and a bar from 0 to the record with a flag at the end, round milestones on the way (25, 50, 100…) and a dot at today's best. Tap it for the details, as before.
+- **Time Boosts off**: off by default, and switched off once for everyone with this update (they kept coming back on, e.g. after importing settings from the original plugin again). If you switch them on afterwards, they stay on.
+
 ## 0.9.8
 
 Back to the look from the design: everything in the middle.
