@@ -531,7 +531,10 @@ export class CardContainer {
         // NEW: restore keyboard focus after cloze confirmation
         if (this.plugin.uiManager === null) throw new Error("UI manager not initialized!!!");
         this.plugin.uiManager.setSRViewInFocus(true);
-        this.response.againButton.buttonEl.focus();
+        // Keyboard only: on touch devices the focus ring stayed on "Again" after every answer
+        if (!Platform.isMobile && !EmulatedPlatform().isMobile) {
+            this.response.againButton.buttonEl.focus();
+        }
     }
 
     private _keydownHandler = (e: KeyboardEvent) => {

@@ -51,6 +51,7 @@
 .is-mobile .sr-tree-container.is-endless .sr-endless-check {
     width: 22px;
     height: 22px;
+    align-self: center;
 }
 
 .is-mobile .sr-endless-start {

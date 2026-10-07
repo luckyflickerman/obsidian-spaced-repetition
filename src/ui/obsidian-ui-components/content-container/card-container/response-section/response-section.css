@@ -21,6 +21,11 @@
     }
 }
 
+/* Phone: a smaller gap, so four even buttons still fit "Ponownie" */
+.is-phone .sr-response {
+    gap: var(--size-4-2);
+}
+
 .sr-edit-view .sr-response {
     border: none;
 }
@@ -58,6 +63,8 @@
     align-items: center;
     justify-content: center;
     gap: 1px;
+    /* even widths: "Ponownie" no longer pushes "Łatwe" off a narrow screen */
+    flex: 1 1 0;
     min-width: 0;
     height: 52px;
     line-height: 1.15;

@@ -59,6 +59,10 @@ export interface IBaseLocale {
     DAYS_STR_IVL_MOBILE: string;
     MONTHS_STR_IVL_MOBILE: string;
     YEARS_STR_IVL_MOBILE: string;
+    MINUTES_STR_IVL: string;
+    HOURS_STR_IVL: string;
+    MINUTES_STR_IVL_MOBILE: string;
+    HOURS_STR_IVL_MOBILE: string;
 
     // settings.ts
     SETTINGS_HEADER: string;

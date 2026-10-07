@@ -55,6 +55,11 @@ import {
 import { getSpeedStreakVisual, resolveThemeId } from "src/speed-streak/visuals/visual-registry";
 import type { SpeedStreakVisual, VisualState } from "src/speed-streak/visuals/visual-types";
 
+/** "8.4" → "8,4" in Polish (the decimal comma). */
+function decimal(text: string): string {
+    return isPolish() ? text.replace(".", ",") : text;
+}
+
 export interface SpeedStreakCardContext {
     tags: string[];
     deckPath: string;
@@ -539,7 +544,8 @@ export class SpeedStreakController {
     }
 
     private showSummary(summary: SpeedStreakSessionSummary) {
-        const avg = summary.cards > 0 ? (summary.activeMs / summary.cards / 1000).toFixed(1) : "0";
+        const avg =
+            summary.cards > 0 ? decimal((summary.activeMs / summary.cards / 1000).toFixed(1)) : "0";
         const lines = [
             ss("SUMMARY_TITLE"),
             ss("SUMMARY_LINE", {
@@ -768,10 +774,10 @@ export class SpeedStreakController {
             timerText = "∞";
         } else if (remaining >= 0) {
             const secs = remaining / 1000;
-            timerText = secs >= 10 ? Math.ceil(secs).toString() : secs.toFixed(1);
+            timerText = secs >= 10 ? Math.ceil(secs).toString() : decimal(secs.toFixed(1));
             fraction = total && total > 0 ? Math.max(0, Math.min(1, remaining / total)) : 0;
         } else {
-            timerText = `+${(-remaining / 1000).toFixed(remaining > -10000 ? 1 : 0)}`;
+            timerText = `+${decimal((-remaining / 1000).toFixed(remaining > -10000 ? 1 : 0))}`;
             fraction = 0;
         }
 

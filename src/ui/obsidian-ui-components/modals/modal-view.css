@@ -64,3 +64,9 @@ body:not(.is-mobile) #sr-modal-view {
     padding-left: var(--safe-area-inset-left) !important;
     padding-bottom: var(--safe-area-inset-bottom) !important;
 }
+
+/* Phone: the window already fills the screen, so the full screen button only took the room
+   of the mode menu and pushed the close button off the edge */
+.is-phone #sr-modal-view .sr-fullscreen-button {
+    display: none;
+}

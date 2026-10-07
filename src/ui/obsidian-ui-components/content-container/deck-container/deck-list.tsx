@@ -2,6 +2,7 @@ import "src/ui/obsidian-ui-components/content-container/deck-container/deck-list
 import "src/endless/endless.css";
 import { setIcon } from "obsidian";
 
+import { bg, bgCount } from "src/appearance/background-i18n";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
 import { en } from "src/endless/endless-i18n";
@@ -52,12 +53,16 @@ export default class DeckListComponent {
     private startReviewOfDeck: (deck: Deck) => void;
     private endless: EndlessDeckSelection | null = null;
     private endlessBar: HTMLDivElement;
+    /** "14 cards waiting today" over the photo (phone with a background theme, background.css) */
+    private duePill: HTMLDivElement;
 
     public constructor(parentEl: HTMLElement, startReviewOfDeck: (deck: Deck) => void) {
         this.startReviewOfDeck = startReviewOfDeck;
         // Prep main container
         this.scrollWrapper = parentEl.createDiv();
         this.scrollWrapper.addClass("sr-scroll-wrapper");
+
+        this.duePill = this.scrollWrapper.createDiv({ cls: "usr-due-pill" });
 
         this.content = this.scrollWrapper.createDiv();
         this.content.addClass("sr-content");
@@ -158,6 +163,13 @@ export default class DeckListComponent {
         const originDeckStats = reviewSequencer.getDeckStats(
             reviewSequencer.originalDeckTree.getTopicPath(),
         );
+
+        this.duePill.setText(
+            originDeckStats.dueCount > 0
+                ? bgCount("DUE_WAITING", originDeckStats.dueCount)
+                : bg("ALL_DONE"),
+        );
+        this.duePill.toggleClass("is-done", originDeckStats.dueCount === 0);
 
         if (originDeckStats.totalCount === 0) {
             const noDecksToReviewEl = this.treeContainer.createDiv();

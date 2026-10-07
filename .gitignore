@@ -53,3 +53,6 @@ dev-vault/.obsidian/
 zadania/
 Claude outputs/
 ZADANIE-*.md
+
+# …except the starting settings of the test vault (scripts/dev-vault-install.mjs copies them)
+!dev-vault/_config/data.json

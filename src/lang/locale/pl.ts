@@ -49,12 +49,21 @@ const pl: IBaseLocale = {
     ALL_CAUGHT_UP: "Jesteś teraz na bieżąco :D.",
 
     // scheduling.ts
-    DAYS_STR_IVL: "${interval} dni",
-    MONTHS_STR_IVL: "${interval} miesięcy",
-    YEARS_STR_IVL: "${interval} lata",
+    // forms: 1 dzień, 2–4 dni, 5+ dni, 1,5 dnia (src/lang/plural.ts)
+    DAYS_STR_IVL:
+        "one:${interval} dzień|few:${interval} dni|many:${interval} dni|other:${interval} dnia",
+    MONTHS_STR_IVL:
+        "one:${interval} miesiąc|few:${interval} miesiące|many:${interval} miesięcy|other:${interval} miesiąca",
+    YEARS_STR_IVL:
+        "one:${interval} rok|few:${interval} lata|many:${interval} lat|other:${interval} roku",
     DAYS_STR_IVL_MOBILE: "${interval} d",
     MONTHS_STR_IVL_MOBILE: "${interval} mies.",
-    YEARS_STR_IVL_MOBILE: "${interval}r",
+    YEARS_STR_IVL_MOBILE:
+        "one:${interval} rok|few:${interval} lata|many:${interval} lat|other:${interval} roku",
+    MINUTES_STR_IVL: "${interval} min",
+    HOURS_STR_IVL: "${interval} godz.",
+    MINUTES_STR_IVL_MOBILE: "${interval} min",
+    HOURS_STR_IVL_MOBILE: "${interval} godz.",
 
     // settings.ts
     SETTINGS_HEADER: "Upgraded Spaced Repetition",

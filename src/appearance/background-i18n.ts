@@ -1,3 +1,4 @@
+import { selectPluralForm } from "src/lang/plural";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
 
 const EN = {
@@ -19,6 +20,8 @@ const EN = {
     DIM: "Darken the photo",
     BLUR: "Blur behind the panels",
     CREDIT: "Photos: ${names} (Unsplash).",
+    DUE_WAITING: "one:${n} card waiting today|other:${n} cards waiting today",
+    ALL_DONE: "All done for today",
 };
 
 type Keys = keyof typeof EN;
@@ -42,6 +45,9 @@ const PL: Record<Keys, string> = {
     DIM: "Przyciemnienie zdjęcia",
     BLUR: "Rozmycie za panelami",
     CREDIT: "Zdjęcia: ${names} (Unsplash).",
+    DUE_WAITING:
+        "one:${n} karta czeka na dziś|few:${n} karty czekają na dziś|many:${n} kart czeka na dziś|other:${n} karty czeka na dziś",
+    ALL_DONE: "Na dziś wszystko powtórzone",
 };
 
 export function bg(key: Keys, params?: Record<string, string | number>): string {
@@ -52,6 +58,14 @@ export function bg(key: Keys, params?: Record<string, string | number>): string 
         }
     }
     return text;
+}
+
+/** A text with a number in it, in the right plural form ("4 karty czekają na dziś"). */
+export function bgCount(key: Keys, n: number): string {
+    const template = (isPolish() ? PL[key] : EN[key]) ?? EN[key];
+    return selectPluralForm(template, n, isPolish() ? "pl" : "en")
+        .split("${n}")
+        .join(String(n));
 }
 
 /** Name and description of a theme ("none" = no photo). */

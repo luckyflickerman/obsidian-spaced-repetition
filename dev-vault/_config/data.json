@@ -1,0 +1,19 @@
+{
+    "settings": {
+        "flashcardTags": ["#ENG", "#ESP"],
+        "tts": {
+            "enabled": true,
+            "autoPlay": true,
+            "provider": "system",
+            "languageRules": "#ENG = en-GB\n#ESP = es-ES",
+            "defaultLanguage": "",
+            "voices": {},
+            "rate": 0.85,
+            "volume": 100,
+            "fallbackSide": "question",
+            "readWholeAnswer": true,
+            "pauseSpeedStreak": true,
+            "replayHotkey": "r"
+        }
+    }
+}

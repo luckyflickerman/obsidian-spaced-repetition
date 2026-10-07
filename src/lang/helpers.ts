@@ -1,6 +1,7 @@
 import { IBaseLocale } from "src/lang/base-locale";
 import en from "src/lang/locale/en";
 import { LocaleManager, LocaleManagerInstance } from "src/lang/locale-manager";
+import { formatCount, selectPluralForm } from "src/lang/plural";
 
 // Initialize the locale manager
 LocaleManagerInstance.instance = new LocaleManager();
@@ -55,6 +56,22 @@ export function t(translationKey: keyof IBaseLocale, params?: Record<string, unk
     }
 
     return translation;
+}
+
+/**
+ * Like t(), for a translation with a number in it: picks the plural form for
+ * `count` (see src/lang/plural.ts) and writes the number the way the language
+ * does (Polish "1,5 dnia"). `count` is inserted as `${countParam}`.
+ */
+export function tCount(
+    translationKey: keyof IBaseLocale,
+    count: number,
+    countParam = "interval",
+    params?: Record<string, unknown>,
+): string {
+    const locale: string = LocaleManagerInstance.getInstance().currentLocale;
+    const template = selectPluralForm(t(translationKey), count, locale);
+    return insertParameters(template, { ...params, [countParam]: formatCount(count, locale) });
 }
 
 /**

@@ -1,6 +1,6 @@
 import { TICKS_PER_DAY } from "src/data/constants";
 import { SRSettings } from "src/data/settings";
-import { t } from "src/lang/helpers";
+import { t, tCount } from "src/lang/helpers";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
 import { DueDateHistogram } from "src/scheduling/due-date-histogram";
 
@@ -70,12 +70,12 @@ export function textInterval(interval: number | null | undefined, isMobile: bool
         y: number = Math.round(interval / 36.525) / 10;
 
     if (isMobile) {
-        if (m < 1.0) return t("DAYS_STR_IVL_MOBILE", { interval });
-        else if (y < 1.0) return t("MONTHS_STR_IVL_MOBILE", { interval: m });
-        else return t("YEARS_STR_IVL_MOBILE", { interval: y });
+        if (m < 1.0) return tCount("DAYS_STR_IVL_MOBILE", interval);
+        else if (y < 1.0) return tCount("MONTHS_STR_IVL_MOBILE", m);
+        else return tCount("YEARS_STR_IVL_MOBILE", y);
     } else {
-        if (m < 1.0) return t("DAYS_STR_IVL", { interval });
-        else if (y < 1.0) return t("MONTHS_STR_IVL", { interval: m });
-        else return t("YEARS_STR_IVL", { interval: y });
+        if (m < 1.0) return tCount("DAYS_STR_IVL", interval);
+        else if (y < 1.0) return tCount("MONTHS_STR_IVL", m);
+        else return tCount("YEARS_STR_IVL", y);
     }
 }

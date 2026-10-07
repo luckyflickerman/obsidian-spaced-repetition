@@ -68,6 +68,10 @@ const en: IBaseLocale = {
     DAYS_STR_IVL_MOBILE: "${interval}d",
     MONTHS_STR_IVL_MOBILE: "${interval}m",
     YEARS_STR_IVL_MOBILE: "${interval}y",
+    MINUTES_STR_IVL: "${interval} min",
+    HOURS_STR_IVL: "${interval} hr",
+    MINUTES_STR_IVL_MOBILE: "${interval}m",
+    HOURS_STR_IVL_MOBILE: "${interval}h",
 
     // settings.ts
     SETTINGS_HEADER: "Spaced Repetition",
