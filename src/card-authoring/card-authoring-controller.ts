@@ -456,9 +456,7 @@ export class CardAuthoringController {
             return;
         }
         new DeckSuggestModal(this.app, decks, (deck) => {
-            void this.rememberDeck(deck).then(
-                () => new Notice(ca("DECK_CHOSEN", { tag: deck.tag, file: deck.file })),
-            );
+            void this.rememberDeck(deck);
         }).open();
     }
 
@@ -574,8 +572,6 @@ export class CardAuthoringController {
         );
         void this.saveData();
         this.updateStatusBar();
-        if (Platform.isMobile && this.settings.showDailyCounter)
-            new Notice(ca("COUNTER", { n: this.counterValue() }), 2500);
 
         // 4. next empty template on the next line
         const deck = deckForTag(this.settings, deckTag) ?? currentDeck(this.settings);
@@ -732,7 +728,6 @@ export class CardAuthoringController {
             const lines = editor.getValue().split("\n");
             const ins = embedInsert(lines, fresh, fileName);
             editor.replaceRange(ins.text, { line: ins.line, ch: ins.ch });
-            new Notice(ca("IMAGE_ADDED", { name: fileName }));
         } catch (e) {
             console.error("[Card authoring] image", e);
             new Notice(ca("IMAGE_FAILED"));
@@ -755,7 +750,6 @@ export class CardAuthoringController {
         );
         try {
             await this.app.fileManager.renameFile(file, folder + name);
-            new Notice(ca("IMAGE_RENAMED", { name }));
         } catch (e) {
             console.error("[Card authoring] rename pasted image", e);
         }

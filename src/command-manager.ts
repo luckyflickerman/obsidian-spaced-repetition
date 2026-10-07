@@ -1,4 +1,4 @@
-import { Editor, Menu, Notice, Platform, TFile } from "obsidian";
+import { Editor, Menu, Platform, TFile } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
 import { en } from "src/endless/endless-i18n";
@@ -398,7 +398,6 @@ export class CommandManager {
                 settings.enabled = !settings.enabled;
                 await this.settingsManager.save();
                 SpeedStreakController.active?.refreshSettings();
-                new Notice(settings.enabled ? ss("TOGGLED_ON") : ss("TOGGLED_OFF"));
             },
         });
 

@@ -89,6 +89,7 @@ export interface SpeedStreakSettings {
     theme: string;
     performance: SpeedStreakPerformanceSetting;
     showRatingTrail: boolean;
+    /** No longer used: the summary notice was removed in 0.9.7 (the pause screen shows the session) */
     showSessionSummary: boolean;
     reducedMotion: boolean;
 

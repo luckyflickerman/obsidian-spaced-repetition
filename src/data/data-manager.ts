@@ -269,8 +269,6 @@ export class DataManager {
             this.settingsManager.settings,
         );
 
-        new Notice(t("RESPONSE_RECEIVED"));
-
         if (this.settingsManager.settings.autoNextNote) {
             await this.plugin.nextNoteReviewHandler.autoReviewNextNote();
         }

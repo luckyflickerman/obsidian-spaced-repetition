@@ -1,6 +1,6 @@
 /**
- * Background — the settings: the theme picker (a tile per built-in theme with
- * a small preview of its glass and colours) and the sliders. The picker is on
+ * Background — the settings: the theme picker (a tile per built-in theme: its
+ * photo and its name) and the sliders. The picker is on
  * the Appearance page and at the top of the "Options" window.
  */
 
@@ -45,11 +45,8 @@ function addThemePicker(group: SettingGroup, plugin: SRPlugin) {
                 });
             } else {
                 tile.addClass("is-none");
+                setIcon(view.createSpan({ cls: "usr-bg-theme-none-icon" }), "image-off");
             }
-            const glass = view.createDiv({ cls: "usr-bg-theme-glass" });
-            glass.createSpan({ cls: "usr-bg-theme-word", text: bg("SAMPLE_WORD") });
-            glass.createSpan({ cls: "usr-bg-theme-soft", text: bg("SAMPLE_SOFT") });
-            glass.createSpan({ cls: "usr-bg-theme-button", text: bg("SAMPLE_BUTTON") });
             const nameEl = tile.createSpan({ cls: "usr-bg-theme-name" });
             setIcon(nameEl.createSpan({ cls: "usr-bg-theme-check" }), "check");
             nameEl.createSpan({ text: name });

@@ -133,6 +133,11 @@ export class DeckContainer {
 
     /** The deck tree; in Endless mode with tick boxes and the start bar. */
     private redrawDecks(reviewSequencer: IFlashcardReviewSequencer, settings: SRSettings) {
+        // Endless has no "cards due today" or daily goal (deck-list.css / background.css)
+        this.containerEl.toggleClass(
+            "sr-is-endless",
+            this.reviewMode === FlashcardReviewMode.Endless,
+        );
         if (this.reviewMode !== FlashcardReviewMode.Endless) {
             this.deckList.redraw(reviewSequencer, settings);
             return;

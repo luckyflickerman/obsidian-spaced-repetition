@@ -3,6 +3,16 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.8
+
+Back to the look from the design: everything in the middle.
+
+- **Computer and iPad with a background theme**: the photo fills the window and the deck list and the review are **one glass panel in the middle** (at most 640 px wide), as in the design, instead of bars stretched to the edges. On a computer use the full screen button for the whole-screen look.
+- **Phone deck list**: the daily goal is now a slim line under "N cards waiting today" (over the photo), the sheet with the decks starts higher, and the **calendar is right under the decks**, visible as soon as the list opens (its big statistics are gone on the phone; average, study days and streaks stay, the year buttons are below it).
+- **Endless**: no "cards waiting today" and no daily goal — they do not belong to Endless. The tick in the deck boxes is in the middle of the box now.
+- **Theme tiles**: only the photo and the name of the theme (the sample word and button are gone).
+- **Fewer notifications**: no more pop-ups after a review (Speed Streak summary — the pause screen shows it — and "Response received"), while writing cards ("New today: N", "New cards go to…", "Image added", "Image renamed") and technical ones ("Note was opened in a new tab", "Cards count does not match…", "Speed Streak on/off"). Warnings (duplicate card, missing translation, import) stay.
+
 ## 0.9.7
 
 The phone layout from the design, and fixes for every device.

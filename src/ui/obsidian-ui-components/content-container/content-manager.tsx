@@ -1,5 +1,5 @@
 import { now } from "moment";
-import { App, MarkdownView, Notice, Platform } from "obsidian";
+import { App, MarkdownView, Notice } from "obsidian";
 
 import { BackgroundController } from "src/appearance/background-controller";
 import { DataManager } from "src/data/data-manager";
@@ -32,7 +32,6 @@ import { ConfirmationModal } from "src/ui/obsidian-ui-components/modals/confirma
 import { FlashcardEditModal } from "src/ui/obsidian-ui-components/modals/edit-modal";
 import { ReviewQueueLoader } from "src/ui/review-queue-loader";
 import { UIManager, UIState } from "src/ui/ui-manager";
-import EmulatedPlatform from "src/utils/platform-detector";
 
 export enum ContentState {
     Deck,
@@ -463,15 +462,6 @@ export default class ContentManager {
         const currentQuestion = this.reviewSequencer.currentQuestion;
         if (!currentQuestion) return;
         this.cardContainer.speedStreak.pauseForDeparture();
-
-        if (
-            (!this.settings.openViewInNewTab &&
-                !(Platform.isMobile || EmulatedPlatform().isMobile)) ||
-            (!this.settings.openViewInNewTabMobile &&
-                (Platform.isMobile || EmulatedPlatform().isMobile))
-        ) {
-            new Notice("Note was opened in new tab in the background");
-        }
 
         const file = currentQuestion.note.file.tfile;
         const blockId = currentQuestion.questionText.obsidianBlockId;

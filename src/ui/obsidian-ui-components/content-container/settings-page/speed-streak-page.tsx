@@ -464,7 +464,6 @@ export class SpeedStreakPage extends SettingsPage {
         );
         this.addToggle(feedback, "countdownSound", ss("COUNTDOWN_SOUND"));
         this.addToggle(feedback, "vibrationEnabled", ss("VIBRATION"));
-        this.addToggle(feedback, "showSessionSummary", ss("SUMMARY"), ss("SUMMARY_DESC"));
 
         // Shortcuts
         const keys = new SettingGroup(this.containerEl).setHeading(ss("G_SHORTCUTS"));

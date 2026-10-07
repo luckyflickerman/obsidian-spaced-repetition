@@ -5,7 +5,6 @@
  * works like in the normal review (the user asks for it).
  */
 
-import { Notice } from "obsidian";
 
 import { DataStore } from "src/data/data-store/base/data-store";
 import { Card } from "src/data/data-structures/card/card";
@@ -185,7 +184,7 @@ export class EndlessReviewSequencer implements IFlashcardReviewSequencer {
         await question.writeQuestion(this.settings);
 
         if (cardFrontBackList.length !== question.cards.length) {
-            new Notice("Cards count does not match cards from question text. Skipping redraw.");
+            console.warn("SR: Cards count does not match question text. Skipping redraw.");
             return;
         }
         question.cards.forEach((card, i) => {

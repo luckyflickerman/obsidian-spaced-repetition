@@ -21,7 +21,7 @@ Plugin instaluje się przez **BRAT** — krok po kroku w [README.md](README.md#p
 - **Pierwsza karta gratis**: rozgrzewka bez limitu po wejściu w powtórkę.
 - **Rekordy**: wszech czasów i dzisiejszy, „Czyste” serie (bez pauz i Boostów), top 5 (więcej niżej).
 - **Ostrzeżenie „kończy się czas”**: pulsowanie (i tykanie) przez ostatnie 3 s.
-- **Dźwięki** (syntezowane, domyślnie wyłączone), **wibracje** na telefonie, **podsumowanie sesji** po wyjściu.
+- **Dźwięki** (syntezowane, domyślnie wyłączone), **wibracje** na telefonie. Podsumowanie sesji widać na ekranie pauzy (bez dodatkowych powiadomień).
 - **Tryb Punkty** (klasyczny): punkty × mnożnik serii.
 
 ## Style wizualne
@@ -227,13 +227,13 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 
 ## Tło (motywy ze zdjęciem)
 
-Zdjęcie za listą talii i fiszkami, a na nim przezroczyste, „szklane” panele. Domyślnie wyłączone. Do wyboru dwa gotowe motywy:
+Zdjęcie za listą talii i fiszkami, a na nim przezroczysty, „szklany” panel. Na komputerze i iPadzie zdjęcie wypełnia całe okno, a lista talii i powtórka są jednym panelem na środku (najwyżej 640 px szerokości), tak jak w projekcie — żeby zobaczyć to na całym ekranie komputera, włącz pełny ekran przyciskiem **⛶**. Domyślnie wyłączone. Do wyboru dwa gotowe motywy:
 
 - **Jezioro**: górskie jezioro o świcie, turkusowe szkło i złoty akcent,
 - **Zmierzch**: fioletowy zmierzch nad miastem, fioletowe szkło i różowy akcent,
 - **Bez zdjęcia**: zwykłe kolory Obsidiana.
 
-Jak wybrać: kliknij kafelek z motywem w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Upgraded Spaced Repetition → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
+Jak wybrać: kliknij kafelek (zdjęcie z nazwą motywu) w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Upgraded Spaced Repetition → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
 
 W **Wyglądzie** są jeszcze trzy suwaki: **Zakrycie paneli** (mniej = zdjęcie bardziej prześwituje), **Przyciemnienie zdjęcia** i **Rozmycie za panelami**.
 
@@ -245,7 +245,7 @@ Kolory trzymają się zasady 70/20/10:
 
 Tekst zawsze zostaje czytelny, także w jasnym motywie Obsidiana. Przy włączonym tle przyciski odpowiedzi są w jednej rodzinie kolorów: przezroczyste kafelki równej szerokości, a tylko „Dobre” (w Endless „Wiem”) ma kolor akcentu. Krótka fiszka (słowo i tłumaczenie) jest zapisana większą, książkową czcionką, z małym podpisem notatki nad nią i krótką kreską między pytaniem a odpowiedzią.
 
-**Na telefonie** (pionowo) lista talii wygląda jak w projekcie: u góry widać zdjęcie i napis „N kart czeka na dziś”, a talie leżą na panelu wysuniętym od dołu — przesuń go palcem w górę, żeby zobaczyć cel dzienny i kalendarz. Przy każdej talii są dwie liczby: na dziś (w kolorze akcentu) i wszystkie karty. W trybie Endless nad taliami jest rekord i duży przycisk „Zacznij Endless”.
+**Na telefonie** (pionowo) lista talii wygląda jak w projekcie: u góry widać zdjęcie, napis „N kart czeka na dziś”, a pod nim smukły pasek celu dziennego („Nowe fiszki dziś 4/10”). Talie leżą na panelu wysuniętym od dołu, a zaraz pod nimi jest kalendarz (bez dużych statystyk — zostały tylko średnia, dni nauki i serie; przyciski roku są pod kalendarzem). Przy każdej talii są dwie liczby: na dziś (w kolorze akcentu) i wszystkie karty. W trybie Endless nie ma napisu „czeka na dziś” ani celu dziennego — nad taliami jest rekord i duży przycisk „Zacznij Endless”.
 
 ## Tryb Endless
 
@@ -357,13 +357,13 @@ Na komputerze podgląd otwiera się obok ikonki, a na telefonie w okienku. Ikonk
 
 ### Licznik
 
-„**Nowe dziś: 4/10**” widać na pasku stanu, a na telefonie w podglądzie i po zakończeniu fiszki.
+„**Nowe dziś: 4/10**” widać na pasku stanu, a na telefonie w podglądzie fiszki.
 
 - Liczą się wszystkie nowe fiszki, także dopisane ręcznie, w dniu, w którym plugin pierwszy raz je zobaczył.
 - Fiszki istniejące przed aktualizacją nie są liczone.
 - Dzień zaczyna się o godzinie z ustawienia „Początek dnia”, tak jak powtórki.
 - Cel dzienny ustawisz w ustawieniach (domyślnie 10).
-- Na liście talii cel ma własny blok nad kalendarzem. Przycisk **»** po jego prawej stronie zwija go do małej plakietki „🎯 4/10” przy prawej krawędzi. Dotknij plakietki, żeby rozwinąć blok. Plugin pamięta zwinięcie także po zamknięciu Obsidiana.
+- Na liście talii cel ma własny blok nad kalendarzem. Przycisk **»** po jego prawej stronie zwija go do małej plakietki „🎯 4/10” przy prawej krawędzi. Dotknij plakietki, żeby rozwinąć blok. Plugin pamięta zwinięcie także po zamknięciu Obsidiana. W trybie Endless celu nie ma. Na telefonie z motywem tła cel jest smukłym paskiem nad panelem talii.
 
 ### Obrazki
 

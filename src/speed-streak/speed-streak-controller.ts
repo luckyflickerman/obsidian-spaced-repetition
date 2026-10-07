@@ -1,5 +1,5 @@
 import "src/speed-streak/speed-streak.css";
-import { Notice, Platform } from "obsidian";
+import { Platform } from "obsidian";
 
 import type SRPlugin from "src/main";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
@@ -154,8 +154,6 @@ export class SpeedStreakController {
     private best: SpeedStreakRunRecord | null = null;
     private bestStreak = 0;
     private listed: ListedRun[] = [];
-    private newRecordThisSession = false;
-    private bestAllTimeAtStart = 0;
     /** Endless session: own all-time record and "cards this session" */
     private endless = false;
     /** Endless score (answers without an error in a row), shown by the hourglass */
@@ -204,7 +202,6 @@ export class SpeedStreakController {
             return;
         }
         this.loadRecords();
-        this.newRecordThisSession = false;
         this.holdCount = 0;
         this.holdPausedByUs = false;
         this.engine.bestToBeat = this.bestStreak;
@@ -492,7 +489,6 @@ export class SpeedStreakController {
     private loadRecords() {
         const runs = this.sessionRuns(getSpeedStreakData(this.plugin));
         this.recomputeRecords(runs);
-        this.bestAllTimeAtStart = Math.max(0, ...runs.map((r) => r.streak));
     }
 
     private recomputeRecords(runs: SpeedStreakRunRecord[]) {
@@ -519,7 +515,6 @@ export class SpeedStreakController {
         const runs = this.sessionRuns(getSpeedStreakData(this.plugin));
         runs.push(run);
         if (runs.length > MAX_STORED_RUNS) runs.splice(0, runs.length - MAX_STORED_RUNS);
-        if (run.streak > this.bestAllTimeAtStart) this.newRecordThisSession = true;
         this.recomputeRecords(runs);
         this.engine.bestToBeat = this.bestStreak;
     }
@@ -540,30 +535,6 @@ export class SpeedStreakController {
         } catch (e) {
             console.error("[Speed Streak] could not save records", e);
         }
-        if (this.settings.showSessionSummary && summary.cards > 0) this.showSummary(summary);
-    }
-
-    private showSummary(summary: SpeedStreakSessionSummary) {
-        const avg =
-            summary.cards > 0 ? decimal((summary.activeMs / summary.cards / 1000).toFixed(1)) : "0";
-        const lines = [
-            ss("SUMMARY_TITLE"),
-            ss("SUMMARY_LINE", {
-                cards: summary.cards,
-                best: summary.bestStreakInSession,
-                timeouts: summary.timeouts,
-                boosts: summary.boostsUsed,
-                avg,
-            }),
-        ];
-        if (this.settings.gameplayMode === "points")
-            lines.push(ss("SUMMARY_SCORE", { score: summary.score }));
-        if (this.newRecordThisSession) {
-            const runs = this.sessionRuns(getSpeedStreakData(this.plugin));
-            const best = Math.max(...runs.map((r) => r.streak));
-            lines.push(ss(this.endless ? "ENDLESS_SUMMARY_RECORD" : "SUMMARY_RECORD", { n: best }));
-        }
-        new Notice(lines.join("\n"), 8000);
     }
 
     // MARK: Engine events → feedback
