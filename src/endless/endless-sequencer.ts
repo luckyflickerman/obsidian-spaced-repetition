@@ -5,7 +5,6 @@
  * works like in the normal review (the user asks for it).
  */
 
-
 import { DataStore } from "src/data/data-store/base/data-store";
 import { Card } from "src/data/data-structures/card/card";
 import { Question, QuestionText } from "src/data/data-structures/card/questions/question";
