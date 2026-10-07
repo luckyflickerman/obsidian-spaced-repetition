@@ -3,6 +3,18 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.7
+
+The phone layout from the design, and fixes for every device.
+
+- **Phone deck list with a background theme** (as in the design): the photo at the top with "14 cards waiting today", the decks on a sheet that slides up from below (drag it up for the daily goal and the calendar). Two numbers per deck: today (in the accent colour) and all cards. In Endless: the record line and one big "Start Endless" button.
+- **Phone header**: the close button was cut off at the right edge and the window could scroll sideways (with a background theme). The full screen button is gone on phones — the window fills the screen anyway — so "Review mode" fits again. Plain icon buttons on the glass bar, no dark squares behind them.
+- **Answer buttons**: always the same width, so "Again" no longer pushes "Easy" off a narrow screen. With a background theme: rounded tiles, 60 px high (66 px on phones). On phones and tablets the focus ring no longer stays on "Again" after every answer.
+- **Light Obsidian theme with a background photo**: the deck names were dark grey on the dark glass — now light and readable.
+- **Short cards with a background theme**: bigger book-like text, the note path as a small caption above, a short line between question and answer.
+- **Polish**: intervals in proper Polish — "1 dzień", "3 dni", "1,5 dnia", "2 miesiące", "1 rok", "2 godz." (was "1 dni", "2 hr"); the Speed Streak timer uses a decimal comma ("7,9").
+- Tick boxes in Endless are in line with the deck names on touch devices.
+
 ## 0.9.6
 
 Two ready background themes instead of picking a photo.

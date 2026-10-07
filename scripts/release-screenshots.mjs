@@ -1,7 +1,9 @@
 // Release screenshots: every plugin screen in 7 device modes + measurements (CLAUDE.md,
 // "Zrzuty ekranu przy każdym wydaniu").
 //
-// Usage: node scripts/release-screenshots.mjs <version>
+// Usage: node scripts/release-screenshots.mjs <version> [--tlo=lake|dusk]
+//   --tlo: the run with a background theme (src/appearance/), saved in "<version>-<theme>";
+//   without it the background is off (the screens look like before 0.9.5).
 //   Obsidian must run with --remote-debugging-port=9222 and have the dev-vault window open;
 //   the plugin must be built and installed (node scripts/dev-vault-install.mjs).
 // Output: Claude outputs/zrzuty/<version>/<mode>-<nr>-<screen>.png + metrics.json (not in git).
@@ -14,12 +16,18 @@ import path from "node:path";
 
 const version = process.argv[2];
 if (!version) {
-    console.error("Usage: node scripts/release-screenshots.mjs <version>");
+    console.error("Usage: node scripts/release-screenshots.mjs <version> [--tlo=lake|dusk]");
     process.exit(1);
 }
+const BG = (process.argv.find((a) => a.startsWith("--tlo=")) ?? "--tlo=none").slice(6);
 const ID = "upgraded-spaced-repetition";
 const ORIGINAL = "obsidian-spaced-repetition";
-const OUT = path.join(process.cwd(), "Claude outputs", "zrzuty", version);
+const OUT = path.join(
+    process.cwd(),
+    "Claude outputs",
+    "zrzuty",
+    BG === "none" ? version : `${version}-${BG}`,
+);
 const NOTES_DIR = path.join(process.cwd(), "dev-vault", "Fiszki");
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -372,7 +380,13 @@ for (const f of fs.readdirSync(NOTES_DIR)) {
 }
 let originalWasOn = false;
 consoleProblems.length = 0;
+const bgSettings = `app.plugins.plugins['${ID}'].dataManager.data.settings`;
+const bgBefore = await run(`return ${bgSettings}.background?.theme ?? 'none'`);
+const setBg = (theme) =>
+    run(`const s = ${bgSettings}; s.background = { ...(s.background ?? {}), theme: '${theme}' };
+        await app.plugins.plugins['${ID}'].dataManager.savePluginData(); return 1`);
 try {
+    await setBg(BG);
     originalWasOn = !!(await run(`return !!app.plugins.plugins['${ORIGINAL}']`));
     if (originalWasOn) await run(`await app.plugins.disablePluginAndSave('${ORIGINAL}'); return 1`);
     await sleep(600);
@@ -412,6 +426,7 @@ try {
     await esc();
     await theme("system");
     await setMobile(false);
+    await setBg(bgBefore ?? "none");
     await setSize(null);
     if (originalWasOn) await run(`await app.plugins.enablePluginAndSave('${ORIGINAL}'); return 1`);
     for (const [f, content] of notesBackup) fs.writeFileSync(path.join(NOTES_DIR, f), content);

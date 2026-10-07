@@ -1862,6 +1862,8 @@ body.theme-dark {
   height: 44px;
   padding: 0;
   background: transparent !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border: 0;
   border-radius: 12px;
   box-shadow: none !important;
@@ -1962,6 +1964,7 @@ body.theme-dark {
   display: none;
 }
 .is-phone .usr-bg-on .sr-deck-container .sr-tree-item-row {
+  align-items: center;
   min-height: 48px;
   border-radius: 12px;
   font-size: var(--font-ui-medium);
@@ -3046,6 +3049,7 @@ body:not(.is-mobile)
 }
 .is-mobile .sr-tree-container.is-endless .sr-tree-item-row {
   min-height: 44px;
+  align-items: center;
 }
 .is-mobile .sr-tree-container.is-endless .sr-endless-check {
   width: 22px;

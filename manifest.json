@@ -1,7 +1,7 @@
 {
     "id": "upgraded-spaced-repetition",
     "name": "Upgraded Spaced Repetition",
-    "version": "0.9.6",
+    "version": "0.9.7",
     "minAppVersion": "1.11.0",
     "description": "Spaced repetition flashcards with extras: a Speed Streak timer game, read-aloud, quick card authoring and a review calendar.",
     "author": "luckyflickerman",

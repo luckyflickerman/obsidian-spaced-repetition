@@ -220,7 +220,7 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 
 ## Okno powtórek: pełny ekran i przesuwanie
 
-- Przycisk **⛶** w nagłówku (na liście talii i podczas powtórki) włącza i wyłącza pełny ekran. Możesz też przypisać skrót do komendy „Okno powtórek: pełny ekran wł. / wył.”.
+- Przycisk **⛶** w nagłówku (na liście talii i podczas powtórki) włącza i wyłącza pełny ekran (na telefonie go nie ma — tam okno i tak zajmuje cały ekran). Możesz też przypisać skrót do komendy „Okno powtórek: pełny ekran wł. / wył.”.
 - Okno przesuwasz, chwytając pasek u góry (nagłówek listy talii albo pasek karty) i przeciągając je w dowolne miejsce. Przyciski na pasku działają normalnie.
 - Okno zapamiętuje miejsce do następnego otwarcia. Dwuklik na pasku wyśrodkowuje je z powrotem.
 - Okno nie ucieknie za krawędź ekranu, bo pasek zawsze zostaje widoczny. Pełny ekran nie zmienia zapisanego rozmiaru okna.
@@ -243,7 +243,9 @@ Kolory trzymają się zasady 70/20/10:
 - 20%: tekst i linie w jasnym odcieniu tego samego koloru,
 - 10%: jeden akcent, tylko w kilku miejscach: liczby „Dziś”, cel dzienny, główny przycisk odpowiedzi, piasek w klepsydrze.
 
-Tekst zawsze zostaje czytelny. Przy włączonym tle przyciski odpowiedzi są w jednej rodzinie kolorów: przezroczyste, a tylko „Dobre” (w Endless „Wiem”) ma kolor akcentu. Słowo na karcie jest zapisane książkową czcionką.
+Tekst zawsze zostaje czytelny, także w jasnym motywie Obsidiana. Przy włączonym tle przyciski odpowiedzi są w jednej rodzinie kolorów: przezroczyste kafelki równej szerokości, a tylko „Dobre” (w Endless „Wiem”) ma kolor akcentu. Krótka fiszka (słowo i tłumaczenie) jest zapisana większą, książkową czcionką, z małym podpisem notatki nad nią i krótką kreską między pytaniem a odpowiedzią.
+
+**Na telefonie** (pionowo) lista talii wygląda jak w projekcie: u góry widać zdjęcie i napis „N kart czeka na dziś”, a talie leżą na panelu wysuniętym od dołu — przesuń go palcem w górę, żeby zobaczyć cel dzienny i kalendarz. Przy każdej talii są dwie liczby: na dziś (w kolorze akcentu) i wszystkie karty. W trybie Endless nad taliami jest rekord i duży przycisk „Zacznij Endless”.
 
 ## Tryb Endless
 

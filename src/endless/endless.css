@@ -46,6 +46,8 @@
 /* Touch: the whole row ticks the deck; a bigger box and a 44 px row */
 .is-mobile .sr-tree-container.is-endless .sr-tree-item-row {
     min-height: 44px;
+    /* the tick box in line with the deck name */
+    align-items: center;
 }
 
 .is-mobile .sr-tree-container.is-endless .sr-endless-check {
