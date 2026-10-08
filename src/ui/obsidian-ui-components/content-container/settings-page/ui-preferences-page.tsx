@@ -41,10 +41,10 @@ export class UIPreferencesPage extends SettingsPage {
 
         this.uiManager = uiManager;
 
-        // Upgraded Spaced Repetition: photo behind the review, colours from the photo
+        // Fishcards: photo behind the review, colours from the photo
         addBackgroundSettings(this.containerEl, this.plugin);
 
-        // Upgraded Spaced Repetition: size and centering of the card text in the review
+        // Fishcards: size and centering of the card text in the review
         const reviewWindow = () => {
             const s = this.settingsManager.settings;
             s.reviewWindow = normalizeReviewWindowSettings(s.reviewWindow);

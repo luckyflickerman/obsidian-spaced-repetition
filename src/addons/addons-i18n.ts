@@ -2,7 +2,7 @@ import type { AddonId } from "src/addons/addons";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
 
 const EN = {
-    TITLE: "Upgraded Spaced Repetition options",
+    TITLE: "Fishcards options",
     BUTTON: "Options",
     OPTIONS: "Options",
     PLUGINS: "Built-in plugins",
@@ -20,7 +20,7 @@ const EN = {
 type Keys = keyof typeof EN;
 
 const PL: Record<Keys, string> = {
-    TITLE: "Opcje Upgraded Spaced Repetition",
+    TITLE: "Opcje Fishcards",
     BUTTON: "Opcje",
     OPTIONS: "Opcje",
     PLUGINS: "Wbudowane wtyczki",

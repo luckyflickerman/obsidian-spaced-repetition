@@ -6,7 +6,7 @@ Użytkowniczka nie programuje — rozmawiaj z nią **po polsku, prostym językie
 ## Tożsamość pluginu
 
 - Identyfikator: **`upgraded-spaced-repetition`** — stały, **nigdy go nie zmieniaj** (zmiana = nowy plugin, utrata ustawień).
-- Nazwa: `Upgraded Spaced Repetition` (tymczasowa, może się zmienić przed 1.0).
+- Nazwa: **`Fishcards`** (od 0.9.11; wcześniej „Upgraded Spaced Repetition”). Zmienia się tylko `name` w manifeście i teksty — identyfikator zostaje.
 - Folder w vaulcie: `.obsidian/plugins/upgraded-spaced-repetition/`. Oryginał (`obsidian-spaced-repetition`) może być zainstalowany równolegle, więc globalne nazwy (widoki, ikony) mają prefiks `usr-`.
 - Adres repozytorium w kodzie: stałe `PLUGIN_REPO` / `PLUGIN_REPO_URL` w `src/data/constants.ts`.
 

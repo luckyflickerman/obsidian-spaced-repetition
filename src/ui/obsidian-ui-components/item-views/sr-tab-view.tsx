@@ -103,7 +103,7 @@ export class SRTabView extends ItemView {
      * @returns {string} The display text for the SRTabView.
      */
     getDisplayText() {
-        return "Upgraded Spaced Repetition";
+        return "Fishcards";
     }
 
     /**

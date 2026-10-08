@@ -169,7 +169,7 @@ export class LegacyImportController {
                 await plugins.enablePlugin(id);
                 return;
             } catch (e) {
-                console.warn("Upgraded Spaced Repetition: reload after import failed", e);
+                console.warn("Fishcards: reload after import failed", e);
             }
         }
         new Notice(li("RESTART"), 0);

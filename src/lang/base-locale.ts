@@ -357,7 +357,7 @@ export interface IBaseLocale {
     DEBUG_LOG: string;
     COPY: string;
     NO_DECKS_TO_REVIEW: string;
-    // Upgraded Spaced Repetition (optional: locales without them fall back to English)
+    // Fishcards (optional: locales without them fall back to English)
     ALL_DECKS?: string;
     DECK_TITLE?: string;
 }

@@ -1,6 +1,6 @@
-# Upgraded Spaced Repetition — dodatki
+# Fishcards — dodatki
 
-Opis dodatków pluginu **Upgraded Spaced Repetition** (rozszerzona wersja _Spaced Repetition_ 1.15.4): Speed Streak, czytanie na głos, tworzenie fiszek, cel dzienny, kalendarz i okno powtórek.
+Opis dodatków pluginu **Fishcards** (rozszerzona wersja _Spaced Repetition_ 1.15.4): Speed Streak, czytanie na głos, tworzenie fiszek, cel dzienny, kalendarz i okno powtórek.
 
 ## Instalacja
 
@@ -9,7 +9,7 @@ Plugin instaluje się przez **BRAT** — krok po kroku w [README.md](README.md#p
 - Plugin ma własny identyfikator (`upgraded-spaced-repetition`) i własny folder `.obsidian/plugins/upgraded-spaced-repetition/`, więc aktualizacja oryginalnego Spaced Repetition ze sklepu niczego nie nadpisze.
 - Przy pierwszym uruchomieniu plugin proponuje przeniesienie ustawień, rekordów Speed Streak i historii z oryginału (Tak / Nie / Później). Później: komenda „Importuj dane z oryginalnego Spaced Repetition”.
 - Po przeniesieniu **wyłącz oryginalny plugin** (Ustawienia → Wtyczki społeczności), żeby fiszki nie były liczone podwójnie.
-- Ustawienia dodatków: Ustawienia → **Upgraded Spaced Repetition**.
+- Ustawienia dodatków: Ustawienia → **Fishcards**.
 
 ## Jak działa
 
@@ -127,7 +127,7 @@ farma = -/untimed      pytanie domyślnie, odpowiedź bez limitu
 ## Czytanie na głos
 
 Po odsłonięciu odpowiedzi plugin może przeczytać na głos obce słowo albo zdanie, z wymową dla języka karty.
-Używa głosów zainstalowanych w systemie, więc działa bez internetu i bez kont. Ustawienia → Upgraded Spaced Repetition → **Czytanie na głos**.
+Używa głosów zainstalowanych w systemie, więc działa bez internetu i bez kont. Ustawienia → Fishcards → **Czytanie na głos**.
 
 ### Jak oznaczać słowa
 
@@ -202,7 +202,7 @@ Na górze `tts-provider.ts` jest instrukcja krok po kroku, jak dodać nowego dos
 
 ## Karta w powtórce
 
-Ustawienia → Upgraded Spaced Repetition → **Wygląd** → **Karta w powtórce**:
+Ustawienia → Fishcards → **Wygląd** → **Karta w powtórce**:
 
 - **Rozmiar tekstu karty**: normalny, duży (domyślnie) albo bardzo duży. Krótkie fiszki (słowo i tłumaczenie) dostają pełne powiększenie, dłuższe (zdania, listy, obrazki) tylko lekkie, żeby mieściły się na telefonie.
 - **Wyśrodkuj krótkie fiszki** (domyślnie włączone): słowo i tłumaczenie stoją na środku okna. Ścieżka „notatka > nagłówek” zostaje u góry. Jest w jednej linii, a dotknięcie pokazuje ją całą.
@@ -235,7 +235,7 @@ Zdjęcie za listą talii i fiszkami, a na nim przezroczysty, „szklany” panel
 - **Zorza**: zielona zorza polarna nad górami i jeziorem, ciemnoturkusowe szkło i zielony akcent,
 - **Bez zdjęcia**: zwykłe kolory Obsidiana.
 
-Jak wybrać: kliknij kafelek (zdjęcie z nazwą motywu) w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Upgraded Spaced Repetition → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
+Jak wybrać: kliknij kafelek (zdjęcie z nazwą motywu) w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Fishcards → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
 
 W **Wyglądzie** są jeszcze trzy suwaki: **Zakrycie paneli** (mniej = zdjęcie bardziej prześwituje), **Przyciemnienie zdjęcia** i **Rozmycie za panelami**.
 
@@ -297,12 +297,12 @@ Speed Streak działa jak zwykle (timer, Boosty, pauza), ale ma:
 
 ## Opcje (przycisk z kołem zębatym)
 
-W nagłówku listy talii, obok X, jest przycisk **Opcje** (koło zębate). Otwiera okno „Opcje Upgraded Spaced Repetition”, ułożone jak ustawienia Obsidiana:
+W nagłówku listy talii, obok X, jest przycisk **Opcje** (koło zębate). Otwiera okno „Opcje Fishcards”, ułożone jak ustawienia Obsidiana:
 
 - **Opcje**: wszystkie strony ustawień pluginu (Fiszki, Tworzenie fiszek, Notatki, Harmonogram, Wygląd, Dane, Statystyki). Dotknij wiersza, żeby otworzyć stronę. Strzałka w lewo wraca do listy.
 - **Wbudowane wtyczki**: kalendarz powtórek, cel dzienny, czytanie na głos i Speed Streak. Przełącznik włącza i wyłącza wtyczkę, a koło zębate otwiera jej ustawienia.
 
-Ten sam podział jest na głównej stronie Ustawienia → Upgraded Spaced Repetition.
+Ten sam podział jest na głównej stronie Ustawienia → Fishcards.
 
 - Wyłączony kalendarz dalej zapisuje historię w tle, więc po ponownym włączeniu nie ma w nim dziur.
 
@@ -337,7 +337,7 @@ Dodawanie słówek z książki ma zajmować kilka sekund. Wszystko dzieje się w
 
 ### Talie
 
-Ustawienia → Upgraded Spaced Repetition → **Tworzenie fiszek** → **Talie fiszek**. Każda talia to tag, plik i język czytania, np. `#ENG → Fiszki/Angielski.md → en-GB`.
+Ustawienia → Fishcards → **Tworzenie fiszek** → **Talie fiszek**. Każda talia to tag, plik i język czytania, np. `#ENG → Fiszki/Angielski.md → en-GB`.
 
 - Nowe fiszki trafiają na koniec pliku talii. Plugin tylko dopisuje: istniejące linie i ich komentarze `<!--SR:…-->` się nie zmieniają.
 - Ostatnio używana talia jest zapamiętywana. Zmienisz ją komendą „Nowa fiszka: zmień język”.

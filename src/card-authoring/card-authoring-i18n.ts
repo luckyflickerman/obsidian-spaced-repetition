@@ -10,7 +10,7 @@ const EN = {
     CMD_DUPLICATES: "Show duplicates in deck",
     RIBBON: "New card",
     // Notices
-    NO_DECKS: "Add a deck first: Settings → Upgraded Spaced Repetition → Card authoring.",
+    NO_DECKS: "Add a deck first: Settings → Fishcards → Card authoring.",
     NOT_A_CARD: "Put the cursor in a card line.",
     MISSING_WORD: "Missing word",
     MISSING_TRANSLATION: "Missing translation",
@@ -99,7 +99,7 @@ const PL: Record<Keys, string> = {
     CMD_IMAGE: "Dodaj obrazek do fiszki",
     CMD_DUPLICATES: "Pokaż duplikaty w talii",
     RIBBON: "Nowa fiszka",
-    NO_DECKS: "Najpierw dodaj talię: Ustawienia → Upgraded Spaced Repetition → Tworzenie fiszek.",
+    NO_DECKS: "Najpierw dodaj talię: Ustawienia → Fishcards → Tworzenie fiszek.",
     NOT_A_CARD: "Ustaw kursor w linii fiszki.",
     MISSING_WORD: "Brak słowa",
     MISSING_TRANSLATION: "Brak tłumaczenia",

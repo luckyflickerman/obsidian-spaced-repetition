@@ -408,6 +408,14 @@ body:not(.is-phone) .usr-bg-on .sr-response {
     background: rgba(255, 255, 255, 0.12) !important;
 }
 
+/* The open list of the mode menu is drawn by the system (white on Windows) and inherited the
+   light text of the theme — "Cram" and "Endless" were almost invisible. Dark glass colour with
+   light text, like the panels. */
+.usr-bg-on select.dropdown option {
+    background-color: rgb(var(--usr-bg-base));
+    color: var(--usr-bg-ink);
+}
+
 .usr-bg-on .sr-header select.dropdown {
     background-color: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.18);

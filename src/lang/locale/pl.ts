@@ -66,7 +66,7 @@ const pl: IBaseLocale = {
     HOURS_STR_IVL_MOBILE: "${interval} godz.",
 
     // settings.ts
-    SETTINGS_HEADER: "Upgraded Spaced Repetition",
+    SETTINGS_HEADER: "Fishcards",
     GROUP_TAGS_FOLDERS: "Tagi i foldery",
     GROUP_FLASHCARD_REVIEW: "Powtórki fiszek",
     GROUP_FLASHCARD_SEPARATORS: "Separatory fiszek",
@@ -292,7 +292,7 @@ const pl: IBaseLocale = {
     // Settings > info
     CHECK_ROADMAP: '<a href="${roadMapUrl}">Plany rozwoju</a> oryginalnego pluginu.',
     CHECK_DEV_NEWS: '<a href="${devNewsUrl}">Nowości</a> z rozwoju oryginalnego pluginu.',
-    // Upgraded Spaced Repetition: brakujące tłumaczenia
+    // Fishcards: brakujące tłumaczenia
     CRAM_MODE: "Tryb intensywny",
     REVIEW_MODE: "Tryb powtórek",
     DUE: "Dziś",

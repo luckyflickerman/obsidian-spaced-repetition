@@ -1,7 +1,13 @@
-# Changelog — Upgraded Spaced Repetition
+# Changelog — Fishcards (formerly Upgraded Spaced Repetition)
 
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
+
+## 0.9.11
+
+- **New name: Fishcards** ("fiszki" + flashcards). Only the name changes: the plugin id, your settings, records and review dates stay as they are. In BRAT and in Settings → Community plugins the plugin now shows as **Fishcards**.
+- **Mode menu with a background theme**: the open list ("Review mode", "Cram mode", "Endless") was white with almost white text on Windows. Now it has the dark glass colour with light text.
+- New README with the current features, the four themes and a short "Getting started".
 
 ## 0.9.10
 

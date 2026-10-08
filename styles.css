@@ -1944,6 +1944,10 @@ body:not(.is-phone) .usr-bg-on .sr-response {
 .is-phone .usr-bg-on .sr-card-toolbar .mod-raised:active {
   background: rgba(255, 255, 255, 0.12) !important;
 }
+.usr-bg-on select.dropdown option {
+  background-color: rgb(var(--usr-bg-base));
+  color: var(--usr-bg-ink);
+}
 .usr-bg-on .sr-header select.dropdown {
   background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
