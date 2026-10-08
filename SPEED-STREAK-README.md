@@ -227,10 +227,12 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 
 ## Tło (motywy ze zdjęciem)
 
-Zdjęcie za listą talii i fiszkami, a na nim przezroczysty, „szklany” panel. Na komputerze i iPadzie zdjęcie wypełnia całe okno, a lista talii i powtórka są jednym panelem na środku (najwyżej 640 px szerokości), tak jak w projekcie — żeby zobaczyć to na całym ekranie komputera, włącz pełny ekran przyciskiem **⛶**. Domyślnie wyłączone. Do wyboru dwa gotowe motywy:
+Zdjęcie za listą talii i fiszkami, a na nim przezroczysty, „szklany” panel. Na komputerze i iPadzie zdjęcie wypełnia całe okno, a lista talii i powtórka są jednym panelem na środku (najwyżej 640 px szerokości), tak jak w projekcie — żeby zobaczyć to na całym ekranie komputera, włącz pełny ekran przyciskiem **⛶**. Domyślnie wyłączone. Do wyboru cztery gotowe motywy:
 
 - **Jezioro**: górskie jezioro o świcie, turkusowe szkło i złoty akcent,
 - **Zmierzch**: fioletowy zmierzch nad miastem, fioletowe szkło i różowy akcent,
+- **Kosmos**: granatowe nocne niebo z Drogą Mleczną, granatowe szkło i lodowobłękitny akcent,
+- **Zorza**: zielona zorza polarna nad górami i jeziorem, ciemnoturkusowe szkło i zielony akcent,
 - **Bez zdjęcia**: zwykłe kolory Obsidiana.
 
 Jak wybrać: kliknij kafelek (zdjęcie z nazwą motywu) w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Upgraded Spaced Repetition → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
@@ -260,7 +262,7 @@ Tekst zawsze zostaje czytelny, także w jasnym motywie Obsidiana. Przy włączon
 Jak to działa:
 
 - Fiszki idą w rundach: w każdej rundzie każda fiszka pojawia się w losowej kolejności. Po ostatniej zaczyna się nowa runda i tak bez końca. Nad kartą widać postęp rundy, np. „6/20”.
-- **Błąd** (czerwony przycisk, w zwykłej powtórce „Ponownie”): fiszka wraca po 3 kartach, a **wynik spada do 0**. **Trudne**: fiszka wraca po 7 kartach. **Wiem**: fiszka jest zaliczona w tej rundzie. W Endless są tylko te trzy przyciski. „Reset” z paska nad kartą działa jak „Błąd”.
+- **Błąd** (czerwony przycisk, w zwykłej powtórce „Ponownie”): fiszka wraca po 3 kartach, a **wynik spada do 0**. **Trudne**: fiszka wraca po 7 kartach, a wynik się nie zmienia (0 punktów). **Wiem**: fiszka jest zaliczona w tej rundzie. W Endless są tylko te trzy przyciski. „Reset” z paska nad kartą działa jak „Błąd”.
 - **Karty z jednej fiszki są od siebie daleko.** Fiszka z `:::` albo `??` daje dwie karty (np. „forestalled → uprzedzić” i „uprzedzić → forestalled”). Takie karty pojawiają się w odstępie co najmniej 5% wszystkich kart: przy 100 kartach co najmniej co 5, przy 400 co 20, przy małej puli co najmniej co 2. Obowiązuje to też na przełomie rund i po „Błąd” i „Trudne”. Gdy kart jest za mało, plugin rozsuwa je najlepiej, jak się da.
 - Gdy ostatnia karta rundy dostanie „Błąd” albo „Trudne”, nie wraca od razu: zaczyna się nowa runda, a ta karta przychodzi po co najmniej 3 (albo 7) innych.
 - **Endless nic nie zapisuje w notatkach.** Komentarze `<!--SR:…-->` i terminy powtórek zostają takie, jakie były. Do kalendarza powtórek liczy się tylko czas nauki i liczba kart.
@@ -268,7 +270,7 @@ Jak to działa:
 
 ### Wynik i rekordy Endless
 
-**Wynik** to liczba odpowiedzi bez błędu z rzędu: „Trudne” i „Wiem” dodają 1, „Błąd” zeruje. Wynik działa także przy wyłączonym Speed Streak. Przekroczenie czasu w Speed Streak go nie zeruje.
+**Wynik** to liczba odpowiedzi bez błędu z rzędu: „Wiem” dodaje 1, „Trudne” daje 0 punktów (wynik zostaje), „Błąd” zeruje. Wynik działa także przy wyłączonym Speed Streak. Przekroczenie czasu w Speed Streak go nie zeruje.
 
 > Bądź ze sobą szczery — rekord ma sens tylko wtedy, gdy przyznajesz się do błędów.
 

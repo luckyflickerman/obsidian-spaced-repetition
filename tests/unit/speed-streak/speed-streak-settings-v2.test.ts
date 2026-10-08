@@ -144,13 +144,19 @@ describe("layout and performance", () => {
         expect(resolveLayout("auto", 1366)).toBe("side-right");
         expect(resolveLayout("auto", SIDE_PANEL_MIN_WIDTH - 1)).toBe("compact");
         expect(resolveLayout("auto", 390)).toBe("compact"); // phone
+        // a side panel chosen by hand: kept on a computer, but a phone has no room for it
+        expect(resolveLayout("side-left", 1024)).toBe("side-left");
+        expect(resolveLayout("side-right", 640)).toBe("side-right");
+        expect(resolveLayout("side-left", 390)).toBe("compact");
+        expect(resolveLayout("compact", 1440)).toBe("compact");
         expect(resolveLayout("auto", 820)).toBe("compact"); // iPad portrait
         expect(resolveLayout("auto", 1180)).toBe("side-right"); // iPad landscape
     });
 
-    test("fixed layouts ignore the width", () => {
+    test("fixed layouts: compact always, a side panel only where the card still fits", () => {
         expect(resolveLayout("compact", 2000)).toBe("compact");
-        expect(resolveLayout("side-left", 300)).toBe("side-left");
+        expect(resolveLayout("side-left", 300)).toBe("compact");
+        expect(resolveLayout("side-left", 600)).toBe("side-left");
     });
 
     test("performance: auto is Full on computers and Light on mobile", () => {

@@ -43,6 +43,11 @@
     mask-position: 50% 50%;
 }
 
+/* Endless: the decks are only ticked, so no "Today / New / Known / Total" heading row */
+.sr-deck-container.sr-is-endless .sr-header-row {
+    display: none;
+}
+
 /* Endless practises chosen decks: no daily goal of new cards here */
 .sr-deck-container.sr-is-endless .sr-goal {
     /* important: the phone style shows the goal as a slim line over the photo */

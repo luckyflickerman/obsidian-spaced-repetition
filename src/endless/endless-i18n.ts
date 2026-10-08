@@ -11,7 +11,7 @@ const EN = {
     // Rating buttons
     ERROR: "Error",
     ERROR_RESETS: "resets score",
-    LATER: "comes back later",
+    LATER: "0 points, comes back later",
     KNOW: "Got it",
     KNOW_SUB: "+1 to score",
     ROUND_END: "done",
@@ -33,7 +33,7 @@ const EN = {
     RUN_LINE: "${score} — ${decks}, ${date}",
     SUMMARY_TITLE: "Session finished",
     SUMMARY: "Best score in session: ${best} · Errors: ${errors} · Ratings: ${ratings}",
-    SUMMARY_RECORD: "🏆 New Endless record: ${n}!",
+    SUMMARY_RECORD: "New Endless record: ${n}!",
     // Few cards warning
     FEW_TITLE: "Few cards for Endless",
     FEW_TEXT:
@@ -55,7 +55,7 @@ const PL: Record<Keys, string> = {
     SELECT_DECK: "Ćwicz talię ${deck} w trybie Endless",
     ERROR: "Błąd",
     ERROR_RESETS: "zeruje wynik",
-    LATER: "wróci później",
+    LATER: "0 pkt, wróci później",
     KNOW: "Wiem",
     KNOW_SUB: "+1 do wyniku",
     ROUND_END: "zaliczone",
@@ -75,7 +75,7 @@ const PL: Record<Keys, string> = {
     RUN_LINE: "${score} — ${decks}, ${date}",
     SUMMARY_TITLE: "Koniec sesji",
     SUMMARY: "Wynik najlepszy w sesji: ${best} · Błędy: ${errors} · Oceny: ${ratings}",
-    SUMMARY_RECORD: "🏆 Nowy rekord Endless: ${n}!",
+    SUMMARY_RECORD: "Nowy rekord Endless: ${n}!",
     FEW_TITLE: "Mało fiszek do trybu Endless",
     FEW_TEXT:
         "Wybrane talie mają ${n} fiszek. Endless działa najlepiej od ${min} fiszek — przy mniejszej liczbie te same karty wracają bardzo często i łatwo zapamiętać ich kolejność zamiast słów.",

@@ -101,6 +101,10 @@ export function applyRating(
             endedRun: state.score > 0 ? state.score : null,
         };
     }
+    // "Hard" (comes back later): 0 points — the run goes on, but the score does not grow
+    if (rating === "hard") {
+        return { state: { ...state, ratings }, endedRun: null };
+    }
     const score = state.score + 1;
     return {
         state: { ...state, score, bestScore: Math.max(state.bestScore, score), ratings },

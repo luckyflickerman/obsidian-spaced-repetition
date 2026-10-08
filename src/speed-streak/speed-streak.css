@@ -168,14 +168,10 @@ button.sr-ss-record-btn:hover {
     background: color-mix(in srgb, var(--ss-text) 8%, transparent);
 }
 
-.sr-ss-trophy {
-    display: flex;
-    color: var(--ss-gold);
-}
-
-.sr-ss-trophy svg {
-    width: 16px;
-    height: 16px;
+.sr-ss-record-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--ss-muted);
 }
 
 .sr-ss-record-value {

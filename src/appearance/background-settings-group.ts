@@ -106,7 +106,8 @@ export function addBackgroundSettings(containerEl: HTMLElement, plugin: SRPlugin
     slider("dim", bg("DIM"), "", 0, 0.6, 0.02);
     slider("blur", bg("BLUR"), "", 0, 40, 1);
     group.addSetting((setting: Setting) => {
-        setting.setDesc(bg("CREDIT", { names: BACKGROUND_THEMES.map((t) => t.credit).join(", ") }));
+        const names = BACKGROUND_THEMES.map((t) => t.credit).filter((name) => name !== "");
+        setting.setDesc(bg("CREDIT", { names: names.join(", ") }));
         setting.settingEl.addClass("usr-bg-credit");
     });
 }

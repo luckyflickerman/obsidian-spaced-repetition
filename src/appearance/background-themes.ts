@@ -11,12 +11,15 @@
  * 3. Add the names `THEME_<ID>` and `THEME_<ID>_DESC` in background-i18n.ts
  *    and the photo's author in README.md.
  *
- * Photos: Unsplash (Unsplash licence).
+ * Photos: Unsplash (Unsplash licence). "space" and "aurora" are drawn by the plugin's author
+ * (scripts/generate-theme-photos.py), no licence needed.
  */
 
 import { buildPalette, PhotoPalette } from "src/appearance/photo-palette";
 import lakePhoto from "src/appearance/themes/jezioro.jpg";
+import spacePhoto from "src/appearance/themes/kosmos.jpg";
 import duskPhoto from "src/appearance/themes/zmierzch.jpg";
+import auroraPhoto from "src/appearance/themes/zorza.jpg";
 
 export interface BackgroundTheme {
     id: string;
@@ -45,6 +48,22 @@ export const BACKGROUND_THEMES: BackgroundTheme[] = [
         position: "center",
         palette: buildPalette(262.5, 0.33, 322.5, 0.55),
         credit: "Henry Lai",
+    },
+    {
+        // Deep blue night sky with the Milky Way — navy panels, icy blue accent (generated)
+        id: "space",
+        photo: spacePhoto,
+        position: "30% center",
+        palette: buildPalette(226, 0.5, 192, 0.7),
+        credit: "",
+    },
+    {
+        // Green aurora over mountains and a lake — dark teal panels, aurora green accent (generated)
+        id: "aurora",
+        photo: auroraPhoto,
+        position: "center 35%",
+        palette: buildPalette(186, 0.45, 148, 0.7),
+        credit: "",
     },
 ];
 

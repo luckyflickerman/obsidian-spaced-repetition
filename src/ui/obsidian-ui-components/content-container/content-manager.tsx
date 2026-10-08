@@ -179,6 +179,13 @@ export default class ContentManager {
             return;
         }
 
+        // The plugin always starts in the deck list (the "menu"); only the review of one
+        // note goes straight to its cards
+        if (this.reviewQueueLoader.getSingleNote() === null) {
+            await this._showDecksList();
+            return;
+        }
+
         // Determine if the card view should be opened immediately
         const subdecksWithCardsInQueue: Deck[] = this.reviewSequencer.getSubDecksWithCardsInQueue(
             this.reviewSequencer.originalDeckTree,

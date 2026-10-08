@@ -40,7 +40,7 @@ const EN = {
     SUMMARY_LINE:
         "Cards: ${cards} · best streak: ${best} · timeouts: ${timeouts} · boosts: ${boosts} · avg ${avg}s/card",
     SUMMARY_SCORE: "Score: ${score}",
-    SUMMARY_RECORD: "🏆 New all-time record: ${n}!",
+    SUMMARY_RECORD: "New all-time record: ${n}!",
     RULE_PREFIX: "Rule",
     // Settings page
     PAGE_NAME: "Speed Streak",
@@ -134,7 +134,8 @@ const EN = {
     ENDLESS_RECORD: "Endless all-time best",
     ENDLESS_BEST_5: "Endless best 5",
     ENDLESS_SESSION: "Session: ${n}",
-    ENDLESS_SUMMARY_RECORD: "🏆 New Speed Streak streak record in Endless: ${n}!",
+    ENDLESS_SUMMARY_RECORD: "New Speed Streak streak record in Endless: ${n}!",
+    RECORD_SHORT: "Record",
     PURE_BADGE: "Pure",
     BREAKS_BADGE: "Breaks",
     NEXT_BOOST: "Next Boost ${n} / ${m}",
@@ -249,7 +250,7 @@ const PL: Record<Keys, string> = {
     SUMMARY_LINE:
         "Karty: ${cards} · najlepsza seria: ${best} · przekroczenia: ${timeouts} · boosty: ${boosts} · śr. ${avg}s/kartę",
     SUMMARY_SCORE: "Punkty: ${score}",
-    SUMMARY_RECORD: "🏆 Nowy rekord wszech czasów: ${n}!",
+    SUMMARY_RECORD: "Nowy rekord wszech czasów: ${n}!",
     RULE_PREFIX: "Reguła",
     PAGE_NAME: "Speed Streak",
     G_GENERAL: "Ogólne",
@@ -341,7 +342,8 @@ const PL: Record<Keys, string> = {
     ENDLESS_RECORD: "Rekord Endless",
     ENDLESS_BEST_5: "Najlepsze 5 w Endless",
     ENDLESS_SESSION: "Sesja: ${n}",
-    ENDLESS_SUMMARY_RECORD: "🏆 Nowy rekord serii Speed Streak w Endless: ${n}!",
+    ENDLESS_SUMMARY_RECORD: "Nowy rekord serii Speed Streak w Endless: ${n}!",
+    RECORD_SHORT: "Rekord",
     PURE_BADGE: "Czysta",
     BREAKS_BADGE: "Przerwy",
     NEXT_BOOST: "Następny Boost ${n} / ${m}",

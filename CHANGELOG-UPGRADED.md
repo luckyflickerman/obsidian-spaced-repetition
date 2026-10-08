@@ -3,6 +3,15 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## 0.9.10
+
+- **The plugin opens in the deck list** (the menu) instead of going straight into a review when only one deck has cards today. Reviewing one note still goes straight to its cards.
+- **Endless**: no "Today / New / Known / Total" heading row; ticking decks no longer moves or resizes the window (the open decks and the scroll position stay); **"Hard" gives 0 points** (the score stays, it is not reset and nothing is added).
+- **Computer**: the Speed Streak side panel no longer covers the card — the glass panel gets wider and the card stays next to the side panel. A side panel chosen in the settings is not used on a phone (no room for it); the bar is used there.
+- **Phone**: "New cards today 0/10" looks exactly like "N cards waiting today" (same pill, dot and text).
+- **No trophies**: no 🏆 in "Score 39", in the Speed Streak bar (it says "Record" now, as in the design) or in the new-record message at the end of a session.
+- **Two new background themes**: **Space** (deep blue night sky with the Milky Way, icy blue accent) and **Aurora** (green aurora over mountains and a lake, green accent). Both pictures are drawn by the plugin's author, built into the plugin.
+
 ## 0.9.9
 
 - **Phone: the window is in place again.** On a phone a swipe over the top bar moved the whole window to the left or right (the bar is the handle for moving the window on a computer), and the plugin remembered that spot. Now a window that fills the screen (every phone, an iPad at full size) cannot be moved, and a remembered spot is ignored there.

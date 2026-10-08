@@ -93,6 +93,15 @@ describe("background themes", () => {
         expect(findTheme("nope")).toBeNull();
     });
 
+    test("space: navy glass with icy blue; aurora: dark teal glass with green", () => {
+        const space = findTheme("space")!.palette;
+        expect(hueDistance(hueOf(space.base), 226)).toBeLessThan(10);
+        expect(hueDistance(hueOf(space.accent), 192)).toBeLessThan(10);
+        const aurora = findTheme("aurora")!.palette;
+        expect(hueDistance(hueOf(aurora.base), 186)).toBeLessThan(10);
+        expect(hueDistance(hueOf(aurora.accent), 148)).toBeLessThan(10);
+    });
+
     test("every theme has a photo, a unique id and readable colours", () => {
         const ids = new Set<string>();
         for (const theme of BACKGROUND_THEMES) {
@@ -100,7 +109,8 @@ describe("background themes", () => {
             expect(ids.has(theme.id)).toBe(false);
             ids.add(theme.id);
             expect(theme.photo.startsWith("data:image/")).toBe(true);
-            expect(theme.credit).not.toBe("");
+            // generated photos (space, aurora) have no outside author
+            expect(typeof theme.credit).toBe("string");
             const p = theme.palette;
             expect(contrastRatio(p.ink, p.base)).toBeGreaterThanOrEqual(7);
             expect(contrastRatio(p.accent, p.base)).toBeGreaterThanOrEqual(4.5);

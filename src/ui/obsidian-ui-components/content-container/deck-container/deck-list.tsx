@@ -56,6 +56,8 @@ export default class DeckListComponent {
     private endlessBar: HTMLDivElement;
     /** "14 cards waiting today" over the photo (phone with a background theme, background.css) */
     private duePill: HTMLDivElement;
+    /** Decks opened or closed by hand: kept when the list is redrawn (ticking in Endless) */
+    private collapsedByHand = new Map<string, boolean>();
 
     public constructor(parentEl: HTMLElement, startReviewOfDeck: (deck: Deck) => void) {
         this.startReviewOfDeck = startReviewOfDeck;
@@ -157,6 +159,9 @@ export default class DeckListComponent {
         endless: EndlessDeckSelection | null = null,
     ) {
         this.endless = endless;
+        // redrawn after every tick in Endless: keep the scroll position and the open decks
+        const scrollTop = this.content.scrollTop;
+        const wrapperScrollTop = this.scrollWrapper.scrollTop;
         this.treeContainer.empty();
         this.treeContainer.toggleClass("is-endless", endless !== null);
         this._drawEndlessBar();
@@ -200,6 +205,8 @@ export default class DeckListComponent {
                 this.startReviewOfDeck,
             );
         }
+        this.content.scrollTop = scrollTop;
+        this.scrollWrapper.scrollTop = wrapperScrollTop;
     }
 
     private _createTree(
@@ -256,7 +263,8 @@ export default class DeckListComponent {
         }
         treeRowSelf.addClass("sr-tree-item-row");
 
-        let collapsed = !initiallyExpanded;
+        const rowKey = deck ? deckKey(deck.getTopicPath().path) : `#${deckName}`;
+        let collapsed = this.collapsedByHand.get(rowKey) ?? !initiallyExpanded;
         const collapseIconEl = treeRowSelf.createDiv("tree-item-icon collapse-icon");
         setIcon(collapseIconEl, "chevron-down");
         if (collapsed) collapseIconEl.addClass("is-collapsed");
@@ -315,6 +323,7 @@ export default class DeckListComponent {
                 // if the user clicks on the collapse icon
                 e.stopPropagation();
                 collapsed = !collapsed;
+                this.collapsedByHand.set(rowKey, collapsed);
             });
         }
 

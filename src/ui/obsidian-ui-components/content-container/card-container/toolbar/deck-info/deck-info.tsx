@@ -83,7 +83,7 @@ export default class DeckInfoComponent {
         this.scoreDivider.toggleClass("sr-is-hidden", hidden);
         this.scoreEl.toggleClass("sr-is-hidden", hidden);
         if (hidden) return;
-        this.scoreEl.setText(en("SCORE", { n: score }) + (newRecord ? " 🏆" : ""));
+        this.scoreEl.setText(en("SCORE", { n: score }));
         this.scoreEl.toggleClass("is-record", newRecord);
         this.scoreEl.setAttr(
             "aria-label",

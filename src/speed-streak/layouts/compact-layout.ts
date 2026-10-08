@@ -74,8 +74,8 @@ export class CompactLayout implements SpeedStreakLayoutView {
             ev.preventDefault();
             this.callbacks.openRun(null);
         });
-        const trophy = this.recordBtn.createSpan({ cls: "sr-ss-trophy" });
-        setIcon(trophy, "trophy");
+        // a word instead of a trophy icon (the user found the trophy too "AI")
+        this.recordBtn.createSpan({ cls: "sr-ss-record-label", text: ss("RECORD_SHORT") });
         this.recordValue = this.recordBtn.createSpan({ cls: "sr-ss-record-value" });
         this.liveBadge = this.recordBtn.createSpan({ cls: "sr-ss-badge" });
         this.recordBar = info.createDiv({ cls: "sr-ss-recbar" });

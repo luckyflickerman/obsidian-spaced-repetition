@@ -30,6 +30,8 @@ export type SpeedStreakLayoutSetting = "auto" | "compact" | "side-left" | "side-
 export type SpeedStreakLayout = "compact" | "side-left" | "side-right";
 /** Minimum width of the review view (px) for the side panel in "auto". */
 export const SIDE_PANEL_MIN_WIDTH = 900;
+/** A side panel chosen by hand still needs room for the card next to it (not on a phone) */
+export const SIDE_PANEL_CHOSEN_MIN_WIDTH = 600;
 
 /** "auto" = Full on computers, Light on phones / tablets. */
 export type SpeedStreakPerformanceSetting = "auto" | "full" | "light" | "minimal";
@@ -443,7 +445,8 @@ export function resolveLayout(
     setting: SpeedStreakLayoutSetting,
     viewWidth: number,
 ): SpeedStreakLayout {
-    if (setting !== "auto") return setting;
+    if (setting === "compact") return "compact";
+    if (setting !== "auto") return viewWidth >= SIDE_PANEL_CHOSEN_MIN_WIDTH ? setting : "compact";
     return viewWidth >= SIDE_PANEL_MIN_WIDTH ? "side-right" : "compact";
 }
 

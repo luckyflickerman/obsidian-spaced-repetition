@@ -142,21 +142,39 @@ body:not(.is-phone) .usr-bg-on .sr-container {
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
 }
 
-/* the deck list is as tall as its content (it scrolls inside when the window is low) */
-body:not(.is-phone) .usr-bg-on .sr-deck-container {
-    height: auto;
-    max-height: calc(100% - 32px);
-}
-
-body:not(.is-phone) .usr-bg-on .sr-deck-container .sr-scroll-wrapper {
-    height: auto;
-    flex: 0 1 auto;
-    min-height: 0;
-}
-
-/* the review keeps one height, so the buttons do not jump between cards */
-body:not(.is-phone) .usr-bg-on .sr-card-container {
+/* the deck list and the review keep one height: ticking a deck in Endless, opening a deck or
+   going back never moves the panel (the list scrolls inside) */
+body:not(.is-phone) .usr-bg-on .sr-container {
     height: min(720px, calc(100% - 32px));
+}
+
+/* Speed Streak side panel (left or right): the glass panel gets wider by the side panel's
+   width and the card keeps its own 640 px beside it */
+body:not(.is-phone) .usr-bg-on .sr-card-container.sr-ss-with-panel {
+    width: min(calc(640px + var(--sr-ss-panel-w)), calc(100% - 32px));
+}
+
+body:not(.is-phone) .usr-bg-on .sr-card-container.sr-ss-panel-left-host {
+    padding-left: calc(var(--sr-ss-panel-w) + 18px);
+}
+
+body:not(.is-phone) .usr-bg-on .sr-card-container.sr-ss-panel-right-host {
+    padding-right: calc(var(--sr-ss-panel-w) + 18px);
+}
+
+body:not(.is-phone) .usr-bg-on .sr-ss-hud.sr-ss-panel {
+    border-radius: 0;
+    border-width: 0 !important;
+}
+
+body:not(.is-phone) .usr-bg-on .sr-ss-hud.sr-ss-panel-left {
+    border-radius: 24px 0 0 24px;
+    border-right-width: 1px !important;
+}
+
+body:not(.is-phone) .usr-bg-on .sr-ss-hud.sr-ss-panel-right {
+    border-radius: 0 24px 24px 0;
+    border-left-width: 1px !important;
 }
 
 /* inside the panel: no second layer of glass, only the Speed Streak bar is a lighter strip */
@@ -463,12 +481,13 @@ body:not(.is-phone) .usr-bg-on .sr-response {
         left: 20px;
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         width: auto;
         margin: 0;
-        padding: 6px 14px;
+        /* exactly like "N cards waiting today" above it */
+        padding: 8px 14px;
         border-radius: 999px;
-        background: rgba(var(--usr-bg-base), 0.62) !important;
+        background: rgba(var(--usr-bg-base), 0.5) !important;
         border: 1px solid var(--usr-glass-line);
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
@@ -478,27 +497,32 @@ body:not(.is-phone) .usr-bg-on .sr-response {
         display: none;
     }
 
+    /* the same dot as "N cards waiting today" (soft when the goal is reached) */
+    .is-phone .usr-bg-on .sr-deck-container .sr-content > .sr-goal:not(.is-minimized)::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        flex: none;
+        border-radius: 999px;
+        background: var(--usr-bg-accent);
+    }
+
+    .is-phone .usr-bg-on .sr-deck-container .sr-content > .sr-goal.is-reached::before {
+        background: var(--usr-bg-soft);
+    }
+
     .is-phone .usr-bg-on .sr-goal .sr-goal-head {
-        gap: 6px;
+        gap: 5px;
         margin: 0;
     }
 
-    .is-phone .usr-bg-on .sr-goal .sr-goal-title {
+    .is-phone .usr-bg-on .sr-goal :is(.sr-goal-title, .sr-goal-value) {
         font-size: var(--font-ui-small);
+        font-weight: var(--font-medium);
         color: var(--usr-bg-ink);
     }
 
-    .is-phone .usr-bg-on .sr-goal .sr-goal-value {
-        font-size: var(--font-ui-small);
-    }
-
-    .is-phone .usr-bg-on .sr-goal .sr-goal-bar {
-        width: 44px;
-        height: 4px;
-        margin: 0;
-    }
-
-    .is-phone .usr-bg-on .sr-goal :is(.sr-goal-minimize, .sr-goal-note) {
+    .is-phone .usr-bg-on .sr-goal :is(.sr-goal-minimize, .sr-goal-note, .sr-goal-bar) {
         display: none;
     }
 
@@ -681,7 +705,8 @@ body:not(.is-phone) .usr-bg-on .sr-response {
     width: 100%;
     flex-basis: 100%;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* five tiles: as many in a row as fit (three on a phone) */
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
     gap: 10px;
     margin-top: 10px;
 }

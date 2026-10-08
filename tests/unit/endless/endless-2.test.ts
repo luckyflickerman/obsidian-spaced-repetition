@@ -167,13 +167,18 @@ describe("Endless queue: the last card of a round", () => {
 });
 
 describe("Endless score", () => {
-    test('"Hard", "Good", "Easy" add 1; "Error" resets to 0 and ends the run', () => {
+    test('"Good", "Easy" add 1; "Hard" adds 0; "Error" resets to 0 and ends the run', () => {
         let s = createScoreState();
-        for (const r of ["good", "hard", "easy"] as EndlessRating[]) s = applyRating(s, r).state;
+        for (const r of ["good", "hard", "easy", "good"] as EndlessRating[])
+            s = applyRating(s, r).state;
         expect(s.score).toBe(3);
+        // "Hard" neither adds nor ends the run
+        const hard = applyRating(s, "hard");
+        expect(hard.endedRun).toBeNull();
+        expect(hard.state).toEqual({ score: 3, bestScore: 3, errors: 0, ratings: 5 });
         const res = applyRating(s, "again");
         expect(res.endedRun).toBe(3);
-        expect(res.state).toEqual({ score: 0, bestScore: 3, errors: 1, ratings: 4 });
+        expect(res.state).toEqual({ score: 0, bestScore: 3, errors: 1, ratings: 5 });
         // an error at 0 ends nothing
         expect(applyRating(res.state, "again").endedRun).toBeNull();
         expect(applyRating(res.state, "again").state.errors).toBe(2);

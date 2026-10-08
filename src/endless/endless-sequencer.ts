@@ -48,7 +48,7 @@ export function cardsOfDecks(decks: Deck[]): Card[] {
 export interface EndlessSessionInfo {
     /** Deck names, e.g. "ENG, ESP" */
     decks: string;
-    /** All-time best score when the session started (for the 🏆 on a new record) */
+    /** All-time best score when the session started (to mark a new record) */
     bestAtStart: number;
     /** A run of the score ended ("Error" after good answers) */
     onRunEnded(score: number): void;
