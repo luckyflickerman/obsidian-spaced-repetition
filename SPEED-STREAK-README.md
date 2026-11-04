@@ -218,6 +218,16 @@ Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą nast
 - W trybie źródłowym zawsze widać pełny tekst.
 - Wyłączysz to w Ustawieniach → Tworzenie fiszek → **Zwijaj komentarze harmonogramu w edytorze**.
 
+## Klawisze w powtórce
+
+Działają na komputerze, a także na iPadzie i tablecie z Androidem z podłączoną klawiaturą (albo pilotem do przewracania stron, który wysyła Spację / Enter):
+
+- **Spacja** lub **Enter**: pokaż odpowiedź; gdy odpowiedź jest widoczna — „Dobre”,
+- **0**: „Ponownie” (tak jak podpis na przycisku; wcześniej **0** kasowało cały postęp fiszki — kasowanie jest teraz tylko w menu karty, z pytaniem),
+- **1** „Trudne”, **2** „Dobre”, **3** „Łatwe”, **S** pomiń kartę, **J** przejdź do notatki.
+
+Przytrzymany klawisz nie ocenia karty kilka razy. Szybkie podwójne stuknięcie w przycisk na telefonie liczy się raz: drugie stuknięcie zaraz po „Pokaż odpowiedź” nie ocenia karty, a w czasie zapisywania oceny kolejne stuknięcia są pomijane.
+
 ## Okno powtórek: pełny ekran i przesuwanie
 
 - Przycisk **⛶** w nagłówku (na liście talii i podczas powtórki) włącza i wyłącza pełny ekran (na telefonie go nie ma — tam okno i tak zajmuje cały ekran). Okno przesuwa się, przeciągając pasek u góry, tylko gdy jest mniejsze niż ekran; na telefonie nigdy. Możesz też przypisać skrót do komendy „Okno powtórek: pełny ekran wł. / wył.”.
@@ -312,7 +322,7 @@ Pod listą talii jest kalendarz całego roku: jeden kwadrat to jeden dzień. Im 
 
 - **Kolor** (zielony, niebieski, czerwony) wybierasz w Ustawieniach → **Kalendarz powtórek** albo w oknie Opcje (koło zębate przy kalendarzu w „Wbudowanych wtyczkach”).
 - **Zwijanie**: przycisk po prawej nad kalendarzem zwija go do małego bloku pod kolumnami Due / Nowe / Seen / Total. Zostaje tylko koło w kolorze kalendarza (pokazuje, jaka część zaplanowanych na dziś kart jest już zrobiona, a w środku liczbę kart, które zostały) i bieżący miesiąc. Dotknij bloku, żeby rozwinąć kalendarz. Zwinięcie można też włączyć w Ustawieniach → Kalendarz powtórek.
-- Strzałki przełączają rok, kółko wraca do bieżącego roku. Po najechaniu na kwadrat (albo przytrzymaniu na telefonie) widać datę i liczbę kart.
+- Strzałki przełączają rok, kółko wraca do bieżącego roku. Dotknij kwadratu (na komputerze też: kliknij albo najedź myszką), a pod kalendarzem pojawi się data i liczba kart z tego dnia.
 - Statystyki: karty i czas dzisiaj, średnie tempo (karty na minutę), szacowany czas na pozostałe karty, łączny czas nauki i czas z ostatniego tygodnia, średnio kart dziennie, procent dni z nauką, najdłuższa i obecna seria dni.
 - Historia zbiera się od pierwszej powtórki w tej wersji pluginu. Wcześniejszych dni nie da się odtworzyć, bo plugin zapisywał tylko termin następnej powtórki.
 - Czas jednej karty liczy się od pokazania pytania do oceny, maksymalnie 2 minuty (gdy odejdziesz od komputera, nie zawyża statystyk).

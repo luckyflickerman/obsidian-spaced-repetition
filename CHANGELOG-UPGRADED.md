@@ -3,6 +3,22 @@
 Changes in this fork, on top of [Obsidian Spaced Repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition) 1.15.4.
 The release workflow uses the section whose heading matches the git tag as the release description.
 
+## Next (not released yet)
+
+Fixes from a review of the plugin on all devices (Windows, iPad, iPhone, Android):
+
+- **Editing a card no longer loses text.** In the review, "Edit card" cut a multi-line card at every `?` — a question like "What does it mean?" lost the rest of the card when saved. A one-line card with a second `::` in the answer lost its end the same way. Now the card is split exactly like the plugin reads it.
+- **Key 0 is "Again"**, as the hint on the button says. It used to reset the card's whole progress (with FSRS: back to "new"). Resetting stays in the card menu, with a question.
+- **A double tap rates once.** A quick double tap on a phone rated the same card twice (the interval grew twice) and dropped the next card unseen; a double tap on "Show answer" rated the card before the answer could be read. A held key no longer repeats either.
+- **Keyboard on iPad and Android tablets**: Space / Enter / 0–3 / S / J now work with a connected keyboard or a page-turner remote (they were switched off on every mobile device).
+- **Phone on its side**: the top bar with "Back" and "Close" (and the deck list header) stays visible — on an iPhone there was no way out of the review without turning the phone. The rating buttons are 44 px high there too.
+- **Review calendar on touch screens**: tap a day to see its date and number of cards under the calendar (it was only in the mouse tooltip).
+- **Settings**: a change typed right before closing the Options window, or two fields changed within half a second, are no longer lost.
+- **Read-aloud voice per device**: choosing a voice on the iPhone no longer replaces the voice chosen on Windows (each device keeps its own).
+- **Speed Streak**: sounds no longer stop working after opening the review many times on iOS (each window kept its own audio channel open); the timer is no longer paused by clicking another window when playing in a pop-out window; colours follow a light/dark switch during a session; no double safe-area margins on the pause screen and side panel on an iPhone.
+- **Fewer writes to data.json** (synced to the other devices): the review window no longer saves its size every time it opens or Obsidian's window is resized; the review calendar is saved when the app goes to the background on a phone.
+- Switching the plugin off (or a BRAT update) no longer leaves a watcher running in Obsidian; closing the review tab on a phone restores Obsidian's own bottom bar settings.
+
 ## 0.9.11
 
 - **New name: Fishcards** ("fiszki" + flashcards). Only the name changes: the plugin id, your settings, records and review dates stay as they are. In BRAT and in Settings → Community plugins the plugin now shows as **Fishcards**.
