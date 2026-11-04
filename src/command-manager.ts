@@ -1,4 +1,4 @@
-import { Editor, Menu, Platform, TFile } from "obsidian";
+import { Editor, Menu, TFile } from "obsidian";
 
 import { SettingsManager } from "src/data/settings-manager";
 import { en } from "src/endless/endless-i18n";
@@ -18,7 +18,6 @@ import { TtsController } from "src/tts/tts-controller";
 import { tt } from "src/tts/tts-i18n";
 import { toggleUnderline } from "src/tts/tts-text";
 import { UIManager, UIState } from "src/ui/ui-manager";
-import EmulatedPlatform from "src/utils/platform-detector";
 
 /** Wraps the selection in `<u>…</u>` (or unwraps it) — "Mark for reading aloud". */
 function toggleTtsMark(editor: Editor) {
@@ -93,10 +92,6 @@ export class CommandManager {
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
                     !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
-                    !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
                             activeDocument.activeElement.nodeName === "INPUT")
@@ -124,10 +119,6 @@ export class CommandManager {
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
                     !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
-                    !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
                             activeDocument.activeElement.nodeName === "INPUT")
@@ -153,10 +144,6 @@ export class CommandManager {
                     this.uiManager.uiState === UIState.CardBack &&
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
-                    !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
                     !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
@@ -185,10 +172,6 @@ export class CommandManager {
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
                     !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
-                    !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
                             activeDocument.activeElement.nodeName === "INPUT")
@@ -213,10 +196,6 @@ export class CommandManager {
                     this.uiManager.uiState === UIState.CardFront &&
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
-                    !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
                     !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
@@ -244,10 +223,6 @@ export class CommandManager {
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
                     !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
-                    !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
                             activeDocument.activeElement.nodeName === "INPUT")
@@ -273,10 +248,6 @@ export class CommandManager {
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
                     !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
-                    !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||
                             activeDocument.activeElement.nodeName === "INPUT")
@@ -301,10 +272,6 @@ export class CommandManager {
                     this.uiManager.uiState === UIState.CardBack &&
                     this.uiManager.isSRInFocus &&
                     this.uiManager.contentManager !== null &&
-                    !(
-                        Platform.isMobile || // No keyboard events on mobile
-                        EmulatedPlatform().isMobile
-                    ) &&
                     !(
                         activeDocument.activeElement !== null &&
                         (activeDocument.activeElement.nodeName === "TEXTAREA" ||

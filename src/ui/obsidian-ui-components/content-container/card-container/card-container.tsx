@@ -32,6 +32,11 @@ import { escapeHtml } from "src/utils/escape-html";
 import EmulatedPlatform from "src/utils/platform-detector";
 import { RenderMarkdownWrapper } from "src/utils/renderers";
 
+function consumeKeyEventOf(e: KeyboardEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
 // TODO: Refactor cloze rendering into the renderers file
 export class CardContainer {
     private app: App;
@@ -199,6 +204,17 @@ export class CardContainer {
         this.speedStreak.endSession();
         activeDocument.removeEventListener("keydown", this._keydownHandler);
         this.view.addClass("sr-is-hidden");
+    }
+
+    /**
+     * The review window / tab is closed for good: frees the Speed Streak sound
+     * (each window used to keep its own audio context open; iOS allows only a few)
+     * and the read-aloud listeners.
+     */
+    destroy() {
+        this.closeSession();
+        this.speedStreak.destroy();
+        this.tts.destroy();
     }
 
     /**
@@ -540,24 +556,32 @@ export class CardContainer {
     private _keydownHandler = (e: KeyboardEvent) => {
         if (!this.plugin.isInitialized) throw new Error("SR plugin or data not initialized!!!");
         if (this.plugin.uiManager === null) throw new Error("UI manager not initialized!!!");
-        // Prevents any input, if the edit modal is open or if the view is not in focus
+        // Prevents any input, if the edit modal is open or if the view is not in focus.
+        // Phones and tablets are not excluded: an iPad / Android tablet with a keyboard
+        // (or a Bluetooth page turner) sends the same keys; the on-screen keyboard only
+        // types into text fields, which are excluded here.
+        const active = activeDocument.activeElement;
         if (
             this.plugin.dataManager.data.settings.useCustomHotkeys ||
-            (activeDocument.activeElement !== null &&
-                (activeDocument.activeElement.nodeName === "TEXTAREA" ||
-                    activeDocument.activeElement.nodeName === "INPUT")) ||
+            (active !== null &&
+                (active.nodeName === "TEXTAREA" ||
+                    active.nodeName === "INPUT" ||
+                    active.nodeName === "SELECT" ||
+                    (active instanceof HTMLElement && active.isContentEditable))) ||
             this.cardState === CardState.Closed ||
-            !this.plugin.uiManager.getSRInFocusState() ||
-            Platform.isMobile || // No keyboard events on mobile
-            EmulatedPlatform().isMobile
+            !this.plugin.uiManager.getSRInFocusState()
         ) {
             return;
         }
 
-        const consumeKeyEvent = () => {
-            e.preventDefault();
-            e.stopPropagation();
-        };
+        // A held key repeats: it must not show the answer and then rate the card
+        if (e.repeat) {
+            if (["Enter", "NumpadEnter", "Space"].includes(e.code) || /\d$/.test(e.code))
+                consumeKeyEventOf(e);
+            return;
+        }
+
+        const consumeKeyEvent = () => consumeKeyEventOf(e);
 
         // Speed Streak shortcuts (pause / boost)
         if (this.speedStreak.handleKey(e)) {
@@ -623,7 +647,9 @@ export class CardContainer {
                 if (this.cardState !== CardState.Back) {
                     break;
                 }
-                void this.processReviewHandler(ReviewResponse.Reset);
+                // "0" is shown on the "Again" button. It used to reset the card's whole
+                // progress (FSRS: back to "new"); resetting stays in the toolbar, with a question.
+                void this.processReviewHandler(ReviewResponse.Again);
                 consumeKeyEvent();
                 break;
             default:

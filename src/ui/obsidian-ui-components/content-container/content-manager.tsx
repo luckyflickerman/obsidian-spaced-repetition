@@ -100,6 +100,12 @@ export default class ContentManager {
     private sessionData: SessionData | null = null;
 
     private lastPressedOnProcessReview: number = 0;
+    /**
+     * A rating (or skip) is being saved and the next card drawn. Further taps and keys are
+     * ignored until then: a quick double tap on a phone used to rate the same card twice
+     * (the interval grew twice) and to drop the next card from the queue unseen.
+     */
+    private reviewInProgress = false;
     private background: BackgroundController;
     /** Endless: highest new all-time record set in this session (0 = none) */
     private endlessNewRecord = 0;
@@ -162,7 +168,7 @@ export default class ContentManager {
         this.background.destroy();
         this.uiManager.setSRViewInFocus(false);
         this.deckContainer.closeList();
-        this.cardContainer.closeSession();
+        this.cardContainer.destroy();
         this.uiManager.setUIState(UIState.Closed);
         void flushReviewLog(this.plugin);
     }
@@ -399,7 +405,9 @@ export default class ContentManager {
     }
 
     public async _showAnswer() {
-        if (this.sessionData === null) return;
+        if (this.sessionData === null || this.reviewInProgress) return;
+        // Already shown (a double tap / a second key press): nothing to do
+        if (this.sessionData.cardData.currentCardState === CardState.Back) return;
 
         const timeNow = now();
         if (
@@ -507,9 +515,14 @@ export default class ContentManager {
     }
 
     public async _skipCurrentCard() {
-        if (this.reviewSequencer === null) return;
-        this.reviewSequencer.skipCurrentCard();
-        await this._showNextCard();
+        if (this.reviewSequencer === null || this.reviewInProgress) return;
+        this.reviewInProgress = true;
+        try {
+            this.reviewSequencer.skipCurrentCard();
+            await this._showNextCard();
+        } finally {
+            this.reviewInProgress = false;
+        }
     }
 
     private _displayCurrentCardInfoNotice() {
@@ -521,7 +534,7 @@ export default class ContentManager {
     }
 
     public async _processReview(response: ReviewResponse): Promise<void> {
-        if (this.reviewSequencer === null) return;
+        if (this.reviewSequencer === null || this.reviewInProgress) return;
         const timeNow = now();
         if (
             timeNow - this.lastPressedOnProcessReview <
@@ -531,13 +544,18 @@ export default class ContentManager {
         }
         this.lastPressedOnProcessReview = timeNow;
 
-        // Review calendar: count the card (a reset is not a review)
-        const isNew = !(this.reviewSequencer.currentCard?.hasSchedule ?? true);
-        const msOnCard = this.cardContainer.msOnCurrentCard();
+        this.reviewInProgress = true;
+        try {
+            // Review calendar: count the card (a reset is not a review)
+            const isNew = !(this.reviewSequencer.currentCard?.hasSchedule ?? true);
+            const msOnCard = this.cardContainer.msOnCurrentCard();
 
-        await this.reviewSequencer.processReview(response);
-        if (response !== ReviewResponse.Reset) recordCardReview(this.plugin, msOnCard, isNew);
-        await this._showNextCard();
+            await this.reviewSequencer.processReview(response);
+            if (response !== ReviewResponse.Reset) recordCardReview(this.plugin, msOnCard, isNew);
+            await this._showNextCard();
+        } finally {
+            this.reviewInProgress = false;
+        }
     }
 
     // MARK: Deck button handlers

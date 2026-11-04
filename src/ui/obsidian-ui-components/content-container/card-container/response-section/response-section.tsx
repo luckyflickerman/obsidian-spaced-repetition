@@ -11,6 +11,13 @@ import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
 import SRResponseButtonComponent from "src/ui/obsidian-ui-components/content-container/card-container/response-section/sr-response-button";
 
+/**
+ * A rating button tapped this soon after "Show answer" is the second half of a double tap:
+ * the rating buttons appear where "Show answer" was, so the second tap used to rate the card
+ * before the answer could be read.
+ */
+const GHOST_TAP_MS = 350;
+
 export default class ResponseSectionComponent {
     public responseEl: HTMLDivElement;
     public againButton: SRResponseButtonComponent;
@@ -18,6 +25,7 @@ export default class ResponseSectionComponent {
     public goodButton: SRResponseButtonComponent;
     public easyButton: SRResponseButtonComponent;
     public answerButton: SRResponseButtonComponent;
+    private answerTappedAt = 0;
 
     constructor(
         container: HTMLElement,
@@ -32,6 +40,7 @@ export default class ResponseSectionComponent {
             classNames: ["sr-bg-accent", "sr-show-answer-button"],
             text: t("SHOW_ANSWER"),
             onClick: () => {
+                this.answerTappedAt = Date.now();
                 showAnswer();
             },
         });
@@ -40,6 +49,7 @@ export default class ResponseSectionComponent {
             classNames: ["sr-bg-red", "sr-again-button", "sr-is-hidden"],
             text: displayRatingLabel(settings.flashcardAgainText, "again", t("AGAIN")),
             onClick: async () => {
+                if (this.isGhostTap()) return;
                 await processReview(ReviewResponse.Again);
             },
         });
@@ -48,6 +58,7 @@ export default class ResponseSectionComponent {
             classNames: ["sr-bg-yellow", "sr-hard-button", "sr-is-hidden"],
             text: displayRatingLabel(settings.flashcardHardText, "hard", t("HARD")),
             onClick: async () => {
+                if (this.isGhostTap()) return;
                 await processReview(ReviewResponse.Hard);
             },
         });
@@ -56,6 +67,7 @@ export default class ResponseSectionComponent {
             classNames: ["sr-bg-blue", "sr-good-button", "sr-is-hidden"],
             text: displayRatingLabel(settings.flashcardGoodText, "good", t("GOOD")),
             onClick: async () => {
+                if (this.isGhostTap()) return;
                 await processReview(ReviewResponse.Good);
             },
         });
@@ -64,9 +76,14 @@ export default class ResponseSectionComponent {
             classNames: ["sr-bg-green", "sr-easy-button", "sr-is-hidden"],
             text: displayRatingLabel(settings.flashcardEasyText, "easy", t("EASY")),
             onClick: async () => {
+                if (this.isGhostTap()) return;
                 await processReview(ReviewResponse.Easy);
             },
         });
+    }
+
+    private isGhostTap(): boolean {
+        return Date.now() - this.answerTappedAt < GHOST_TAP_MS;
     }
 
     public resetResponseButtons() {
