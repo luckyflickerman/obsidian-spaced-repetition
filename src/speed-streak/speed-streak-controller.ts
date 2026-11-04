@@ -670,9 +670,21 @@ export class SpeedStreakController {
     };
 
     private onVisibility = () => {
-        if ((this.listenDoc ?? activeDocument).hidden) this.onWindowBlur();
-        else this.onWindowFocus();
+        if ((this.listenDoc ?? activeDocument).hidden) {
+            this.onWindowBlur();
+            // Phone / tablet: the app may be closed from the background without warning;
+            // the runs recorded so far (kept in memory until the session ends) are saved now
+            if (this.engine.sessionActive) void this.saveRecordsSoFar();
+        } else this.onWindowFocus();
     };
+
+    private async saveRecordsSoFar() {
+        try {
+            await saveSpeedStreakData(this.plugin);
+        } catch (e) {
+            console.error("[Speed Streak] could not save records", e);
+        }
+    }
 
     private onMotionChange = () => {
         if (this.engine.sessionActive) {
