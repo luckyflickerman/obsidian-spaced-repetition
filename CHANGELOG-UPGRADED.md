@@ -16,7 +16,7 @@ Fixes from a review of the plugin on all devices (Windows, iPad, iPhone, Android
 - **Settings**: a change typed right before closing the Options window, or two fields changed within half a second, are no longer lost.
 - **Read-aloud voice per device**: choosing a voice on the iPhone no longer replaces the voice chosen on Windows (each device keeps its own).
 - **Speed Streak**: sounds no longer stop working after opening the review many times on iOS (each window kept its own audio channel open); the timer is no longer paused by clicking another window when playing in a pop-out window; colours follow a light/dark switch during a session; no double safe-area margins on the pause screen and side panel on an iPhone.
-- **Fewer writes to data.json** (synced to the other devices): the review window no longer saves its size every time it opens or Obsidian's window is resized; the review calendar is saved when the app goes to the background on a phone.
+- **Fewer writes to data.json** (synced to the other devices): the review window no longer saves its size every time it opens or Obsidian's window is resized; the review calendar and the Speed Streak records are saved when the app goes to the background on a phone (they were lost when the system closed the app).
 - Switching the plugin off (or a BRAT update) no longer leaves a watcher running in Obsidian; closing the review tab on a phone restores Obsidian's own bottom bar settings.
 
 ## 0.9.11
