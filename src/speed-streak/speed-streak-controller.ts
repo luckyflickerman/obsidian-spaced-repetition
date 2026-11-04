@@ -1,5 +1,5 @@
 import "src/speed-streak/speed-streak.css";
-import { Platform } from "obsidian";
+import { EventRef, Platform } from "obsidian";
 
 import type SRPlugin from "src/main";
 import { ReviewResponse } from "src/scheduling/algorithms/base/repetition-item";
@@ -144,6 +144,9 @@ export class SpeedStreakController {
     private motionQuery: MediaQueryList | null = null;
 
     private loopHandle: number | null = null;
+    private listenWin: Window | null = null;
+    private listenDoc: Document | null = null;
+    private cssChangeRef: EventRef | null = null;
     private interrupted = false;
     private interruptPausedByUs = false;
     /** Active `holdTimerWhile` calls (e.g. reading aloud). */
@@ -667,7 +670,7 @@ export class SpeedStreakController {
     };
 
     private onVisibility = () => {
-        if (activeDocument.hidden) this.onWindowBlur();
+        if ((this.listenDoc ?? activeDocument).hidden) this.onWindowBlur();
         else this.onWindowFocus();
     };
 
@@ -678,18 +681,37 @@ export class SpeedStreakController {
         }
     };
 
+    /** Light / dark theme switched during the session (e.g. iOS at sunset): new colours. */
+    private onCssChange = () => {
+        this.themeRgb = null;
+        this.visual?.refreshColors();
+        this.render();
+    };
+
     private attachWindowListeners() {
-        window.addEventListener("blur", this.onWindowBlur);
-        window.addEventListener("focus", this.onWindowFocus);
-        activeDocument.addEventListener("visibilitychange", this.onVisibility);
+        this.detachWindowListeners();
+        // The window the review is shown in (a desktop pop-out window has its own):
+        // the main window's blur/focus used to pause the timer while playing in a pop-out
+        const win = this.hostEl.win ?? window;
+        const doc = this.hostEl.doc ?? activeDocument;
+        this.listenWin = win;
+        this.listenDoc = doc;
+        win.addEventListener("blur", this.onWindowBlur);
+        win.addEventListener("focus", this.onWindowFocus);
+        doc.addEventListener("visibilitychange", this.onVisibility);
         this.motionQuery?.addEventListener?.("change", this.onMotionChange);
+        this.cssChangeRef = this.plugin.app.workspace.on("css-change", this.onCssChange);
     }
 
     private detachWindowListeners() {
-        window.removeEventListener("blur", this.onWindowBlur);
-        window.removeEventListener("focus", this.onWindowFocus);
-        activeDocument.removeEventListener("visibilitychange", this.onVisibility);
+        this.listenWin?.removeEventListener("blur", this.onWindowBlur);
+        this.listenWin?.removeEventListener("focus", this.onWindowFocus);
+        this.listenDoc?.removeEventListener("visibilitychange", this.onVisibility);
+        this.listenWin = null;
+        this.listenDoc = null;
         this.motionQuery?.removeEventListener?.("change", this.onMotionChange);
+        if (this.cssChangeRef) this.plugin.app.workspace.offref(this.cssChangeRef);
+        this.cssChangeRef = null;
     }
 
     // MARK: Render

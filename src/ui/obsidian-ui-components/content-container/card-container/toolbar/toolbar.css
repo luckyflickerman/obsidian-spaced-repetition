@@ -57,9 +57,15 @@
     --deck-info-name-width: 10ch;
 }
 
+/* Phone on its side: the bar stays (it holds "Back" and "Close" — an iPhone has no back
+   button, so hiding it left no way out of the review), just with less space around it */
 @media only screen and (orientation: landscape) {
     .is-phone .sr-card-toolbar {
-        display: none;
+        padding-block: 0;
+
+        & > * {
+            margin-block: 2px;
+        }
     }
 }
 

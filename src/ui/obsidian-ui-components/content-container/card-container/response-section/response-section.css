@@ -87,9 +87,10 @@
 }
 
 @media only screen and (orientation: landscape) {
+    /* 44 px: the smallest comfortable size for a finger */
     .is-phone .sr-response-button {
-        height: 38px;
-        line-height: 38px;
+        height: 44px;
+        line-height: 44px;
     }
 
     .is-phone .sr-response .sr-response-button.sr-two-line {

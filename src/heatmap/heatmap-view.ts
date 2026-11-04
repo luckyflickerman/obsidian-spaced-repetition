@@ -381,11 +381,32 @@ export class HeatmapView {
                 el.setAttr("aria-label", tooltip(cell));
             }
         });
+        this.addDayInfo(weeksEl, ".sr-hm-cell");
         this.rootEl.createDiv({ cls: "sr-hm-year", text: String(this.year) });
 
         // Show today (the end of the year) first on narrow screens
         window.requestAnimationFrame(() => {
             scroller.scrollLeft = this.year === today.getFullYear() ? scroller.scrollWidth : 0;
+        });
+    }
+
+    /**
+     * A tap on a day square shows its date and numbers under the calendar. The tooltip only
+     * appears when a mouse hovers, so on a phone or iPad the day's numbers could not be seen.
+     */
+    private addDayInfo(gridEl: HTMLElement, cellSelector: string) {
+        const info = this.rootEl.createDiv({ cls: "sr-hm-day-info", attr: { role: "status" } });
+        gridEl.addEventListener("click", (ev) => {
+            const target = ev.target instanceof Element ? ev.target : null;
+            const cell = target?.closest<HTMLElement>(cellSelector) ?? null;
+            const label = cell?.getAttr("aria-label");
+            gridEl.querySelectorAll(".is-selected").forEach((el) => el.removeClass("is-selected"));
+            if (!cell || !label) {
+                info.setText("");
+                return;
+            }
+            cell.addClass("is-selected");
+            info.setText(label.split("\n").join(" · "));
         });
     }
 

@@ -879,10 +879,7 @@ button.sr-ss-pause-btn {
   margin-bottom: auto;
 }
 .sr-ss-paused-overlay {
-  padding: max(var(--size-4-4), env(safe-area-inset-top))
-    max(var(--size-4-4), env(safe-area-inset-right))
-    max(var(--size-4-4), env(safe-area-inset-bottom))
-    max(var(--size-4-4), env(safe-area-inset-left));
+  padding: var(--size-4-4);
   overflow-y: auto;
 }
 .sr-ss-paused-title {
@@ -1059,8 +1056,7 @@ button.sr-ss-pause-btn {
   bottom: 0;
   width: var(--sr-ss-panel-w);
   margin: 0;
-  padding: max(var(--size-4-3), env(safe-area-inset-top)) var(--size-4-3)
-    max(var(--size-4-3), env(safe-area-inset-bottom));
+  padding: var(--size-4-3);
   display: flex;
   flex-direction: column;
   gap: var(--size-4-2);
@@ -1072,16 +1068,16 @@ button.sr-ss-pause-btn {
 .sr-ss-panel-right {
   right: 0;
   border-right: none;
-  padding-right: max(var(--size-4-3), env(safe-area-inset-right));
+  padding-right: var(--size-4-3);
 }
 .sr-ss-panel-left {
   left: 0;
   border-left: none;
-  padding-left: max(var(--size-4-3), env(safe-area-inset-left));
+  padding-left: var(--size-4-3);
 }
 button.sr-ss-panel-collapse {
   position: absolute;
-  top: max(var(--size-4-2), env(safe-area-inset-top));
+  top: var(--size-4-2);
   min-width: 44px;
   min-height: 44px;
   z-index: 2;
@@ -2493,6 +2489,20 @@ body:not(.is-phone) .usr-bg-on .sr-response {
 .sr-hm-l5 {
   background-color: var(--sr-hm-5);
 }
+.sr-hm-day-info {
+  text-align: center;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  margin-top: var(--size-4-1);
+  min-height: 1.4em;
+}
+.sr-hm-day-info:empty {
+  display: none;
+}
+.sr-hm-cell.is-selected {
+  outline: 2px solid var(--text-normal);
+  outline-offset: -1px;
+}
 .sr-hm-year {
   text-align: center;
   font-size: var(--font-smallest);
@@ -2764,8 +2774,8 @@ button.sr-hm-mini-box:hover {
 }
 @media only screen and (orientation: landscape) {
   .is-phone .sr-response-button {
-    height: 38px;
-    line-height: 38px;
+    height: 44px;
+    line-height: 44px;
   }
   .is-phone .sr-response .sr-response-button.sr-two-line {
     height: 44px;
@@ -2901,7 +2911,10 @@ body:not(.is-mobile)
 }
 @media only screen and (orientation: landscape) {
   .is-phone .sr-card-toolbar {
-    display: none;
+    padding-block: 0;
+    & > * {
+      margin-block: 2px;
+    }
   }
 }
 .is-phone .sr-card-toolbar .sr-edit-button,
@@ -3375,10 +3388,7 @@ body:not(.is-mobile)
 }
 @media only screen and (orientation: landscape) {
   .is-phone .sr-deck-list-header {
-    display: none;
-  }
-  .is-phone .sr-deck-container .sr-deck-list-header .sr-button {
-    padding: 0;
+    padding-block: 2px;
   }
 }
 

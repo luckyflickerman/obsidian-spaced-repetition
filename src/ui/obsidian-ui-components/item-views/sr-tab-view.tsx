@@ -32,6 +32,9 @@ export class SRTabView extends ItemView {
     private viewContainerEl: HTMLElement | null = null;
     private viewContentEl: HTMLElement | null = null;
     private settings: SRSettings | null = null;
+    /** Obsidian's own values, put back when the tab closes (null = not changed) */
+    private savedNavbarPosition: string | null = null;
+    private savedFadeMask: string | null = null;
 
     constructor(
         leaf: WorkspaceLeaf,
@@ -123,8 +126,9 @@ export class SRTabView extends ItemView {
         // Reposition the navbar if it's mobile, because lese it overlaps the buttons in the tab view
         if (activeDocument.body.classList.contains("is-mobile")) {
             const mobileNavbar = activeDocument.getElementsByClassName("mobile-navbar")[0];
-            if (mobileNavbar) {
-                (mobileNavbar as HTMLElement).setCssProps({ position: "relative" });
+            if (mobileNavbar instanceof HTMLElement) {
+                this.savedNavbarPosition = mobileNavbar.style.getPropertyValue("position");
+                mobileNavbar.setCssProps({ position: "relative" });
             }
         }
 
@@ -133,6 +137,8 @@ export class SRTabView extends ItemView {
             activeDocument.body.classList.contains("is-phone") &&
             activeDocument.body.classList.contains("is-floating-nav")
         ) {
+            this.savedFadeMask =
+                activeDocument.body.style.getPropertyValue("--view-bottom-fade-mask");
             activeDocument.body.style.setProperty(
                 "--view-bottom-fade-mask",
                 "linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, #000000 calc(16px - 0px))",
@@ -164,23 +170,26 @@ export class SRTabView extends ItemView {
 
     // eslint-disable-next-line @typescript-eslint/require-await
     async onClose() {
-        // Resets the changes made in onOpen
-        if (activeDocument.body.classList.contains("is-mobile")) {
+        // Resets the changes made in onOpen: back to what was there before (a fixed value
+        // here used to stay in Obsidian until restart and could differ from its own one)
+        if (this.savedNavbarPosition !== null) {
             const mobileNavbar = activeDocument.getElementsByClassName("mobile-navbar")[0];
-            if (mobileNavbar) {
-                (mobileNavbar as HTMLElement).setCssProps({ position: "unset" });
+            if (mobileNavbar instanceof HTMLElement) {
+                mobileNavbar.setCssProps({ position: this.savedNavbarPosition });
             }
+            this.savedNavbarPosition = null;
         }
 
-        // Resets the changes made in onOpen
-        if (
-            activeDocument.body.classList.contains("is-phone") &&
-            activeDocument.body.classList.contains("is-floating-nav")
-        ) {
-            activeDocument.body.style.setProperty(
-                "--view-bottom-fade-mask",
-                "linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, #000000 calc(34px - 0px + 12px))",
-            );
+        if (this.savedFadeMask !== null) {
+            if (this.savedFadeMask === "") {
+                activeDocument.body.style.removeProperty("--view-bottom-fade-mask");
+            } else {
+                activeDocument.body.style.setProperty(
+                    "--view-bottom-fade-mask",
+                    this.savedFadeMask,
+                );
+            }
+            this.savedFadeMask = null;
         }
 
         if (this.contentManager) this.contentManager.close();

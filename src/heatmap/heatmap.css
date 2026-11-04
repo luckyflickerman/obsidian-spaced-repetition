@@ -250,6 +250,24 @@
     background-color: var(--sr-hm-5);
 }
 
+/* Date and numbers of the tapped day (touch screens have no hover tooltip) */
+.sr-hm-day-info {
+    text-align: center;
+    font-size: var(--font-ui-small);
+    color: var(--text-muted);
+    margin-top: var(--size-4-1);
+    min-height: 1.4em;
+}
+
+.sr-hm-day-info:empty {
+    display: none;
+}
+
+.sr-hm-cell.is-selected {
+    outline: 2px solid var(--text-normal);
+    outline-offset: -1px;
+}
+
 .sr-hm-year {
     text-align: center;
     font-size: var(--font-smallest);

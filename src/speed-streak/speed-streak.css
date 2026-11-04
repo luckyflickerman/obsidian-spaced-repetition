@@ -560,11 +560,10 @@ button.sr-ss-pause-btn {
     margin-bottom: auto;
 }
 
+/* No safe-area insets here: the review window already keeps clear of the notch and the
+   home bar (modal-view.css), so they were counted twice on an iPhone */
 .sr-ss-paused-overlay {
-    padding: max(var(--size-4-4), env(safe-area-inset-top))
-        max(var(--size-4-4), env(safe-area-inset-right))
-        max(var(--size-4-4), env(safe-area-inset-bottom))
-        max(var(--size-4-4), env(safe-area-inset-left));
+    padding: var(--size-4-4);
     overflow-y: auto;
 }
 
@@ -781,8 +780,8 @@ button.sr-ss-pause-btn {
     bottom: 0;
     width: var(--sr-ss-panel-w);
     margin: 0;
-    padding: max(var(--size-4-3), env(safe-area-inset-top)) var(--size-4-3)
-        max(var(--size-4-3), env(safe-area-inset-bottom));
+    /* safe-area insets are already kept by the review window (modal-view.css) */
+    padding: var(--size-4-3);
     display: flex;
     flex-direction: column;
     gap: var(--size-4-2);
@@ -795,18 +794,18 @@ button.sr-ss-pause-btn {
 .sr-ss-panel-right {
     right: 0;
     border-right: none;
-    padding-right: max(var(--size-4-3), env(safe-area-inset-right));
+    padding-right: var(--size-4-3);
 }
 
 .sr-ss-panel-left {
     left: 0;
     border-left: none;
-    padding-left: max(var(--size-4-3), env(safe-area-inset-left));
+    padding-left: var(--size-4-3);
 }
 
 button.sr-ss-panel-collapse {
     position: absolute;
-    top: max(var(--size-4-2), env(safe-area-inset-top));
+    top: var(--size-4-2);
     min-width: 44px;
     min-height: 44px;
     z-index: 2;
