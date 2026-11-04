@@ -5,6 +5,7 @@ import { Card } from "src/data/data-structures/card/card";
 import { CardType } from "src/data/data-structures/card/questions/question";
 import { SRSettings } from "src/data/settings";
 import { t } from "src/lang/helpers";
+import { joinCardText, splitCardText } from "src/review-window/edit-card-text";
 import { TextDirection } from "src/utils/strings";
 
 // from https://github.com/chhoumann/quickadd/blob/bce0b4cdac44b867854d6233796e3406dfd163c6/src/gui/GenericInputPrompt/GenericInputPrompt.ts#L5
@@ -64,20 +65,15 @@ export class FlashcardEditModal extends Modal {
         this.separator = this.getSeparatorFromCardType(this.cardType, settings);
 
         if (this.separator !== null) {
-            this.textFront = this.currentCard.question.questionText.actualQuestion.split(
+            // Split like the parser: at the first separator / the separator line only
+            // (a "?" inside a multi-line question used to cut the card and lose its rest)
+            const parts = splitCardText(
+                this.currentCard.question.questionText.actualQuestion,
                 this.separator,
-            )[0];
-            this.textBack = this.currentCard.question.questionText.actualQuestion.split(
-                this.separator,
-            )[1];
-
-            if (
-                this.cardType === CardType.MultiLineBasic ||
-                this.cardType === CardType.MultiLineReversed
-            ) {
-                this.textBack = this.textBack.trimStart();
-                this.textFront = this.textFront.trimEnd();
-            }
+                this.isMultiLine,
+            );
+            this.textFront = parts.front;
+            this.textBack = parts.back;
         } else {
             this.textFront = this.modalText;
             this.textBack = "";
@@ -208,27 +204,14 @@ export class FlashcardEditModal extends Modal {
 
     private save() {
         this.didSaveChanges = true;
-        this.changedText = this.textAreaFront.value;
-        if (this.separator) {
-            // New line at end of Front
-            if (
-                (this.cardType === CardType.MultiLineBasic ||
-                    this.cardType === CardType.MultiLineReversed) &&
-                !this.textAreaFront.value.endsWith("\n")
-            ) {
-                this.changedText += "\n";
-            }
-            this.changedText += this.separator;
-            // New line at start of Back
-            if (
-                (this.cardType === CardType.MultiLineBasic ||
-                    this.cardType === CardType.MultiLineReversed) &&
-                !this.textAreaBack.value.startsWith("\n")
-            ) {
-                this.changedText += "\n";
-            }
-            this.changedText += this.textAreaBack.value;
-        }
+        this.changedText = this.separator
+            ? joinCardText(
+                  this.textAreaFront.value,
+                  this.textAreaBack.value,
+                  this.separator,
+                  this.isMultiLine,
+              )
+            : this.textAreaFront.value;
         this.close();
     }
 
@@ -249,6 +232,13 @@ export class FlashcardEditModal extends Modal {
             this.textAreaBack.removeEventListener("keydown", this.keyListenerCallback);
             this.textAreaBack.removeEventListener("input", this.emptyListenerCallback);
         }
+    }
+
+    private get isMultiLine(): boolean {
+        return (
+            this.cardType === CardType.MultiLineBasic ||
+            this.cardType === CardType.MultiLineReversed
+        );
     }
 
     private getSeparatorFromCardType(cardType: CardType, settings: SRSettings): string | null {
