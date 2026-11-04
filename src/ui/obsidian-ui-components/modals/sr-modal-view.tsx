@@ -13,6 +13,7 @@ export class SRModalView extends Modal {
     private plugin: SRPlugin;
     private settingsManager: SettingsManager;
     private resizeObserver: ResizeObserver | null = null;
+    private saveSizeTimer: number | null = null;
     private windowController: ReviewWindowController;
 
     constructor(
@@ -38,7 +39,7 @@ export class SRModalView extends Modal {
             );
 
             this.resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
-                void this.onResize(entries);
+                this.onResize(entries);
             });
             this.resizeObserver.observe(this.modalEl);
         }
@@ -72,11 +73,18 @@ export class SRModalView extends Modal {
     }
 
     onClose(): void {
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = null;
+        if (this.saveSizeTimer !== null) {
+            window.clearTimeout(this.saveSizeTimer);
+            this.saveSizeTimer = null;
+            void this.plugin.dataManager.savePluginData();
+        }
         this.windowController.detach();
         this.contentManager.close();
     }
 
-    private async onResize(entries: ResizeObserverEntry[]) {
+    private onResize(entries: ResizeObserverEntry[]) {
         // Full screen is temporary: keep the user's normal window size
         if (this.windowController.isFullscreen()) return;
         const modalEl = entries[0].target as HTMLElement;
@@ -94,7 +102,7 @@ export class SRModalView extends Modal {
 
         this.setRoundedModalCorners(!(heightPercent >= 100 || widthPercent >= 100));
 
-        await this.saveSizeToSettings(
+        this.saveSizeToSettings(
             heightPercent,
             widthPercent,
             Platform.isMobile || EmulatedPlatform().isMobile,
@@ -117,20 +125,33 @@ export class SRModalView extends Modal {
         );
     }
 
-    private async saveSizeToSettings(
-        heightPercent: number,
-        widthPercent: number,
-        isMobile: boolean,
-    ) {
-        if (isNaN(heightPercent) || isNaN(widthPercent)) return;
+    /**
+     * Remembers a size changed by the user (dragging the corner). Only a real change is saved,
+     * and only once the dragging stops: the observer also fires when the window opens and while
+     * Obsidian's window is resized, and every save used to rewrite data.json (synced to the
+     * other devices, where it could overwrite their newer data).
+     */
+    private saveSizeToSettings(heightPercent: number, widthPercent: number, isMobile: boolean) {
+        if (!Number.isFinite(heightPercent) || !Number.isFinite(widthPercent)) return;
+
+        const settings = this.settingsManager.settings;
+        const [oldHeight, oldWidth] = isMobile
+            ? [settings.flashcardHeightPercentageMobile, settings.flashcardWidthPercentageMobile]
+            : [settings.flashcardHeightPercentage, settings.flashcardWidthPercentage];
+        if (Math.abs(oldHeight - heightPercent) < 0.5 && Math.abs(oldWidth - widthPercent) < 0.5)
+            return;
 
         if (isMobile) {
-            this.settingsManager.settings.flashcardHeightPercentageMobile = heightPercent;
-            this.settingsManager.settings.flashcardWidthPercentageMobile = widthPercent;
+            settings.flashcardHeightPercentageMobile = heightPercent;
+            settings.flashcardWidthPercentageMobile = widthPercent;
         } else {
-            this.settingsManager.settings.flashcardHeightPercentage = heightPercent;
-            this.settingsManager.settings.flashcardWidthPercentage = widthPercent;
+            settings.flashcardHeightPercentage = heightPercent;
+            settings.flashcardWidthPercentage = widthPercent;
         }
-        await this.plugin.dataManager.savePluginData();
+        if (this.saveSizeTimer !== null) window.clearTimeout(this.saveSizeTimer);
+        this.saveSizeTimer = window.setTimeout(() => {
+            this.saveSizeTimer = null;
+            void this.plugin.dataManager.savePluginData();
+        }, 600);
     }
 }

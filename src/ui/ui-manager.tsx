@@ -155,6 +155,9 @@ export class UIManager {
 
     public removeSRFocusListener() {
         this.setSRViewInFocus(false);
+        // Kept running after the plugin was switched off or reloaded (e.g. a BRAT update)
+        this.externalModalObserver?.disconnect();
+        this.externalModalObserver = null;
     }
 
     public handleFocusChange(leaf: WorkspaceLeaf | null) {

@@ -7,6 +7,7 @@ import { DebugLoggerInstance } from "src/data/debug-logger";
 import { PluginDataError, PluginDataManager } from "src/data/plugin-data-manager";
 import { SRSettings } from "src/data/settings";
 import { SettingsManager } from "src/data/settings-manager";
+import { flushReviewLog } from "src/heatmap/heatmap-view";
 import { LocaleManagerInstance } from "src/lang/locale-manager";
 import { LegacyImportController } from "src/migration/legacy-import-controller";
 import { NextNoteReviewHandler } from "src/note/next-note-review-handler";
@@ -74,6 +75,12 @@ export default class SRPlugin extends Plugin {
                 this.isInitialized = true;
                 this._reminderManager.restartReviewReminders();
 
+                // Phone / tablet: the app can be closed from the background without warning,
+                // so the review calendar is saved when Obsidian leaves the screen
+                this.registerDomEvent(activeDocument, "visibilitychange", () => {
+                    if (activeDocument.hidden) void flushReviewLog(this);
+                });
+
                 // One-time offer to copy data from the original Spaced Repetition plugin
                 const legacyImport = new LegacyImportController(this);
                 legacyImport.load();
@@ -140,10 +147,12 @@ export default class SRPlugin extends Plugin {
     }
 
     onunload(): void {
-        this.reminderManager.stopReviewReminders();
+        // Switched off before the layout was ready: some parts were never created
+        this._reminderManager?.stopReviewReminders();
         this.app.workspace.getLeavesOfType(REVIEW_QUEUE_VIEW_TYPE).forEach((leaf) => leaf.detach());
-        this.uiManager.destroy();
-        this.commandManager.onunload();
+        this._uiManager?.destroy();
+        this._commandManager?.onunload();
+        if (this.isDataManagerLoaded()) void flushReviewLog(this);
     }
 
     public addCustomHotkeys() {

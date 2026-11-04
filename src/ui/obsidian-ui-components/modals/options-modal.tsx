@@ -17,6 +17,7 @@ import {
     SettingsPageType,
     SettingsPageTypesArray,
 } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-manager";
+import { PendingUpdates } from "src/utils/pending-updates";
 
 /** Pages listed under "Options" (the built-in plugins have their own list). */
 export const OPTION_PAGES: SettingsPageType[] = SettingsPageTypesArray.filter(
@@ -32,7 +33,8 @@ export class OptionsModal extends Modal {
     private plugin: SRPlugin;
     private onChanged: () => void;
     private page: SettingsPage | null = null;
-    private applyDebounceTimer = 0;
+    /** Changes typed in a page; saved when typing stops and, at the latest, on closing */
+    private updates = new PendingUpdates(512, () => refreshBuiltInPlugins());
     private didReadMultilineEndMarkerWarning = false;
 
     constructor(plugin: SRPlugin, onChanged: () => void) {
@@ -47,13 +49,14 @@ export class OptionsModal extends Modal {
     }
 
     onClose(): void {
-        window.clearTimeout(this.applyDebounceTimer);
         this.destroyPage();
         this.contentEl.empty();
         this.onChanged();
     }
 
     private destroyPage() {
+        // a change typed just before leaving the page is saved, not dropped
+        void this.updates.flush();
         this.page?.destroy();
         this.page = null;
     }
@@ -88,12 +91,7 @@ export class OptionsModal extends Modal {
             uiManager: this.plugin.uiManager,
             settingsManager: this.plugin.dataManager.settingsManager,
             dataManager: this.plugin.dataManager,
-            applySettingsUpdate: (callback: () => unknown) => {
-                window.clearTimeout(this.applyDebounceTimer);
-                this.applyDebounceTimer = window.setTimeout(() => {
-                    void Promise.resolve(callback()).then(() => refreshBuiltInPlugins());
-                }, 512);
-            },
+            applySettingsUpdate: (callback: () => unknown) => this.updates.add(callback),
             // "display": re-render the page (e.g. after "restore default")
             display: () => this.showPage(pageType),
             // the page's back button opens "main-page" = back to the list

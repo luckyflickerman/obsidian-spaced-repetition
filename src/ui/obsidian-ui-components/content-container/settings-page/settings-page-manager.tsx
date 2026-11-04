@@ -24,6 +24,7 @@ import { StatisticsPage } from "src/ui/obsidian-ui-components/content-container/
 import { TtsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/tts-page";
 import { UIPreferencesPage } from "src/ui/obsidian-ui-components/content-container/settings-page/ui-preferences-page";
 import { UIManager } from "src/ui/ui-manager";
+import { PendingUpdates } from "src/utils/pending-updates";
 
 export { getPageIcon, getPageName, SettingsPageTypesArray };
 export type { SettingsPageType };
@@ -139,7 +140,8 @@ export class SettingsPageManager {
     private dataManager: DataManager;
     private uiManager: UIManager;
     private pages: SettingsPage[] = [];
-    private applyDebounceTimer: number = 0;
+    /** Changes typed in a page: saved when typing stops (every field keeps its last value) */
+    private updates = new PendingUpdates(512);
     private currentPage: SettingsPageType;
     private updateLastPageState: (lastPage: SettingsPageType, lastScrollPosition: number) => void;
     private display: () => void;
@@ -180,6 +182,7 @@ export class SettingsPageManager {
      * Destroys the SettingsPageManager and all its pages.
      */
     destroy() {
+        void this.updates.flush();
         this.pages.forEach((page) => page.destroy && page.destroy());
     }
 
@@ -192,8 +195,7 @@ export class SettingsPageManager {
 
     // https://github.com/mgmeyers/obsidian-kanban/blob/main/src/Settings.ts
     private applySettingsUpdate(callback: () => unknown): void {
-        window.clearTimeout(this.applyDebounceTimer);
-        this.applyDebounceTimer = window.setTimeout(callback, 512);
+        this.updates.add(callback);
     }
 
     private createPages() {
