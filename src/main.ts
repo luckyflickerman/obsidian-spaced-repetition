@@ -7,6 +7,7 @@ import { DebugLoggerInstance } from "src/data/debug-logger";
 import { PluginDataError, PluginDataManager } from "src/data/plugin-data-manager";
 import { SRSettings } from "src/data/settings";
 import { SettingsManager } from "src/data/settings-manager";
+import { FishNoteController } from "src/fish-note/fish-note-controller";
 import { flushReviewLog } from "src/heatmap/heatmap-view";
 import { LocaleManagerInstance } from "src/lang/locale-manager";
 import { LegacyImportController } from "src/migration/legacy-import-controller";
@@ -70,6 +71,8 @@ export default class SRPlugin extends Plugin {
                 this.commandManager.onLayoutReady();
                 this.cardAuthoring = new CardAuthoringController(this);
                 this.cardAuthoring.load();
+                // "New fish note" (file explorer button, folder menu, command)
+                new FishNoteController(this).load();
                 this._reminderManager = new ReminderManager(this, this.uiManager, this.dataManager);
 
                 this.isInitialized = true;

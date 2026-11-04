@@ -39,6 +39,13 @@ export interface CardAuthoringSettings {
     maxImageWidth: number;
     /** Show a small icon instead of the long <!--SR:…--> text in the editor (display only) */
     compactScheduleComments: boolean;
+    /**
+     * Folder for card images, next to the note (`obrazy` → `Niemiecki/obrazy/hund.jpg`);
+     * empty = Obsidian's own attachment setting
+     */
+    imageFolder: string;
+    /** Images in card lines are small thumbnails in the editor (full size in the review) */
+    inlineThumbnails: boolean;
 }
 
 export const DEFAULT_CARD_AUTHORING_SETTINGS: CardAuthoringSettings = {
@@ -57,6 +64,8 @@ export const DEFAULT_CARD_AUTHORING_SETTINGS: CardAuthoringSettings = {
     resizeImages: true,
     maxImageWidth: 800,
     compactScheduleComments: true,
+    imageFolder: "obrazy",
+    inlineThumbnails: true,
 };
 
 /** `ENG`, ` #ENG ` → `#ENG`; "" when empty or invalid. */
@@ -115,6 +124,14 @@ export function normalizeCardAuthoringSettings(
         resizeImages: bool(s.resizeImages, d.resizeImages),
         maxImageWidth: num(s.maxImageWidth, d.maxImageWidth, 200, 4000),
         compactScheduleComments: bool(s.compactScheduleComments, d.compactScheduleComments),
+        imageFolder:
+            typeof s.imageFolder === "string"
+                ? s.imageFolder
+                      .trim()
+                      .replace(/\\/g, "/")
+                      .replace(/^\/+|\/+$/g, "")
+                : d.imageFolder,
+        inlineThumbnails: bool(s.inlineThumbnails, d.inlineThumbnails),
     };
 }
 

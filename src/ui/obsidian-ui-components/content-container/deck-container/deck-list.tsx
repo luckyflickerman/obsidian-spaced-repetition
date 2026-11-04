@@ -3,6 +3,7 @@ import "src/endless/endless.css";
 import { setIcon } from "obsidian";
 
 import { bg, bgCount } from "src/appearance/background-i18n";
+import { ca } from "src/card-authoring/card-authoring-i18n";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { SRSettings } from "src/data/settings";
 import { en } from "src/endless/endless-i18n";
@@ -59,8 +60,16 @@ export default class DeckListComponent {
     /** Decks opened or closed by hand: kept when the list is redrawn (ticking in Endless) */
     private collapsedByHand = new Map<string, boolean>();
 
-    public constructor(parentEl: HTMLElement, startReviewOfDeck: (deck: Deck) => void) {
+    /** The note icon next to a deck: opens the note(s) with its cards */
+    private openDeckNotes: ((deck: Deck, evt: MouseEvent) => void) | null;
+
+    public constructor(
+        parentEl: HTMLElement,
+        startReviewOfDeck: (deck: Deck) => void,
+        openDeckNotes: ((deck: Deck, evt: MouseEvent) => void) | null = null,
+    ) {
         this.startReviewOfDeck = startReviewOfDeck;
+        this.openDeckNotes = openDeckNotes;
         // Prep main container
         this.scrollWrapper = parentEl.createDiv();
         this.scrollWrapper.addClass("sr-scroll-wrapper");
@@ -274,6 +283,21 @@ export default class DeckListComponent {
         const treeRowInnerText: HTMLElement = treeRowInner.createDiv("tag-pane-tag-text");
         const treeRowInnerTextSpan: HTMLElement = treeRowInnerText.createSpan("tag-pane-tag-self");
         treeRowInnerTextSpan.setText(deckName);
+
+        // Note icon: opens the note with this deck's cards (a list when there are several)
+        const openNotes = this.openDeckNotes;
+        if (openNotes && deck && !deck.isRootDeck && deckStats.totalCount > 0) {
+            const notesBtn = treeRowSelf.createEl("button", {
+                cls: "sr-deck-notes-button clickable-icon",
+                attr: { "aria-label": ca("DECK_NOTES", { deck: deckName }), type: "button" },
+            });
+            setIcon(notesBtn, "file-text");
+            notesBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openNotes(deck, e);
+            });
+        }
 
         const treeRowOuter: HTMLDivElement = treeRowSelf.createDiv();
         treeRowOuter.addClasses(["tree-item-flair-outer", "sr-tree-stats-container"]);

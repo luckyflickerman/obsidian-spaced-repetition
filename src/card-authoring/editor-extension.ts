@@ -30,7 +30,17 @@ export interface CardEditorHost {
     /** Tab pressed; return true when handled */
     handleTab(view: EditorView): boolean;
     iconLabel(kind: "card" | "warn"): string;
+    /** Images in card lines shown as small thumbnails */
+    thumbnails(): boolean;
+    /** Tap on an image in a card line (line is 0-based, link = the embed's link text) */
+    openImage(view: EditorView, line: number, link: string, anchor: HTMLElement): void;
 }
+
+/** Class of every line of a card (thumbnails, the compact fish note look) */
+export const CARD_LINE_CLASS = "sr-ca-card-line";
+export const THUMBS_CLASS = "sr-ca-thumbs";
+/** First line of a card (a thin line between cards in a fish note) */
+export const CARD_START_CLASS = "sr-ca-card-start";
 
 const REBUILD = StateEffect.define<null>();
 const DEBOUNCE_MS = 300;
@@ -120,17 +130,28 @@ function buildDecorations(
     host: CardEditorHost,
     isCardNote: boolean,
 ): DecorationSet {
-    if (!host.iconsEnabled() || !isCardNote) return Decoration.none;
+    if (!isCardNote) return Decoration.none;
+    const icons = host.iconsEnabled();
+    const lineClass = host.thumbnails() ? `${CARD_LINE_CLASS} ${THUMBS_CLASS}` : CARD_LINE_CLASS;
     const doc = view.state.doc;
     const settings = host.detectSettings();
     const marks: Array<{ pos: number; deco: Decoration; order: number }> = [];
     const seen = new Set<number>();
+    const styled = new Set<number>();
+    const styleLine = (line: number, first: boolean) => {
+        if (styled.has(line) || line < 0 || line >= doc.lines) return;
+        const docLine = doc.line(line + 1);
+        if (/^\s*<!--SR:/.test(docLine.text)) return;
+        styled.add(line);
+        const cls = first ? `${lineClass} ${CARD_START_CLASS}` : lineClass;
+        marks.push({ pos: docLine.from, deco: Decoration.line({ class: cls }), order: -1 });
+    };
 
     for (const [start, end] of sliceRanges(view)) {
         const text = doc.sliceString(doc.line(start + 1).from, doc.line(end + 1).to);
         const result = detectCards(text, settings, { assumeFlashcardNote: true });
         const add = (line: number, kind: "card" | "warn") => {
-            if (seen.has(line)) return;
+            if (!icons || seen.has(line)) return;
             seen.add(line);
             const docLine = doc.line(line + 1);
             if (kind === "warn") {
@@ -146,8 +167,11 @@ function buildDecorations(
                 order: 1,
             });
         };
-        for (const card of result.cards)
+        for (const card of result.cards) {
+            for (let l = card.firstLine; l <= card.lastLine; l++)
+                styleLine(start + l, l === card.firstLine);
             add(start + card.firstLine, card.complete ? "card" : "warn");
+        }
         for (const u of result.unfinished) add(start + u.line, "warn");
     }
 
@@ -221,7 +245,26 @@ export function cardEditorExtension(host: CardEditorHost): Extension {
     );
 
     const tab = Prec.highest(keymap.of([{ key: "Tab", run: (view) => host.handleTab(view) }]));
-    return [plugin, tab];
+    // A tap on a thumbnail in a card line opens the image window (bigger image, move, remove…)
+    const images = EditorView.domEventHandlers({
+        mousedown(event, view) {
+            const target = event.target instanceof Element ? event.target : null;
+            const embed = target?.closest<HTMLElement>(`.${THUMBS_CLASS} .internal-embed`);
+            if (!embed || !embed.querySelector("img")) return false;
+            const link = embed.getAttribute("src");
+            if (!link) return false;
+            let pos: number;
+            try {
+                pos = view.posAtDOM(embed);
+            } catch {
+                return false;
+            }
+            event.preventDefault();
+            host.openImage(view, view.state.doc.lineAt(pos).number - 1, link, embed);
+            return true;
+        },
+    });
+    return [plugin, tab, images];
 }
 
 /** Asks every open editor to redraw the icons (after a settings change). */

@@ -1,8 +1,11 @@
 import "src/ui/obsidian-ui-components/content-container/deck-container/deck-container.css";
+import { Menu, TFile } from "obsidian";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import h from "vhtml";
 
+import { ca } from "src/card-authoring/card-authoring-i18n";
 import { DailyGoalView } from "src/card-authoring/daily-goal-view";
+import { deckNotes } from "src/card-authoring/deck-notes";
 import { Deck } from "src/data/data-structures/deck/deck";
 import { TopicPath } from "src/data/data-structures/deck/topic-path";
 import { SRSettings } from "src/data/settings";
@@ -14,6 +17,7 @@ import { getEndlessRecords } from "src/endless/endless-store";
 import { getHeatmapSettings, HeatmapView } from "src/heatmap/heatmap-view";
 import type SRPlugin from "src/main";
 import type { ReviewWindowControls } from "src/review-window/review-window-controller";
+import { RepItemState } from "src/scheduling/algorithms/base/repetition-item";
 import {
     FlashcardReviewMode,
     IFlashcardReviewSequencer as IFlashcardReviewSequencer,
@@ -35,6 +39,7 @@ export class DeckContainer {
     private reviewMode: FlashcardReviewMode = FlashcardReviewMode.Review;
     private startEndless: (decks: Deck[]) => void;
     private endlessSummary: EndlessSummary | null = null;
+    private closeModal?: () => void;
 
     constructor(
         parentEl: HTMLElement,
@@ -59,11 +64,51 @@ export class DeckContainer {
             windowControls,
         );
 
-        this.deckList = new DeckListComponent(this.containerEl, startReviewOfDeck);
+        this.closeModal = closeModal;
+        this.deckList = new DeckListComponent(this.containerEl, startReviewOfDeck, (deck, evt) =>
+            this.openDeckNotes(deck, evt),
+        );
 
         // Daily goal of new cards, then the review calendar below the deck tree
         this.dailyGoal = new DailyGoalView(this.deckList.contentEl, plugin);
         this.heatmap = new HeatmapView(this.deckList.contentEl, plugin);
+    }
+
+    /**
+     * The note icon next to a deck: one note → open it; several → a menu with each note and
+     * its number of cards. The review window closes first (the note would be behind it);
+     * from a review tab the note opens in a new tab.
+     */
+    private openDeckNotes(deck: Deck, evt: MouseEvent) {
+        const cards = deck.getFlattenedRepItemArray(RepItemState.AnyItem, true);
+        const notes = deckNotes(
+            cards
+                .filter((card) => card.question?.note?.file)
+                .map((card) => ({
+                    path: card.question.note.file.path,
+                    file: card.question.note.file.tfile,
+                })),
+        );
+        if (notes.length === 0) return;
+        const open = (file: TFile) => {
+            const inModal = this.closeModal !== undefined;
+            this.closeModal?.();
+            void this.plugin.app.workspace.getLeaf(inModal ? false : "tab").openFile(file);
+        };
+        if (notes.length === 1) {
+            open(notes[0].file);
+            return;
+        }
+        const menu = new Menu();
+        for (const note of notes) {
+            menu.addItem((item) =>
+                item
+                    .setTitle(ca("DECK_NOTE_ITEM", { name: note.name, n: note.cards }))
+                    .setIcon("file-text")
+                    .onClick(() => open(note.file)),
+            );
+        }
+        menu.showAtMouseEvent(evt);
     }
 
     /** Add-on switched on/off or its settings changed: redraw what depends on it. */

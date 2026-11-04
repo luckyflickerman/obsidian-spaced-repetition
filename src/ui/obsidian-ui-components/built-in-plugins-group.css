@@ -5,6 +5,29 @@
     gap: var(--size-4-2);
 }
 
+/* The whole row opens the page, so the whole row lights up (not only the chevron) */
+.sr-page-link {
+    cursor: pointer;
+    border-radius: var(--radius-s);
+    transition: background-color 120ms ease;
+}
+
+body:not(.is-mobile) .sr-page-link:hover,
+.sr-page-link:active,
+.sr-page-link:focus-within {
+    background-color: var(--background-modifier-hover);
+}
+
+body:not(.is-mobile) .sr-page-link:hover .setting-item-control button,
+.sr-page-link:focus-within .setting-item-control button {
+    color: var(--icon-color-hover, var(--text-normal));
+}
+
+/* the chevron alone does not light up on its own: the row already does */
+.sr-page-link .setting-item-control button.clickable-icon:hover {
+    background-color: transparent;
+}
+
 /* Touch: the chevron is a 44 px target too (the whole row is tappable anyway) */
 .is-mobile .sr-page-link .setting-item-control button {
     min-width: 44px;

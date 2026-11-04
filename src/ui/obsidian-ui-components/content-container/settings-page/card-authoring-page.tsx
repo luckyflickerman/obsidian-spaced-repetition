@@ -122,6 +122,21 @@ export class CardAuthoringPage extends SettingsPage {
         this.addToggle(images, "renamePastedImages", ca("RENAME_PASTED"), ca("RENAME_PASTED_DESC"));
         this.addToggle(images, "resizeImages", ca("RESIZE"), ca("RESIZE_DESC"));
         this.addNumber(images, "maxImageWidth", ca("MAX_WIDTH"));
+        this.addToggle(images, "inlineThumbnails", ca("THUMBNAILS"), ca("THUMBNAILS_DESC"));
+        images.addSetting((setting: Setting) => {
+            setting.setName(ca("IMAGE_FOLDER")).setDesc(ca("IMAGE_FOLDER_DESC"));
+            setting.addText((text) =>
+                text
+                    .setPlaceholder("obrazy")
+                    .setValue(this.caSettings.imageFolder)
+                    .onChange((value) => {
+                        this.applySettingsUpdate(async () => {
+                            this.caSettings.imageFolder = value;
+                            await this.save();
+                        });
+                    }),
+            );
+        });
     }
 
     /** One row per deck: tag, file, language, remove; plus "Add deck". */

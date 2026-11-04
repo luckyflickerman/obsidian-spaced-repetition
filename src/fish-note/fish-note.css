@@ -1,0 +1,27 @@
+/* MARK: Fish note — the compact look of a note made for flashcards
+   (`cssclasses: fishnote` in its frontmatter; Obsidian puts the class on the note's view) */
+
+/* The properties block (cssclasses, fishcards) is hidden: the note shows only the cards */
+.markdown-source-view.fishnote .metadata-container,
+.markdown-preview-view.fishnote .metadata-container {
+    display: none;
+}
+
+/* One card per line, a thin line between cards, a little air above and below each */
+.markdown-source-view.mod-cm6.fishnote .cm-line.sr-ca-card-line {
+    padding-block: 3px;
+}
+
+.markdown-source-view.mod-cm6.fishnote .cm-line.sr-ca-card-start {
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+/* The flashcard tag line on top stays small */
+.markdown-source-view.mod-cm6.fishnote .cm-line:not(.sr-ca-card-line) .cm-hashtag {
+    font-size: var(--font-ui-smaller);
+}
+
+/* The "New fish note" button in the file explorer bar */
+.nav-buttons-container .usr-fishnote-nav {
+    cursor: pointer;
+}

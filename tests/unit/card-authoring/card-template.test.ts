@@ -97,6 +97,19 @@ describe("card authoring settings", () => {
         expect(currentDeck(s)?.file).toBe("Fiszki/Angielski.md");
     });
 
+    test("image folder and thumbnails (old data.json without them)", () => {
+        const old = normalizeCardAuthoringSettings({ dailyGoal: 5 });
+        expect(old.imageFolder).toBe("obrazy");
+        expect(old.inlineThumbnails).toBe(true);
+        expect(normalizeCardAuthoringSettings({ imageFolder: " /img\\cards/ " }).imageFolder).toBe(
+            "img/cards",
+        );
+        expect(normalizeCardAuthoringSettings({ imageFolder: "" }).imageFolder).toBe("");
+        expect(
+            normalizeCardAuthoringSettings({ inlineThumbnails: "no" as never }).inlineThumbnails,
+        ).toBe(true);
+    });
+
     test("daily goal block: shown in full unless minimized", () => {
         expect(normalizeCardAuthoringSettings({}).goalMinimized).toBe(false);
         expect(normalizeCardAuthoringSettings({ goalMinimized: true }).goalMinimized).toBe(true);

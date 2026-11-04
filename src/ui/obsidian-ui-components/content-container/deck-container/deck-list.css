@@ -104,3 +104,34 @@
         display: none;
     }
 }
+
+/* Note icon next to a deck name: opens the note(s) with its cards. Visible on every device
+   (not only on hover); muted until pointed at. */
+.sr-deck-container .sr-deck-notes-button {
+    flex-shrink: 0;
+    padding: 2px;
+    margin-inline-end: var(--size-4-1);
+    color: var(--text-faint);
+    --icon-size: var(--icon-s);
+}
+
+.sr-deck-container .sr-deck-notes-button:hover,
+.sr-deck-container .sr-deck-notes-button:focus-visible {
+    color: var(--text-normal);
+}
+
+/* Touch: a 44 px area to tap, without making the row taller */
+.is-mobile .sr-deck-container .sr-deck-notes-button {
+    position: relative;
+    color: var(--text-muted);
+}
+
+.is-mobile .sr-deck-container .sr-deck-notes-button::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+}

@@ -5,6 +5,14 @@ The release workflow uses the section whose heading matches the git tag as the r
 
 ## Next (not released yet)
 
+New:
+
+- **Fish notes** ("New fish note"): a button with a fish in the file explorer's top bar (next to "New note" and "New folder"), the same item in a folder's menu, and a command. It asks for a name and a deck (or a new deck: pick the language, type a tag like `#DEN`) and creates an ordinary `.md` note made for cards: compact (one card per line, a thin line between cards, properties hidden) with buttons in its header — new card, add image, learn the cards of this note.
+- **Next review date next to the card**: the schedule comment under a card is shown as a small calendar icon at the end of the card's line (next to the preview icon), and its own line takes no room — many more cards fit on the screen. The note text does not change.
+- **Images in card lines**: a small thumbnail at the end of the card in the editor (full size in the review); tap it to see it bigger, move it to the question or the answer, replace it, open it or remove it from the card. Card images go to an `obrazy` folder next to the note (setting); pasted and dragged images are named after the word, shrunk and moved there too.
+- **Note icon in the deck list**: opens the note with the deck's cards (a list when they are in several notes).
+- **Options window**: the whole row lights up under the mouse, not only the arrow.
+
 Fixes from a review of the plugin on all devices (Windows, iPad, iPhone, Android):
 
 - **Editing a card no longer loses text.** In the review, "Edit card" cut a multi-line card at every `?` — a question like "What does it mean?" lost the rest of the card when saved. A one-line card with a second `::` in the answer lost its end the same way. Now the card is split exactly like the plugin reads it.

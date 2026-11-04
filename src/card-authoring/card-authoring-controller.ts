@@ -40,11 +40,20 @@ import {
 } from "src/card-authoring/card-duplicates";
 import {
     embedInsert,
+    embedSide,
+    findEmbed,
     fitWidth,
     imageFileName,
+    imageFolderFor,
+    isImageExtension,
     isPastedImageName,
+    moveEmbedToSide,
+    removeEmbed,
+    replaceEmbedLink,
+    shrinkableExtension,
     uniqueFileName,
 } from "src/card-authoring/card-image";
+import { CardImageModal } from "src/card-authoring/card-image-modal";
 import { openCardPreview } from "src/card-authoring/card-preview";
 import {
     appendAtEnd,
@@ -70,6 +79,7 @@ import {
 import { Card } from "src/data/data-structures/card/card";
 import { CardType, Question } from "src/data/data-structures/card/questions/question";
 import { SettingsUtil, SRSettings } from "src/data/settings";
+import { fishNoteDeckTag } from "src/fish-note/fish-note";
 import type SRPlugin from "src/main";
 import { RepItemState } from "src/scheduling/algorithms/base/repetition-item";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
@@ -110,7 +120,13 @@ export class CardAuthoringController {
     private provider: TtsProvider | null = null;
     /** Cards of the whole vault from the last sync (for duplicates) */
     private syncedRefs: CardRef[] = [];
-    private lastPaste: { time: number; editor: Editor; file: TFile | null } | null = null;
+    /** Last paste / drop into an editor: the image file it creates is renamed and moved */
+    private lastPaste: {
+        time: number;
+        editor: Editor;
+        file: TFile | null;
+        kind: "paste" | "drop";
+    } | null = null;
 
     constructor(plugin: SRPlugin) {
         this.plugin = plugin;
@@ -208,6 +224,8 @@ export class CardAuthoringController {
                 openPreview: (view, line, anchor) => this.openPreview(view, line, anchor),
                 handleTab: (view) => this.handleTab(view),
                 iconLabel: (kind) => (kind === "card" ? ca("PREVIEW") : ca("UNFINISHED")),
+                thumbnails: () => this.settings.inlineThumbnails,
+                openImage: (view, line, link) => this.openImage(view, line, link),
             }),
         );
         // <!--SR:…--> schedule comments as a small calendar icon (display only)
@@ -234,7 +252,23 @@ export class CardAuthoringController {
         // Pasted images: remember the paste, rename the file it creates
         p.registerEvent(
             this.app.workspace.on("editor-paste", (_evt, editor, info) => {
-                this.lastPaste = { time: Date.now(), editor, file: info.file ?? null };
+                this.lastPaste = {
+                    time: Date.now(),
+                    editor,
+                    file: info.file ?? null,
+                    kind: "paste",
+                };
+            }),
+        );
+        // An image dragged from the gallery / a browser / the desktop onto a card line
+        p.registerEvent(
+            this.app.workspace.on("editor-drop", (_evt, editor, info) => {
+                this.lastPaste = {
+                    time: Date.now(),
+                    editor,
+                    file: info.file ?? null,
+                    kind: "drop",
+                };
             }),
         );
         p.registerEvent(
@@ -384,13 +418,26 @@ export class CardAuthoringController {
             new Notice(ca("NO_DECKS"));
             return;
         }
-        const deck = file ? deckForFile(s, file.path) : null;
+        const deck = file ? this.deckForNote(file) : null;
         if (!deck) {
             await this.openDeckAndInsert(null, multi);
             return;
         }
         this.insertTemplate(editor, deck, multi, false);
         await this.rememberDeck(deck);
+    }
+
+    /**
+     * Deck of a note: the deck whose file it is, else the deck named in a fish note
+     * (`fishcards: "#DEN"`; a tag without a deck in the settings still works, without a language).
+     */
+    deckForNote(file: TFile): CardDeck | null {
+        const s = this.settings;
+        const byFile = deckForFile(s, file.path);
+        if (byFile) return byFile;
+        const tag = fishNoteDeckTag(this.app.metadataCache.getFileCache(file)?.frontmatter);
+        if (!tag) return null;
+        return deckForTag(s, tag) ?? { tag, file: file.path, lang: "" };
     }
 
     /**
@@ -713,12 +760,8 @@ export class CardAuthoringController {
             if (!Platform.isMobile) blob = await readClipboardImage();
             if (!blob) blob = await pickImageFile();
             if (!blob) return;
-            const s = this.settings;
-            if (s.resizeImages) blob = await shrinkImage(blob, s.maxImageWidth);
-            const name = imageFileName(card.question, extensionFor(blob.type));
-            const path = await this.app.fileManager.getAvailablePathForAttachment(name, file.path);
-            await this.app.vault.createBinary(path, await blob.arrayBuffer());
-            const fileName = path.split("/").pop() ?? name;
+            const image = await this.saveCardImage(blob, card.question, file);
+            const link = this.app.metadataCache.fileToLinktext(image, file.path, true);
             // the document may have changed while choosing the file
             const fresh =
                 cardAtLine(
@@ -726,7 +769,7 @@ export class CardAuthoringController {
                     card.firstLine,
                 ) ?? card;
             const lines = editor.getValue().split("\n");
-            const ins = embedInsert(lines, fresh, fileName);
+            const ins = embedInsert(lines, fresh, link);
             editor.replaceRange(ins.text, { line: ins.line, ch: ins.ch });
         } catch (e) {
             console.error("[Card authoring] image", e);
@@ -734,24 +777,150 @@ export class CardAuthoringController {
         }
     }
 
-    /** "Pasted image 2026…" pasted into a card line → name from the word. */
+    /**
+     * The folder for a new card image (created when missing): `obrazy` next to the note, or
+     * Obsidian's attachment folder when the setting is empty.
+     */
+    private async imageFolder(note: TFile): Promise<string | null> {
+        const folder = imageFolderFor(note.path, this.settings.imageFolder);
+        if (folder && !this.app.vault.getAbstractFileByPath(folder)) {
+            await this.app.vault.createFolder(folder);
+        }
+        return folder;
+    }
+
+    /** Saves a picked image for a card (shrunk, named after the word) and returns the file. */
+    private async saveCardImage(blob: Blob, question: string, note: TFile): Promise<TFile> {
+        const s = this.settings;
+        const image = s.resizeImages ? await shrinkImage(blob, s.maxImageWidth) : blob;
+        const name = imageFileName(question, extensionFor(image.type));
+        const folder = await this.imageFolder(note);
+        const path = folder
+            ? `${folder}/${uniqueFileName(name, (n) => !!this.app.vault.getAbstractFileByPath(`${folder}/${n}`))}`
+            : await this.app.fileManager.getAvailablePathForAttachment(name, note.path);
+        return await this.app.vault.createBinary(path, await image.arrayBuffer());
+    }
+
+    /** A png / jpeg wider than the limit is shrunk in place (same format, same name). */
+    private async shrinkInPlace(file: TFile) {
+        const mime = shrinkableExtension(file.extension);
+        if (!mime || !this.settings.resizeImages) return;
+        try {
+            const data = await this.app.vault.readBinary(file);
+            const blob = new Blob([data], { type: mime });
+            const small = await shrinkImage(blob, this.settings.maxImageWidth);
+            if (small === blob || small.type !== mime || small.size >= blob.size) return;
+            await this.app.vault.modifyBinary(file, await small.arrayBuffer());
+        } catch (e) {
+            console.error("[Card authoring] shrink image", e);
+        }
+    }
+
+    /**
+     * An image pasted or dropped into a card line: shrunk, named after the word
+     * ("Pasted image 2026…" → forestalled.png) and moved to the image folder next to the note.
+     */
     private async onFileCreated(file: TFile) {
         const paste = this.lastPaste;
-        if (!this.settings.renamePastedImages || !paste || !isPastedImageName(file.name)) return;
-        if (Date.now() - paste.time > 5000) return;
+        if (!paste || Date.now() - paste.time > 5000 || !isImageExtension(file.extension)) return;
+        if (paste.kind === "paste" && !isPastedImageName(file.name)) return;
         // let Obsidian insert the link first
         await new Promise((r) => window.setTimeout(r, 300));
         const card = this.cardAtCursor(paste.editor);
         if (!card || !card.question) return;
-        const folder = file.parent?.path && file.parent.path !== "/" ? `${file.parent.path}/` : "";
+        await this.shrinkInPlace(file);
+
+        const s = this.settings;
+        const note = paste.file;
+        const folder =
+            (note ? await this.imageFolder(note) : null) ??
+            (file.parent?.path && file.parent.path !== "/" ? file.parent.path : "");
+        const wantedName = s.renamePastedImages
+            ? imageFileName(card.question, file.extension)
+            : file.name;
+        const currentFolder = file.parent?.path && file.parent.path !== "/" ? file.parent.path : "";
+        if (folder === currentFolder && wantedName === file.name) return;
+        const prefix = folder ? `${folder}/` : "";
         const name = uniqueFileName(
-            imageFileName(card.question, file.extension),
-            (n) => !!this.app.vault.getAbstractFileByPath(folder + n),
+            wantedName,
+            (n) => !!this.app.vault.getAbstractFileByPath(prefix + n),
         );
         try {
-            await this.app.fileManager.renameFile(file, folder + name);
+            await this.app.fileManager.renameFile(file, prefix + name);
         } catch (e) {
             console.error("[Card authoring] rename pasted image", e);
+        }
+    }
+
+    // MARK: Image in a card line (tap on the thumbnail)
+
+    private openImage(view: EditorView, line: number, link: string) {
+        const note = view.state.field(editorInfoField, false)?.file ?? null;
+        if (line < 0 || line >= view.state.doc.lines) return;
+        const text = view.state.doc.line(line + 1).text;
+        const embed = findEmbed(text, link);
+        if (!embed) return;
+        const seps = [this.sr.singleLineCardSeparator, this.sr.singleLineReversedCardSeparator];
+        const target = this.app.metadataCache.getFirstLinkpathDest(embed.link, note?.path ?? "");
+
+        /** Applies a change to the line, read again (the note may have changed meanwhile) */
+        const editLine = (change: (current: string) => string | null) => {
+            if (line >= view.state.doc.lines) return;
+            const docLine = view.state.doc.line(line + 1);
+            const next = change(docLine.text);
+            if (next === null || next === docLine.text) return;
+            view.dispatch({ changes: { from: docLine.from, to: docLine.to, insert: next } });
+        };
+        const current = (lineText: string) => findEmbed(lineText, embed.link);
+
+        new CardImageModal(this.app, {
+            file: target,
+            link: embed.link,
+            side: embedSide(text, embed, seps),
+            move: (side) =>
+                editLine((t) => {
+                    const e = current(t);
+                    return e ? moveEmbedToSide(t, e, side, seps) : null;
+                }),
+            remove: () => {
+                editLine((t) => {
+                    const e = current(t);
+                    return e ? removeEmbed(t, e) : null;
+                });
+                new Notice(ca("IMAGE_REMOVED"));
+            },
+            replace: () => void this.replaceImage(view, line, embed.link, note, editLine),
+            openFile: () => {
+                if (target) void this.app.workspace.getLeaf("tab").openFile(target);
+            },
+        }).open();
+    }
+
+    private async replaceImage(
+        view: EditorView,
+        line: number,
+        oldLink: string,
+        note: TFile | null,
+        editLine: (change: (current: string) => string | null) => void,
+    ) {
+        if (!note) return;
+        try {
+            const blob = await pickImageFile();
+            if (!blob) return;
+            const lineText = view.state.doc.line(line + 1).text;
+            const card = cardAtLine(
+                detectCards(view.state.doc.toString(), this.detectSettings()).cards,
+                line,
+            );
+            const image = await this.saveCardImage(blob, card?.question ?? lineText, note);
+            const link = this.app.metadataCache.fileToLinktext(image, note.path, true);
+            editLine((t) => {
+                const e = findEmbed(t, oldLink);
+                return e ? replaceEmbedLink(t, e, link) : null;
+            });
+        } catch (e) {
+            console.error("[Card authoring] replace image", e);
+            new Notice(ca("IMAGE_FAILED"));
         }
     }
 }

@@ -264,3 +264,56 @@ button.sr-ca-notice-btn {
     font-size: 0.8em;
     line-height: 1.3;
 }
+
+/* MARK: Images in card lines — small thumbnails (Settings → Card authoring → Images) */
+
+.markdown-source-view .cm-line.sr-ca-thumbs .internal-embed.image-embed {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0.25em;
+    cursor: pointer;
+}
+
+.markdown-source-view .cm-line.sr-ca-thumbs .internal-embed.image-embed img {
+    height: 1.8em !important;
+    width: auto !important;
+    max-width: 3.2em !important;
+    object-fit: cover;
+    border-radius: var(--radius-s);
+    margin: 0;
+    vertical-align: middle;
+    box-shadow: 0 0 0 1px var(--background-modifier-border);
+}
+
+/* the image window opened from a thumbnail */
+.sr-ca-image-modal .sr-ca-image-big {
+    display: block;
+    max-width: 100%;
+    max-height: min(60vh, 520px);
+    margin: 0 auto var(--size-4-3);
+    border-radius: var(--radius-m);
+    object-fit: contain;
+}
+
+.sr-ca-image-side {
+    text-align: center;
+    margin-bottom: var(--size-4-2);
+}
+
+.sr-ca-image-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--size-4-2);
+}
+
+.sr-ca-image-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--size-4-1);
+    min-height: 44px;
+}
+
+.sr-ca-image-action-icon {
+    display: inline-flex;
+}

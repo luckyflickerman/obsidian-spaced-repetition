@@ -211,10 +211,10 @@ Przyciski ocen pokazują nazwę i czas następnej powtórki, np. **Trudne** / 6 
 
 ## Komentarze harmonogramu w edytorze
 
-Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą następnej powtórki. W podglądzie na żywo zamiast tego długiego tekstu widać małą ikonkę kalendarza, a w dymku datę („Następna powtórka: 8 paź 2026”).
+Po ocenie fiszki plugin zapisuje pod nią komentarz `<!--SR:…-->` z datą następnej powtórki. W podglądzie na żywo zamiast tego długiego tekstu widać małą ikonkę kalendarza **na końcu linii fiszki, obok ikonki podglądu**, a w dymku datę („Następna powtórka: 8 paź 2026”). Linia z komentarzem pod fiszką nie zajmuje miejsca, więc na ekranie mieści się dużo fiszek naraz.
 
-- Notatka się **nie zmienia**: komentarz jest w pliku dokładnie tak jak wcześniej, zmienia się tylko wyświetlanie.
-- Gdy kursor jest w tej linii (albo dotkniesz ikonki), widać zwykły tekst.
+- Notatka się **nie zmienia**: komentarz jest w pliku dokładnie tak jak wcześniej (w osobnej linii pod fiszką), zmienia się tylko wyświetlanie.
+- Gdy kursor jest w linii fiszki albo komentarza (albo dotkniesz ikonki), obie linie widać jako zwykły tekst — Enter na końcu fiszki nigdy nie wstawi niczego „niewidocznie” między fiszkę a jej komentarz.
 - W trybie źródłowym zawsze widać pełny tekst.
 - Wyłączysz to w Ustawieniach → Tworzenie fiszek → **Zwijaj komentarze harmonogramu w edytorze**.
 
@@ -382,7 +382,22 @@ Na komputerze podgląd otwiera się obok ikonki, a na telefonie w okienku. Ikonk
 - „**Dodaj obrazek do fiszki**”: na komputerze wkleja obraz ze schowka (a gdy schowek jest pusty, otwiera wybór pliku). Na telefonie i iPadzie otwiera galerię albo aparat.
 - Plik dostaje nazwę od słowa, np. `forestalled.png`. Embed `![[forestalled.png]]` trafia na koniec odpowiedzi.
 - Gdy sama wkleisz obraz (Ctrl+V) w linii fiszki, „Pasted image …” dostaje nazwę od słowa. Można to wyłączyć.
-- Duże zdjęcia są zmniejszane do 800 px szerokości, żeby vault nie puchł. Też można to wyłączyć.
+- Duże zdjęcia są zmniejszane do 800 px szerokości, żeby vault nie puchł. Też można to wyłączyć. Dotyczy to także obrazków wklejonych i przeciągniętych (PNG i JPG; inne formaty zostają bez zmian).
+- **Folder na obrazki**: obrazki fiszek trafiają do folderu `obrazy` obok notatki (np. `Niemiecki/obrazy/hund.jpg`), a nie luzem do vaulta. Nazwę folderu zmienisz w Ustawieniach → Tworzenie fiszek → Obrazki (puste pole = ustawienie załączników Obsidiana).
+- **Przeciąganie**: obrazek przeciągnięty z galerii, przeglądarki albo pulpitu na linię fiszki też dostaje nazwę od słowa, jest zmniejszany i trafia do folderu na obrazki.
+- **Miniaturki w linii**: w edytorze obrazek w fiszce jest małą miniaturką na końcu linii, więc fiszka z obrazkiem mieści się w jednej linijce. W powtórce obrazek ma pełny rozmiar. **Dotknij miniaturki**, żeby zobaczyć obrazek większy i: przenieść go do pytania albo odpowiedzi, zamienić na inny, otworzyć plik albo usunąć z fiszki (plik zostaje w vaulcie). Przenoszenie działa w fiszkach jednoliniowych. Miniaturki wyłączysz w Ustawieniach → Tworzenie fiszek → Obrazki.
+
+## Notatki na fiszki („New fish note”)
+
+Osobny rodzaj notatki tylko na fiszki — żeby fiszki nie mieszały się ze zwykłymi notatkami i żeby dodawanie szło szybko.
+
+- **Tworzenie**: przycisk z rybką na górnym pasku eksploratora plików (obok „New note” i „New folder”), pozycja „Nowa notatka na fiszki” w menu folderu (prawy przycisk / przytrzymanie) albo komenda o tej samej nazwie. Okienko pyta o nazwę i talię; można od razu założyć nową talię: wybierasz język z listy, a plugin podpowiada tag (np. Niemiecki → `#NIE`, możesz wpisać własny, np. `#DEN`).
+- To **zwykły plik .md**: przenosisz go do folderów, synchronizuje się i edytujesz jak każdą notatkę. Na górze pliku są dwie właściwości (`cssclasses: fishnote` i `fishcards: "#DEN"`) — ukryte w widoku, żeby było widać tylko fiszki.
+- **Wygląd**: jedna fiszka w linii, cienka kreska między fiszkami, daty powtórek jako ikonki obok podglądu, obrazki jako miniaturki.
+- **Przyciski w nagłówku notatki**: „Nowa fiszka” (szablon `#DEN |:: ` na końcu notatki), „Dodaj obrazek do fiszki” (do fiszki z kursorem), „Ucz się fiszek z tej notatki”.
+- Nowe fiszki w tej notatce dostają tag talii z notatki — także gdy talia ma też inny plik.
+
+Na liście talii przy każdej talii jest **ikonka notatki**: otwiera notatkę z fiszkami tej talii, a gdy fiszki są w kilku notatkach — pokazuje ich listę z liczbą fiszek.
 
 ## Pominięte z oryginału (specyficzne dla Anki/Windows)
 
