@@ -10,6 +10,7 @@ import { createTtsProvider, TTS_PROVIDERS, TtsProvider } from "src/tts/tts-provi
 import {
     configuredLanguages,
     DEFAULT_TTS_SETTINGS,
+    deviceVoice,
     normalizeLangCode,
     normalizeTtsSettings,
     TTS_RATE_MAX,
@@ -17,6 +18,7 @@ import {
     TtsSettings,
     TtsVoice,
     voicesForLanguage,
+    withDeviceVoice,
 } from "src/tts/tts-settings";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
@@ -315,11 +317,14 @@ export class TtsPage extends SettingsPage {
                 for (const voice of matching) {
                     dropdown.addOption(voice.id, `${voice.name} (${voice.lang})`);
                 }
-                const current = this.ttsSettings.voices[lang] ?? "";
+                // one choice per device (Windows and iPhone have different voices)
+                const deviceIds = voices.map((v) => v.id);
+                const current = deviceVoice(this.ttsSettings.voices[lang], deviceIds);
                 dropdown.setValue(matching.some((v) => v.id === current) ? current : "");
                 dropdown.onChange(async (value) => {
                     const voicesSetting = { ...this.ttsSettings.voices };
-                    if (value) voicesSetting[lang] = value;
+                    const stored = withDeviceVoice(voicesSetting[lang], value, deviceIds);
+                    if (stored) voicesSetting[lang] = stored;
                     else delete voicesSetting[lang];
                     this.ttsSettings.voices = voicesSetting;
                     await this.save();

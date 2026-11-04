@@ -3,6 +3,7 @@ import {
     chooseVoice,
     configuredLanguages,
     DEFAULT_TTS_SETTINGS,
+    deviceVoice,
     langBase,
     normalizeLangCode,
     normalizeTtsSettings,
@@ -11,7 +12,9 @@ import {
     rulesFromDecks,
     TtsSettings,
     TtsVoice,
+    voiceIdList,
     voicesForLanguage,
+    withDeviceVoice,
 } from "src/tts/tts-settings";
 
 function voice(id: string, lang: string, name = id, extra: Partial<TtsVoice> = {}): TtsVoice {
@@ -248,5 +251,55 @@ describe("provider registry", () => {
         expect(TTS_PROVIDERS.map((p) => p.id)).toContain("system");
         expect(createTtsProvider("system").id).toBe("system");
         expect(createTtsProvider("does-not-exist").id).toBe("system");
+    });
+});
+
+describe("chosen voice per device", () => {
+    const windows = ["Microsoft Zira", "Microsoft Helena"];
+    const iphone = ["com.apple.Samantha", "com.apple.Monica"];
+
+    test("voiceIdList splits lines and drops empty ones", () => {
+        expect(voiceIdList("a\n b \n\n")).toEqual(["a", "b"]);
+        expect(voiceIdList("")).toEqual([]);
+        expect(voiceIdList(undefined)).toEqual([]);
+    });
+
+    test("choosing on the iPhone keeps the Windows choice", () => {
+        const onWindows = withDeviceVoice("", "Microsoft Helena", windows);
+        expect(onWindows).toBe("Microsoft Helena");
+        const both = withDeviceVoice(onWindows, "com.apple.Monica", iphone);
+        expect(deviceVoice(both, windows)).toBe("Microsoft Helena");
+        expect(deviceVoice(both, iphone)).toBe("com.apple.Monica");
+    });
+
+    test("a new choice on the same device replaces the old one", () => {
+        const first = withDeviceVoice(
+            "Microsoft Zira\ncom.apple.Monica",
+            "Microsoft Helena",
+            windows,
+        );
+        expect(voiceIdList(first)).toEqual(["Microsoft Helena", "com.apple.Monica"]);
+    });
+
+    test("automatic on one device removes only that device's voice", () => {
+        expect(withDeviceVoice("Microsoft Zira\ncom.apple.Monica", "", windows)).toBe(
+            "com.apple.Monica",
+        );
+        expect(withDeviceVoice("Microsoft Zira", "", windows)).toBe("");
+    });
+
+    test("an old single id still works", () => {
+        expect(deviceVoice("Microsoft Zira", windows)).toBe("Microsoft Zira");
+        expect(deviceVoice("Microsoft Zira", iphone)).toBe("");
+    });
+
+    test("chooseVoice takes the first id installed on this device", () => {
+        const voices: TtsVoice[] = [
+            voice("com.apple.Monica", "es-ES"),
+            voice("com.apple.Jorge", "es-ES", "Jorge", { isDefault: true }),
+        ];
+        expect(chooseVoice(voices, "es-ES", "Microsoft Helena\ncom.apple.Monica")?.id).toBe(
+            "com.apple.Monica",
+        );
     });
 });

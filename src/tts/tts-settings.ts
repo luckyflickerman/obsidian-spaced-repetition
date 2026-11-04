@@ -259,8 +259,8 @@ export function chooseVoice(
     lang: string,
     preferredId?: string,
 ): TtsVoice | null {
-    if (preferredId) {
-        const preferred = voices.find((v) => v.id === preferredId);
+    for (const id of voiceIdList(preferredId)) {
+        const preferred = voices.find((v) => v.id === id);
         if (preferred) return preferred;
     }
     const code = normalizeLangCode(lang);
@@ -274,4 +274,40 @@ export function chooseVoice(
     const exact = pickBest(voices.filter((v) => normalizeLangCode(v.lang) === code));
     if (exact) return exact;
     return pickBest(voices.filter((v) => langBase(v.lang) === base));
+}
+
+// MARK: Chosen voice per device
+
+/**
+ * The settings are shared by all devices (sync), but every device has its own voices
+ * (Windows "Microsoft …", iPhone "com.apple.voice…"). Choosing a voice on one device used to
+ * replace the choice made on the other, which then fell back to the automatic voice.
+ * Now the stored value holds one chosen voice per device, one id per line; each device uses
+ * the first id it has. Older versions read the value as a single id: not found → automatic.
+ */
+export function voiceIdList(stored: string | undefined | null): string[] {
+    return String(stored ?? "")
+        .split("\n")
+        .map((id) => id.trim())
+        .filter((id) => id !== "");
+}
+
+/**
+ * New stored value after choosing `chosen` ("" = automatic) on a device whose voices are
+ * `deviceVoiceIds`: this device's earlier choice is replaced, the other devices' are kept.
+ */
+export function withDeviceVoice(
+    stored: string | undefined | null,
+    chosen: string,
+    deviceVoiceIds: string[],
+): string {
+    const onDevice = new Set(deviceVoiceIds);
+    const others = voiceIdList(stored).filter((id) => !onDevice.has(id) && id !== chosen);
+    return (chosen ? [chosen, ...others] : others).join("\n");
+}
+
+/** The voice of this device in a stored value ("" = automatic). */
+export function deviceVoice(stored: string | undefined | null, deviceVoiceIds: string[]): string {
+    const onDevice = new Set(deviceVoiceIds);
+    return voiceIdList(stored).find((id) => onDevice.has(id)) ?? "";
 }
