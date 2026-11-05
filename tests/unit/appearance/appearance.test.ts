@@ -1,10 +1,17 @@
 import { normalizeBackgroundSettings } from "src/appearance/background-settings";
-import { BACKGROUND_THEMES, findTheme, NO_THEME } from "src/appearance/background-themes";
+import {
+    BACKGROUND_THEMES,
+    customPhotoName,
+    findTheme,
+    NO_THEME,
+} from "src/appearance/background-themes";
 import {
     buildPalette,
     contrastRatio,
     hslToRgb,
     hueDistance,
+    huesFromPixels,
+    paletteFromHues,
     paletteFromPixels,
     RGB,
     rgbToHsl,
@@ -143,5 +150,53 @@ describe("background settings", () => {
             NO_THEME,
         );
         expect(normalizeBackgroundSettings({ glass: "0.4" as never }).glass).toBe(0.4);
+    });
+});
+
+describe("the user's own photo", () => {
+    test("old settings: no photo yet", () => {
+        const s = normalizeBackgroundSettings({ theme: "lake" });
+        expect(s.customPhoto).toBe("");
+        expect(s.customHues).toBeNull();
+    });
+
+    test("custom theme kept only with a photo", () => {
+        expect(normalizeBackgroundSettings({ theme: "custom" }).theme).toBe(NO_THEME);
+        const s = normalizeBackgroundSettings({
+            theme: "custom",
+            customPhoto: " Fishcards/tło.jpg ",
+            customHues: { baseHue: 200, baseS: 0.4, accentHue: 40, accentS: 0.7 },
+        });
+        expect(s.theme).toBe("custom");
+        expect(s.customPhoto).toBe("Fishcards/tło.jpg");
+        expect(s.customHues).toEqual({ baseHue: 200, baseS: 0.4, accentHue: 40, accentS: 0.7 });
+    });
+
+    test("broken hues are dropped", () => {
+        const s = normalizeBackgroundSettings({
+            customPhoto: "a.jpg",
+            customHues: { baseHue: "x" } as never,
+        });
+        expect(s.customHues).toBeNull();
+    });
+
+    test("hues → the same palette as from the pixels", () => {
+        const pixels = photo([
+            [[30, 90, 140], 70],
+            [[240, 190, 60], 10],
+        ]);
+        expect(paletteFromHues(huesFromPixels(pixels))).toEqual(paletteFromPixels(pixels));
+    });
+
+    test("no hues: a readable grey palette", () => {
+        const p = paletteFromHues(null);
+        expect(contrastRatio(p.ink, p.base)).toBeGreaterThan(7);
+        expect(paletteFromHues({ baseHue: NaN, baseS: 1, accentHue: 1, accentS: 1 })).toEqual(p);
+    });
+});
+
+describe("own photo file name", () => {
+    test("date and time in the name", () => {
+        expect(customPhotoName(new Date(2026, 10, 5, 14, 3, 9))).toBe("tlo-20261105-140309.jpg");
     });
 });

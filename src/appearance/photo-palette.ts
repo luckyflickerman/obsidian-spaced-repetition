@@ -100,11 +100,38 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 const GREY_BASE_HUE = 210;
 const DEFAULT_ACCENT_HUE = 38;
 
+/** The four numbers a palette is built from (stored for the user's own photo). */
+export interface PaletteHues {
+    baseHue: number;
+    baseS: number;
+    accentHue: number;
+    accentS: number;
+}
+
 /**
  * Builds the palette from RGBA pixels (e.g. a 64×64 `getImageData`), every
  * 4 values one pixel.
  */
 export function paletteFromPixels(data: ArrayLike<number>): PhotoPalette {
+    const h = huesFromPixels(data);
+    return buildPalette(h.baseHue, h.baseS, h.accentHue, h.accentS);
+}
+
+/** The palette of stored hues (null / broken values: a calm grey-blue with a golden accent). */
+export function paletteFromHues(h: PaletteHues | null | undefined): PhotoPalette {
+    const ok = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
+    if (!h || !ok(h.baseHue) || !ok(h.baseS) || !ok(h.accentHue) || !ok(h.accentS))
+        return buildPalette(GREY_BASE_HUE, 0.12, DEFAULT_ACCENT_HUE, 0.75);
+    return buildPalette(
+        ((h.baseHue % 360) + 360) % 360,
+        clamp(h.baseS, 0, 1),
+        ((h.accentHue % 360) + 360) % 360,
+        clamp(h.accentS, 0, 1),
+    );
+}
+
+/** The two hues (and their saturations) of a photo, from RGBA pixels. */
+export function huesFromPixels(data: ArrayLike<number>): PaletteHues {
     const baseBins = new Array<number>(BINS).fill(0);
     const baseSat = new Array<number>(BINS).fill(0);
     const accentBins = new Array<number>(BINS).fill(0);
@@ -165,7 +192,7 @@ export function paletteFromPixels(data: ArrayLike<number>): PhotoPalette {
             ? clamp(accentSat[accentBin] / accentBins[accentBin], 0.55, 0.85)
             : 0.75;
 
-    return buildPalette(baseHue, baseS, accentHue, accentS);
+    return { baseHue, baseS, accentHue, accentS };
 }
 
 /** The palette from the two hues, with readable text guaranteed. */

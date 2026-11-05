@@ -22,6 +22,7 @@ import {
 } from "src/tts/tts-settings";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
+import { renderDeckLanguages } from "src/ui/obsidian-ui-components/deck-languages-group";
 
 type BoolKey = {
     [K in keyof TtsSettings]: TtsSettings[K] extends boolean ? K : never;
@@ -41,6 +42,7 @@ function installHint(): string {
 export class TtsPage extends SettingsPage {
     private provider: TtsProvider;
     private voicesHost: HTMLElement;
+    private decksHost: HTMLElement;
     private diagnosticsHost: HTMLElement;
     private renderToken = 0;
 
@@ -140,23 +142,30 @@ export class TtsPage extends SettingsPage {
             );
         }
 
-        // Languages
+        // Decks and languages: the same list as on the card authoring page
+        this.decksHost = this.containerEl.createDiv();
+        this.renderDecks();
+
+        // Languages: the default language and (only when used) the advanced text rules
         const languages = new SettingGroup(this.containerEl).setHeading(tt("G_LANGUAGES"));
-        languages.addSetting((setting: Setting) => {
-            setting.setName(tt("RULES")).setDesc(tt("RULES_DESC"));
-            setting.addTextArea((text) => {
-                text.inputEl.rows = 5;
-                text.inputEl.addClass("sr-tts-rules-input");
-                text.setPlaceholder("#hiszpanski = es-ES\n#angielski = en-GB\n#niemiecki = de-DE");
-                text.setValue(s().languageRules).onChange((value) => {
-                    this.applySettingsUpdate(async () => {
-                        s().languageRules = value;
-                        await this.save();
-                        this.renderDynamic();
+        if (s().languageRules.trim() !== "")
+            languages.addSetting((setting: Setting) => {
+                setting.setName(tt("RULES")).setDesc(tt("RULES_DESC"));
+                setting.addTextArea((text) => {
+                    text.inputEl.rows = 5;
+                    text.inputEl.addClass("sr-tts-rules-input");
+                    text.setPlaceholder(
+                        "#hiszpanski = es-ES\n#angielski = en-GB\n#niemiecki = de-DE",
+                    );
+                    text.setValue(s().languageRules).onChange((value) => {
+                        this.applySettingsUpdate(async () => {
+                            s().languageRules = value;
+                            await this.save();
+                            this.renderDynamic();
+                        });
                     });
                 });
             });
-        });
         languages.addSetting((setting: Setting) =>
             setting
                 .setName(tt("DEFAULT_LANG"))
@@ -253,6 +262,18 @@ export class TtsPage extends SettingsPage {
     public destroy(): void {
         this.provider.cancel();
         super.destroy();
+    }
+
+    private renderDecks() {
+        renderDeckLanguages(
+            this.decksHost,
+            this.plugin,
+            (callback) => this.applySettingsUpdate(callback),
+            () => {
+                TtsController.active?.refreshSettings();
+                this.renderDynamic();
+            },
+        );
     }
 
     /** Re-renders the parts that depend on installed voices and language rules. */

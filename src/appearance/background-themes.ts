@@ -70,6 +70,20 @@ export const BACKGROUND_THEMES: BackgroundTheme[] = [
 /** "none" = no photo, Obsidian's own colours */
 export const NO_THEME = "none";
 
+/** The user's own photo (a file in the vault, colours taken from it) */
+export const CUSTOM_THEME = "custom";
+
+/** Folder in the vault for the user's own background photo */
+export const CUSTOM_PHOTO_FOLDER = "Fishcards";
+
+/** `tlo-20261105-143012.jpg` — a new name each time, so no device shows an old cached copy. */
+export function customPhotoName(date: Date): string {
+    const p = (n: number) => String(n).padStart(2, "0");
+    const day = `${date.getFullYear()}${p(date.getMonth() + 1)}${p(date.getDate())}`;
+    const time = `${p(date.getHours())}${p(date.getMinutes())}${p(date.getSeconds())}`;
+    return `tlo-${day}-${time}.jpg`;
+}
+
 export function findTheme(id: string): BackgroundTheme | null {
     return BACKGROUND_THEMES.find((t) => t.id === id) ?? null;
 }

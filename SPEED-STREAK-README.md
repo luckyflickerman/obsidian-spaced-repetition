@@ -161,20 +161,16 @@ Ponowne użycie komendy na podkreślonym słowie zdejmuje podkreślenie.
 - Przejście do następnej karty, pominięcie karty albo zamknięcie powtórki od razu przerywa czytanie.
 - Gdy działa Speed Streak, timer odpowiedzi stoi w czasie czytania („Wstrzymaj timer podczas czytania”). Taka przerwa nie liczy się jako pauza, więc seria zostaje „Czysta”.
 
-### Reguły języków
+### Talie i języki
 
-Plugin musi wiedzieć, w jakim języku jest karta. Wpisz reguły, jedna na linię. Każda reguła pasuje do tagu notatki albo do ścieżki talii:
+Plugin musi wiedzieć, w jakim języku jest karta. Służy do tego jedna lista **Talie i języki** — ta sama w Ustawieniach → **Czytanie na głos** i → **Tworzenie fiszek**:
 
-```
-#hiszpanski = es-ES
-#angielski = en-GB
-#niemiecki = de-DE
-#chinski = zh-CN
-```
-
-- Reguła pasuje też do tagów zagnieżdżonych, np. `#hiszpanski/czasowniki`.
-- Karta bez pasującej reguły nie jest czytana. Możesz ustawić **język domyślny** dla takich kart.
-- Dla każdego języka z reguł możesz wybrać głos. Przycisk „Test” odtwarza przykładowe zdanie. „Automatycznie” wybiera najlepszy głos, czyli najpierw głosy naturalne („Natural”, „Neural”, „Premium”, „Enhanced”).
+- Przycisk **+** → wybierasz język z listy (np. Niemiecki) → wpisujesz skrót talii (plugin podpowiada `#NIE`, możesz wpisać np. `#DEN`) → opcjonalnie plik, do którego „Nowa fiszka” dopisuje karty → **Dodaj**.
+- Przy każdej talii zmienisz język (lista), tag i plik albo usuniesz talię (kosz).
+- Fiszka `#DEN Hund:: pies` jest czytana po niemiecku. Pasują też tagi zagnieżdżone, np. `#DEN/czasowniki`.
+- Twoje stare reguły tekstowe (`#hiszpanski = es-ES`) zostały przeniesione na tę listę automatycznie. Reguły, które nie dotyczą tagu (np. ścieżka talii), zostały w polu **Reguły zaawansowane** — widać je tylko wtedy, gdy jakieś są.
+- Karta bez pasującej talii nie jest czytana. Możesz ustawić **język domyślny** dla takich kart.
+- Dla każdego języka z listy możesz wybrać głos — osobno na każdym urządzeniu. Przycisk „Test” odtwarza przykładowe zdanie. „Automatycznie” wybiera najlepszy głos, czyli najpierw głosy naturalne („Natural”, „Neural”, „Premium”, „Enhanced”).
 - Sekcja **Diagnostyka** pokazuje, czy czytanie działa na tym urządzeniu i ile głosów jest dla każdego języka.
 
 ### Jak doinstalować głosy
@@ -243,9 +239,10 @@ Zdjęcie za listą talii i fiszkami, a na nim przezroczysty, „szklany” panel
 - **Zmierzch**: fioletowy zmierzch nad miastem, fioletowe szkło i różowy akcent,
 - **Kosmos**: granatowe nocne niebo z Drogą Mleczną, granatowe szkło i lodowobłękitny akcent,
 - **Zorza**: zielona zorza polarna nad górami i jeziorem, ciemnoturkusowe szkło i zielony akcent,
-- **Bez zdjęcia**: zwykłe kolory Obsidiana.
+- **Twoje zdjęcie**: pierwszy kafelek, w szachownicę, „Wgraj swoje zdjęcie”. Wybierasz zdjęcie z urządzenia (na telefonie z galerii albo aparatu), a plugin zmniejsza je do 2000 px, zapisuje w vaulcie w folderze `Fishcards` (więc to samo tło jest na wszystkich urządzeniach) i sam dobiera kolory paneli, tak jak w gotowych motywach. Potem kafelek pokazuje Twoje zdjęcie; dotknij go jeszcze raz („zmień”), żeby wgrać inne — poprzednie trafia do kosza Obsidiana. Na urządzeniu, do którego zdjęcie jeszcze się nie zsynchronizowało, tła po prostu nie ma.
+- **Bez zdjęcia**: zwykłe kolory Obsidiana — przycisk obok napisu „Motyw”.
 
-Jak wybrać: kliknij kafelek (zdjęcie z nazwą motywu) w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Fishcards → **Wygląd** → **Tło**. Tło zmienia się od razu. Zdjęcia są wbudowane w plugin, więc niczego nie trzeba wrzucać do sejfu i działa to bez internetu.
+Jak wybrać: kliknij kafelek (zdjęcie z nazwą motywu) w oknie **Opcje** (koło zębate obok listy talii, na samej górze) albo w Ustawieniach → Fishcards → **Wygląd** → **Tło**. Tło zmienia się od razu. Gotowe zdjęcia są wbudowane w plugin, więc działają bez internetu.
 
 W **Wyglądzie** są jeszcze trzy suwaki: **Zakrycie paneli** (mniej = zdjęcie bardziej prześwituje), **Przyciemnienie zdjęcia** i **Rozmycie za panelami**.
 
@@ -347,7 +344,7 @@ Dodawanie słówek z książki ma zajmować kilka sekund. Wszystko dzieje się w
 
 ### Talie
 
-Ustawienia → Fishcards → **Tworzenie fiszek** → **Talie fiszek**. Każda talia to tag, plik i język czytania, np. `#ENG → Fiszki/Angielski.md → en-GB`.
+Ustawienia → Fishcards → **Tworzenie fiszek** → **Talie i języki** (ta sama lista co w „Czytanie na głos”, opis wyżej). Każda talia to tag, język czytania i plik, np. `#ENG → angielski → Fiszki/Angielski.md`.
 
 - Nowe fiszki trafiają na koniec pliku talii. Plugin tylko dopisuje: istniejące linie i ich komentarze `<!--SR:…-->` się nie zmieniają.
 - Ostatnio używana talia jest zapamiętywana. Zmienisz ją komendą „Nowa fiszka: zmień język”.
@@ -385,6 +382,8 @@ Na komputerze podgląd otwiera się obok ikonki, a na telefonie w okienku. Ikonk
 - Duże zdjęcia są zmniejszane do 800 px szerokości, żeby vault nie puchł. Też można to wyłączyć. Dotyczy to także obrazków wklejonych i przeciągniętych (PNG i JPG; inne formaty zostają bez zmian).
 - **Folder na obrazki**: obrazki fiszek trafiają do folderu `obrazy` obok notatki (np. `Niemiecki/obrazy/hund.jpg`), a nie luzem do vaulta. Nazwę folderu zmienisz w Ustawieniach → Tworzenie fiszek → Obrazki (puste pole = ustawienie załączników Obsidiana).
 - **Przeciąganie**: obrazek przeciągnięty z galerii, przeglądarki albo pulpitu na linię fiszki też dostaje nazwę od słowa, jest zmniejszany i trafia do folderu na obrazki.
+- **Zmniejsz zdjęcia fiszek** (komenda): znajduje w notatkach z fiszkami zdjęcia PNG i JPG większe niż 300 KB, pokazuje, ile ich jest i ile zajmują, i po potwierdzeniu zmniejsza je do maksymalnej szerokości (domyślnie 800 px). Nazwy i fiszki się nie zmieniają. **Najpierw kopiuje oryginały** do folderu `Fishcards/kopie zdjęć/<data i godzina>` — gdy wszystko wygląda dobrze, możesz ten folder usunąć, żeby odzyskać miejsce.
+- W powtórce obrazki odpowiedzi zaczynają się wczytywać już przy pytaniu, więc po pokazaniu odpowiedzi są od razu.
 - **Miniaturki w linii**: w edytorze obrazek w fiszce jest małą miniaturką na końcu linii, więc fiszka z obrazkiem mieści się w jednej linijce. W powtórce obrazek ma pełny rozmiar. **Dotknij miniaturki**, żeby zobaczyć obrazek większy i: przenieść go do pytania albo odpowiedzi, zamienić na inny, otworzyć plik albo usunąć z fiszki (plik zostaje w vaulcie). Przenoszenie działa w fiszkach jednoliniowych. Miniaturki wyłączysz w Ustawieniach → Tworzenie fiszek → Obrazki.
 
 ## Notatki na fiszki („New fish note”)

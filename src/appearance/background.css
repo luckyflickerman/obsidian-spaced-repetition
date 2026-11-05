@@ -763,6 +763,55 @@ body:not(.is-phone) .usr-bg-on .sr-response {
     object-fit: cover;
 }
 
+/* "Upload your image": a grey-and-white checkerboard (the usual "empty picture") with an icon */
+.usr-bg-theme.is-upload .usr-bg-theme-view {
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(45deg, #cfcfcf 25%, transparent 25%),
+        linear-gradient(-45deg, #cfcfcf 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #cfcfcf 75%),
+        linear-gradient(-45deg, transparent 75%, #cfcfcf 75%);
+    background-size: 16px 16px;
+    background-position:
+        0 0,
+        0 8px,
+        8px -8px,
+        -8px 0;
+}
+
+/* its name may take two lines ("Upload your image") instead of being cut off */
+.usr-bg-themes .usr-bg-theme.is-upload .usr-bg-theme-name {
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.usr-bg-theme-upload-icon {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    /* dark on the light checkerboard, in both Obsidian themes */
+    color: #3a3a3a;
+}
+
+.usr-bg-theme-upload-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* "change" after the name of the chosen own photo */
+.usr-bg-theme-change {
+    margin-inline-start: auto;
+    font-weight: var(--font-normal);
+    color: var(--text-muted);
+}
+
+/* "No photo" button next to "Theme": marked when no photo is chosen */
+.usr-bg-none-button.is-selected {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
 /* "No photo": Obsidian's own background with a small crossed-out picture */
 .usr-bg-theme-none-icon {
     position: absolute;

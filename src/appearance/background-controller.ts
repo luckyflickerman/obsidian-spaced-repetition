@@ -8,13 +8,14 @@
  */
 
 import "src/appearance/background.css";
+import { TFile } from "obsidian";
 
 import {
     BackgroundSettings,
     normalizeBackgroundSettings,
 } from "src/appearance/background-settings";
-import { findTheme } from "src/appearance/background-themes";
-import { PhotoPalette, rgbCss, rgbTriple } from "src/appearance/photo-palette";
+import { BackgroundTheme, CUSTOM_THEME, findTheme } from "src/appearance/background-themes";
+import { paletteFromHues, PhotoPalette, rgbCss, rgbTriple } from "src/appearance/photo-palette";
 import type SRPlugin from "src/main";
 
 /** Open review views, so a theme change shows at once. */
@@ -48,6 +49,24 @@ export function applyPalette(el: HTMLElement, p: PhotoPalette) {
     });
 }
 
+/**
+ * The user's own photo as a theme: the file from the vault and the colours stored when it was
+ * uploaded. null while the file is missing (e.g. not synced to this device yet): no photo then.
+ */
+export function customTheme(plugin: SRPlugin): BackgroundTheme | null {
+    const s = getBackgroundSettings(plugin);
+    if (!s.customPhoto) return null;
+    const file = plugin.app.vault.getAbstractFileByPath(s.customPhoto);
+    if (!(file instanceof TFile)) return null;
+    return {
+        id: CUSTOM_THEME,
+        photo: plugin.app.vault.getResourcePath(file),
+        position: "center",
+        palette: paletteFromHues(s.customHues),
+        credit: "",
+    };
+}
+
 export class BackgroundController {
     private plugin: SRPlugin;
     private frameEl: HTMLElement;
@@ -64,13 +83,14 @@ export class BackgroundController {
     /** Shows (or removes) the photo for the current settings. */
     apply(): void {
         const s = getBackgroundSettings(this.plugin);
-        const theme = findTheme(s.theme);
+        const theme = s.theme === CUSTOM_THEME ? customTheme(this.plugin) : findTheme(s.theme);
         if (!theme) {
             this.remove();
             return;
         }
 
-        if (!this.layerEl || !this.layerEl.isConnected || this.shownTheme !== theme.id) {
+        const shown = `${theme.id}|${theme.photo}`;
+        if (!this.layerEl || !this.layerEl.isConnected || this.shownTheme !== shown) {
             this.layerEl?.remove();
             this.layerEl = createDiv({ cls: "usr-bg-layer", attr: { "aria-hidden": "true" } });
             this.layerEl
@@ -78,7 +98,7 @@ export class BackgroundController {
                 .setCssProps({ "object-position": theme.position });
             this.layerEl.createDiv({ cls: "usr-bg-scrim" });
             this.frameEl.prepend(this.layerEl);
-            this.shownTheme = theme.id;
+            this.shownTheme = shown;
         }
 
         applyPalette(this.frameEl, theme.palette);

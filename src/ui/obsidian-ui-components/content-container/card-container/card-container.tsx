@@ -3,6 +3,7 @@ import moment from "moment";
 import { App, Platform } from "obsidian";
 
 import { isReversedSibling } from "src/card-authoring/card-detect";
+import { embeddedImageLinks } from "src/card-authoring/image-shrink";
 import { CardType } from "src/data/data-structures/card/questions/question";
 import { SRSettings } from "src/data/settings";
 import { t } from "src/lang/helpers";
@@ -261,6 +262,9 @@ export class CardContainer {
         // Setup cloze input listeners
         this._setupClozeInputListeners();
 
+        // The answer's images start loading now, so they are ready when the answer is shown
+        this.preloadAnswerImages(sessionData);
+
         // Start the Speed Streak question timer
         this.speedStreak.onQuestionShown(this._speedStreakCardContext(sessionData));
 
@@ -271,6 +275,28 @@ export class CardContainer {
             if (firstInput) {
                 firstInput.focus();
             }
+        }
+    }
+
+    /** Images of the current card's answer, loading in the background (one card at a time). */
+    private preloaded: HTMLImageElement[] = [];
+
+    private preloadAnswerImages(sessionData: SessionData) {
+        this.preloaded = [];
+        try {
+            const back = sessionData.cardData.currentCard?.back ?? "";
+            const source = sessionData.currentNote?.filePath ?? "";
+            for (const link of embeddedImageLinks(back)) {
+                const file = this.app.metadataCache.getFirstLinkpathDest(link, source);
+                if (!file) continue;
+                const img = new Image();
+                img.decoding = "async";
+                img.src = this.app.vault.getResourcePath(file);
+                img.decode?.().catch(() => {});
+                this.preloaded.push(img);
+            }
+        } catch {
+            /* only a speed-up: the answer still shows its images without it */
         }
     }
 

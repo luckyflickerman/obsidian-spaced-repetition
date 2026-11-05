@@ -6,11 +6,11 @@ import {
     normalizeCardAuthoringSettings,
 } from "src/card-authoring/card-authoring-settings";
 import { DataManager } from "src/data/data-manager";
-import { SettingsUtil } from "src/data/settings";
 import { SettingsManager } from "src/data/settings-manager";
 import SRPlugin from "src/main";
 import { SettingsPage } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page";
 import { SettingsPageType } from "src/ui/obsidian-ui-components/content-container/settings-page/settings-page-types";
+import { renderDeckLanguages } from "src/ui/obsidian-ui-components/deck-languages-group";
 
 type BoolKey = {
     [K in keyof CardAuthoringSettings]: CardAuthoringSettings[K] extends boolean ? K : never;
@@ -139,82 +139,10 @@ export class CardAuthoringPage extends SettingsPage {
         });
     }
 
-    /** One row per deck: tag, file, language, remove; plus "Add deck". */
+    /** "Decks and languages" — the same list as on the read-aloud page. */
     private renderDecks() {
-        this.decksHost.empty();
-        const group = new SettingGroup(this.decksHost).setHeading(ca("G_DECKS"));
-        group.addSetting((setting: Setting) => setting.setDesc(ca("DECKS_DESC")));
-        const flashcardTags = this.settingsManager.settings.flashcardTags;
-
-        this.caSettings.decks.forEach((deck, index) => {
-            group.addSetting((setting: Setting) => {
-                setting.settingEl.addClass("sr-ca-deck-row");
-                setting.setName(deck.tag);
-                if (!SettingsUtil.isTagInList(flashcardTags, deck.tag)) {
-                    setting.setDesc(
-                        ca("TAG_NOT_FLASHCARD", {
-                            tag: deck.tag,
-                            first: flashcardTags[0] ?? "#flashcards",
-                        }),
-                    );
-                }
-                const update = (change: (d: typeof deck) => void) => {
-                    this.applySettingsUpdate(async () => {
-                        const decks = this.caSettings.decks;
-                        if (!decks[index]) return;
-                        change(decks[index]);
-                        await this.save();
-                        // only the heading: re-rendering would take the focus away
-                        setting.setName(this.caSettings.decks[index]?.tag ?? "");
-                    });
-                };
-                setting.addText((text) => {
-                    text.inputEl.addClass("sr-ca-deck-tag");
-                    text.inputEl.setAttr("aria-label", ca("DECK_TAG"));
-                    text.setPlaceholder("#ENG")
-                        .setValue(deck.tag)
-                        .onChange((v) => update((d) => (d.tag = v)));
-                });
-                setting.addText((text) => {
-                    text.inputEl.addClass("sr-ca-deck-file");
-                    text.inputEl.setAttr("aria-label", ca("DECK_FILE"));
-                    text.setPlaceholder("Fiszki/Angielski.md")
-                        .setValue(deck.file)
-                        .onChange((v) => update((d) => (d.file = v)));
-                });
-                setting.addText((text) => {
-                    text.inputEl.addClass("sr-ca-deck-lang");
-                    text.inputEl.setAttr("aria-label", ca("DECK_LANG"));
-                    text.setPlaceholder("en-GB")
-                        .setValue(deck.lang)
-                        .onChange((v) => update((d) => (d.lang = v)));
-                });
-                setting.addExtraButton((button) =>
-                    button
-                        .setIcon("trash-2")
-                        .setTooltip(ca("REMOVE_DECK"))
-                        .onClick(async () => {
-                            this.caSettings.decks.splice(index, 1);
-                            await this.save();
-                            this.renderDecks();
-                        }),
-                );
-            });
-        });
-
-        group.addSetting((setting: Setting) =>
-            setting.addButton((button) =>
-                button.setButtonText(ca("ADD_DECK")).onClick(async () => {
-                    const n = this.caSettings.decks.length + 1;
-                    this.caSettings.decks.push({
-                        tag: `#TALIA${n}`,
-                        file: `Fiszki/Talia ${n}.md`,
-                        lang: "",
-                    });
-                    await this.save();
-                    this.renderDecks();
-                }),
-            ),
+        renderDeckLanguages(this.decksHost, this.plugin, (callback) =>
+            this.applySettingsUpdate(callback),
         );
     }
 }

@@ -4,6 +4,7 @@ import {
     App,
     Editor,
     editorInfoField,
+    getLinkpath,
     MarkdownView,
     Menu,
     Modal,
@@ -42,7 +43,6 @@ import {
     embedInsert,
     embedSide,
     findEmbed,
-    fitWidth,
     imageFileName,
     imageFolderFor,
     isImageExtension,
@@ -71,12 +71,13 @@ import {
     observeCards,
 } from "src/card-authoring/daily-counter";
 import { refreshDailyGoalViews } from "src/card-authoring/daily-goal-view";
+import { moveTagRulesToDecks } from "src/card-authoring/deck-languages";
 import { cardEditorExtension, refreshCardIcons } from "src/card-authoring/editor-extension";
+import { backupPath, formatSize, shrinkCandidates } from "src/card-authoring/image-shrink";
 import {
     refreshScheduleIcons,
     scheduleCommentExtension,
 } from "src/card-authoring/schedule-comment-extension";
-import { Card } from "src/data/data-structures/card/card";
 import { CardType, Question } from "src/data/data-structures/card/questions/question";
 import { SettingsUtil, SRSettings } from "src/data/settings";
 import { fishNoteDeckTag } from "src/fish-note/fish-note";
@@ -87,6 +88,13 @@ import { chosenVoiceId, getTtsSettings, ttsLanguageRules } from "src/tts/tts-con
 import { createTtsProvider, TtsProvider } from "src/tts/tts-provider";
 import { resolveCardLanguage, TtsFallbackSide } from "src/tts/tts-settings";
 import { buildSpeechPlan, SpeechCard } from "src/tts/tts-text";
+import { ConfirmationModal } from "src/ui/obsidian-ui-components/modals/confirmation-modal";
+import {
+    extensionFor,
+    pickImageFile,
+    readClipboardImage,
+    shrinkImage,
+} from "src/utils/image-files";
 
 /** Plugin-level access to the card authoring settings (normalized on read). */
 export function getCardAuthoringSettings(plugin: SRPlugin): CardAuthoringSettings {
@@ -215,6 +223,12 @@ export class CardAuthoringController {
             icon: "copy",
             callback: () => this.showDuplicates(),
         });
+        p.addCommand({
+            id: "usr-shrink-card-images",
+            name: ca("CMD_SHRINK"),
+            icon: "minimize-2",
+            callback: () => this.askShrinkImages(),
+        });
         p.addRibbonIcon("square-plus", ca("RIBBON"), () => void this.newCardFromAnywhere(false));
 
         p.registerEditorExtension(
@@ -278,7 +292,22 @@ export class CardAuthoringController {
         );
 
         if (!Platform.isMobile) this.statusEl = p.addStatusBarItem();
+        this.moveLanguageRulesToDecks();
         this.onVaultSynced();
+    }
+
+    /**
+     * Once: read-aloud rules written for a tag (`#DEN = de-DE`) become decks in the one
+     * "Decks and languages" list (the rules that are not about a tag stay as they are).
+     */
+    private moveLanguageRulesToDecks() {
+        const tts = getTtsSettings(this.plugin);
+        const s = this.settings;
+        const moved = moveTagRulesToDecks(tts.languageRules, s.decks);
+        if (!moved.changed) return;
+        s.decks = moved.decks;
+        tts.languageRules = moved.rules;
+        void this.saveSettings();
     }
 
     /** After the plugin synced the vault: remember all cards, update the counter. */
@@ -347,7 +376,7 @@ export class CardAuthoringController {
         }
         const seen = new Set<Question>();
         for (const item of tree.getFlattenedRepItemArray(RepItemState.AnyItem, true)) {
-            const q = (item as Card).question;
+            const q = item.question;
             if (!q || seen.has(q) || q.questionType === CardType.Cloze) continue;
             seen.add(q);
             const tag =
@@ -852,6 +881,116 @@ export class CardAuthoringController {
         }
     }
 
+    // MARK: Shrinking the images already in the cards
+
+    /** Image files embedded in notes that hold cards. */
+    private cardImageFiles(): TFile[] {
+        const notes = new Set<TFile>();
+        try {
+            const tree = this.plugin.dataManager.osrCore.reviewableDeckTree;
+            for (const card of tree.getFlattenedRepItemArray(RepItemState.AnyItem, true)) {
+                const tfile = card.question?.note?.file?.tfile;
+                if (tfile) notes.add(tfile);
+            }
+        } catch {
+            return [];
+        }
+        const images = new Map<string, TFile>();
+        for (const note of notes) {
+            for (const embed of this.app.metadataCache.getFileCache(note)?.embeds ?? []) {
+                const file = this.app.metadataCache.getFirstLinkpathDest(
+                    getLinkpath(embed.link),
+                    note.path,
+                );
+                if (file && isImageExtension(file.extension)) images.set(file.path, file);
+            }
+        }
+        return [...images.values()];
+    }
+
+    private askShrinkImages() {
+        const candidates = shrinkCandidates(
+            this.cardImageFiles().map((file) => ({
+                file,
+                path: file.path,
+                extension: file.extension,
+                size: file.stat.size,
+            })),
+        );
+        if (candidates.length === 0) {
+            new Notice(ca("SHRINK_NONE"));
+            return;
+        }
+        const polish = isPolish();
+        const total = candidates.reduce((sum, c) => sum + c.size, 0);
+        const when = new Date();
+        const folder = backupPath(when, "").replace(/\/$/, "");
+        new ConfirmationModal(
+            this.app,
+            ca("SHRINK_TITLE"),
+            ca("SHRINK_DESC", {
+                n: candidates.length,
+                size: formatSize(total, polish),
+                max: this.settings.maxImageWidth,
+                folder,
+            }),
+            undefined,
+            () =>
+                void this.shrinkImages(
+                    candidates.map((c) => c.file),
+                    when,
+                    folder,
+                ),
+        ).open();
+    }
+
+    private async shrinkImages(files: TFile[], when: Date, folder: string) {
+        const polish = isPolish();
+        const progress = new Notice(ca("SHRINK_PROGRESS", { i: 0, n: files.length }), 0);
+        let before = 0;
+        let after = 0;
+        let done = 0;
+        const vault = this.app.vault;
+        const ensureFolder = async (path: string) => {
+            const parts = path.split("/");
+            for (let i = 1; i <= parts.length; i++) {
+                const sub = parts.slice(0, i).join("/");
+                if (!vault.getAbstractFileByPath(sub)) await vault.createFolder(sub);
+            }
+        };
+        for (const [i, file] of files.entries()) {
+            progress.setMessage(ca("SHRINK_PROGRESS", { i: i + 1, n: files.length }));
+            const mime = shrinkableExtension(file.extension);
+            if (!mime) continue;
+            try {
+                const data = await vault.readBinary(file);
+                const blob = new Blob([data], { type: mime });
+                const small = await shrinkImage(blob, this.settings.maxImageWidth);
+                if (small === blob || small.type !== mime || small.size >= blob.size) continue;
+                // the original is copied first; only then the file is replaced
+                const copy = backupPath(when, file.path);
+                await ensureFolder(copy.slice(0, copy.lastIndexOf("/")));
+                if (!vault.getAbstractFileByPath(copy)) await vault.createBinary(copy, data);
+                await vault.modifyBinary(file, await small.arrayBuffer());
+                before += blob.size;
+                after += small.size;
+                done++;
+            } catch (e) {
+                console.error("[Card authoring] shrink", file.path, e);
+            }
+        }
+        progress.hide();
+        new Notice(
+            ca("SHRINK_DONE", {
+                n: done,
+                before: formatSize(before, polish),
+                after: formatSize(after, polish),
+                folder,
+            }),
+            15000,
+        );
+    }
+
     // MARK: Image in a card line (tap on the thumbnail)
 
     private openImage(view: EditorView, line: number, link: string) {
@@ -922,64 +1061,6 @@ export class CardAuthoringController {
             console.error("[Card authoring] replace image", e);
             new Notice(ca("IMAGE_FAILED"));
         }
-    }
-}
-
-// MARK: Image helpers (browser APIs only — work on iOS and Android)
-
-function extensionFor(mime: string): string {
-    const m = /image\/(png|jpe?g|gif|webp|heic|heif|bmp|svg)/i.exec(mime ?? "");
-    if (!m) return "png";
-    const ext = m[1].toLowerCase();
-    return ext === "jpeg" ? "jpg" : ext === "svg" ? "svg" : ext;
-}
-
-async function readClipboardImage(): Promise<Blob | null> {
-    try {
-        if (!navigator.clipboard?.read) return null;
-        const items = await navigator.clipboard.read();
-        for (const item of items) {
-            const type = item.types.find((t) => t.startsWith("image/"));
-            if (type) return await item.getType(type);
-        }
-    } catch {
-        /* no permission or empty clipboard */
-    }
-    return null;
-}
-
-/** File picker; on phones / iPad it offers the gallery and the camera. */
-function pickImageFile(): Promise<Blob | null> {
-    return new Promise((resolve) => {
-        const input = activeDocument.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.addEventListener("change", () => resolve(input.files?.[0] ?? null));
-        input.click();
-    });
-}
-
-/** Scales a photo down to `maxWidth` (canvas). GIF / SVG are kept as they are. */
-async function shrinkImage(blob: Blob, maxWidth: number): Promise<Blob> {
-    if (/gif|svg/i.test(blob.type) || typeof createImageBitmap === "undefined") return blob;
-    try {
-        const bitmap = await createImageBitmap(blob);
-        const size = fitWidth(bitmap.width, bitmap.height, maxWidth);
-        if (size.width === bitmap.width) {
-            bitmap.close();
-            return blob;
-        }
-        const canvas = activeDocument.createElement("canvas");
-        canvas.width = size.width;
-        canvas.height = size.height;
-        canvas.getContext("2d")?.drawImage(bitmap, 0, 0, size.width, size.height);
-        bitmap.close();
-        const type = blob.type === "image/png" ? "image/png" : "image/jpeg";
-        return await new Promise<Blob>((resolve) =>
-            canvas.toBlob((b) => resolve(b ?? blob), type, 0.85),
-        );
-    } catch {
-        return blob;
     }
 }
 
