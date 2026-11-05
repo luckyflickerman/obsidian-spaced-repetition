@@ -92,3 +92,27 @@ export function uniqueNotePath(
     }
     return `${dir}${base} ${Date.now()}.md`;
 }
+
+// MARK: Quick add (the Anki-like window)
+
+/** One card line: `#DEN Hund:: pies ![[hund.jpg]]` (null when the front or the back is empty). */
+export function quickCardLine(
+    tag: string,
+    front: string,
+    back: string,
+    separator: string,
+    imageLink: string | null = null,
+): string | null {
+    const clean = (t: string) => t.replace(/\s*\n\s*/g, " ").trim();
+    const f = clean(front);
+    const b = clean(back);
+    if (!f || (!b && !imageLink)) return null;
+    const answer = [b, imageLink ? `![[${imageLink}]]` : ""].filter(Boolean).join(" ");
+    return `${tag} ${f}${separator} ${answer}`;
+}
+
+/** The note text with the card added as the last line (nothing above is changed). */
+export function appendCardLine(text: string, line: string): string {
+    if (text.length === 0) return `${line}\n`;
+    return `${text}${text.endsWith("\n") ? "" : "\n"}${line}\n`;
+}

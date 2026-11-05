@@ -25,3 +25,70 @@
 .nav-buttons-container .usr-fishnote-nav {
     cursor: pointer;
 }
+
+/* MARK: "Add cards quickly" (like Anki's Add window) */
+
+.usr-fishnote-quick .usr-fq-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4-1);
+    margin-bottom: var(--size-4-3);
+}
+
+.usr-fishnote-quick .usr-fq-field label {
+    font-size: var(--font-ui-small);
+    color: var(--text-muted);
+}
+
+.usr-fishnote-quick .usr-fq-field input {
+    width: 100%;
+    min-height: 44px;
+    font-size: var(--font-ui-medium);
+}
+
+.usr-fishnote-quick .usr-fq-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--size-4-2);
+    margin-bottom: var(--size-4-3);
+}
+
+.usr-fishnote-quick .usr-fq-both {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--size-4-2);
+    min-height: 44px;
+}
+
+.usr-fishnote-quick .usr-fq-image {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--size-4-1);
+    min-height: 44px;
+    max-width: 60%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.usr-fishnote-quick .usr-fq-image.is-chosen {
+    color: var(--text-accent);
+}
+
+.usr-fishnote-quick .usr-fq-add {
+    width: 100%;
+    min-height: 44px;
+}
+
+.usr-fishnote-quick .usr-fq-list {
+    margin-top: var(--size-4-3);
+    font-size: var(--font-ui-small);
+    color: var(--text-muted);
+}
+
+.usr-fishnote-quick .usr-fq-count {
+    font-weight: var(--font-semibold);
+    color: var(--text-normal);
+}

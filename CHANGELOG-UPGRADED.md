@@ -14,6 +14,7 @@ New:
 - **Options window**: the whole row lights up under the mouse, not only the arrow.
 - **Your own background photo**: the first tile, a checkerboard "Upload your image", takes a photo from the device, shrinks it, saves it in the vault (folder Fishcards, so every device shows it) and takes the panel colours from it like the built-in themes. "No photo" is now a button next to "Theme".
 - **Decks and languages — one list**: the same list in Read aloud and Card authoring. "+" → pick the language from a list → type the tag (e.g. #DEN). The old text rules for tags were moved into the list; other rules stay as "Advanced rules".
+- **Add cards quickly** (fish note header button or command): a small window like Anki's "Add" — Front, Back, both directions, an image, Add; each card goes to the end of the note as a normal line and the window stays open for the next one.
 - **Shrink card images** (command): finds PNG / JPEG images over 300 KB in notes with cards, copies the originals to "Fishcards/kopie zdjęć/<date>" and shrinks them (same name and format, cards unchanged). In the review the answer's images start loading with the question, so they show at once.
 
 Fixes from a review of the plugin on all devices (Windows, iPad, iPhone, Android):

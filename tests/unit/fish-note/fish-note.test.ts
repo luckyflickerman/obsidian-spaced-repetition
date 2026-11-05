@@ -1,8 +1,10 @@
 import {
+    appendCardLine,
     fishNoteDeckTag,
     fishNoteFileName,
     fishNoteText,
     isFishNote,
+    quickCardLine,
     uniqueNotePath,
 } from "src/fish-note/fish-note";
 import { languageName, sortedLanguages, suggestDeckTag } from "src/tts/languages";
@@ -75,5 +77,27 @@ describe("languages", () => {
         expect(suggestDeckTag("Niemiecki")).toBe("#NIE");
         expect(suggestDeckTag("Łacina")).toBe("#LAC");
         expect(suggestDeckTag("??")).toBe("");
+    });
+});
+
+describe("quick add", () => {
+    test("one card line", () => {
+        expect(quickCardLine("#DEN", " Hund ", "pies", "::")).toBe("#DEN Hund:: pies");
+        expect(quickCardLine("#DEN", "Hund", "pies", ":::", "obrazy/hund.jpg")).toBe(
+            "#DEN Hund::: pies ![[obrazy/hund.jpg]]",
+        );
+        expect(quickCardLine("#DEN", "Hund", "", "::", "h.jpg")).toBe("#DEN Hund:: ![[h.jpg]]");
+        expect(quickCardLine("#DEN", "a\nb", "c", "::")).toBe("#DEN a b:: c");
+    });
+
+    test("empty side: no card", () => {
+        expect(quickCardLine("#DEN", "", "pies", "::")).toBeNull();
+        expect(quickCardLine("#DEN", "Hund", " ", "::")).toBeNull();
+    });
+
+    test("added at the end, nothing above changes", () => {
+        expect(appendCardLine("a\n<!--SR:x-->", "#DEN b:: c")).toBe("a\n<!--SR:x-->\n#DEN b:: c\n");
+        expect(appendCardLine("a\n", "x")).toBe("a\nx\n");
+        expect(appendCardLine("", "x")).toBe("x\n");
     });
 });

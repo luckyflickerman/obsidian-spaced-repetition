@@ -819,7 +819,7 @@ export class CardAuthoringController {
     }
 
     /** Saves a picked image for a card (shrunk, named after the word) and returns the file. */
-    private async saveCardImage(blob: Blob, question: string, note: TFile): Promise<TFile> {
+    async saveCardImage(blob: Blob, question: string, note: TFile): Promise<TFile> {
         const s = this.settings;
         const image = s.resizeImages ? await shrinkImage(blob, s.maxImageWidth) : blob;
         const name = imageFileName(question, extensionFor(image.type));

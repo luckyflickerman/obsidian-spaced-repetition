@@ -37,6 +37,7 @@ import {
     uniqueNotePath,
 } from "src/fish-note/fish-note";
 import { fn } from "src/fish-note/fish-note-i18n";
+import { QuickAddModal } from "src/fish-note/quick-add-modal";
 import type SRPlugin from "src/main";
 import { FlashcardReviewMode } from "src/scheduling/flashcard-review-sequencer";
 import { isPolish } from "src/speed-streak/speed-streak-i18n";
@@ -70,6 +71,18 @@ export class FishNoteController {
             name: fn("NEW_FISH_NOTE"),
             icon: ICON,
             callback: () => this.askAndCreate(null),
+        });
+        p.addCommand({
+            id: "usr-fishnote-quick-add",
+            name: fn("ACTION_QUICK"),
+            icon: "list-plus",
+            checkCallback: (checking) => {
+                const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+                const file = view?.file;
+                if (!file || !this.plugin.cardAuthoring?.deckForNote(file)) return false;
+                if (!checking) this.openQuickAdd(view);
+                return true;
+            },
         });
         p.registerEvent(
             this.app.workspace.on("file-menu", (menu: Menu, file: TAbstractFile) => {
@@ -165,12 +178,30 @@ export class FishNoteController {
                 if (!file || !authoring()) return;
                 void authoring()?.addImage(view.editor, file);
             }),
+            view.addAction("list-plus", fn("ACTION_QUICK"), () => this.openQuickAdd(view)),
             view.addAction("square-plus", fn("ACTION_NEW_CARD"), () => {
                 if (view.getMode() !== "source")
                     void view.setState({ mode: "source" }, { history: false });
                 void authoring()?.newCard(view.editor, view.file, false);
             }),
         ];
+    }
+
+    /** The Anki-like "Add cards quickly" window for the note in `view`. */
+    private openQuickAdd(view: MarkdownView | null) {
+        const file = view?.file ?? null;
+        const deck = file ? this.plugin.cardAuthoring?.deckForNote(file) : null;
+        if (!file || !deck) {
+            new Notice(fn("NOT_FISH"));
+            return;
+        }
+        new QuickAddModal(
+            this.app,
+            this.plugin,
+            file,
+            deck.tag,
+            getCardAuthoringSettings(this.plugin).bothDirections,
+        ).open();
     }
 
     // MARK: Creating a fish note

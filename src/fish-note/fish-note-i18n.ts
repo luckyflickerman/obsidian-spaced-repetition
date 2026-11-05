@@ -19,6 +19,17 @@ const EN = {
     ACTION_NEW_CARD: "New card",
     ACTION_IMAGE: "Add image to the card",
     ACTION_LEARN: "Learn the cards of this note",
+    ACTION_QUICK: "Add cards quickly",
+    QUICK_TITLE: "Add cards · ${tag}",
+    FRONT: "Front (word)",
+    BACK: "Back (translation)",
+    BOTH: "Both directions",
+    IMAGE: "Image",
+    IMAGE_CHOSEN: "Image: ${name}",
+    ADD: "Add",
+    ADDED: "Added: ${n}",
+    NEED_BOTH: "Fill in the front and the back (or add an image).",
+    NOT_FISH: "Open a fish note first.",
 };
 
 type Keys = keyof typeof EN;
@@ -42,6 +53,17 @@ const PL: Record<Keys, string> = {
     ACTION_NEW_CARD: "Nowa fiszka",
     ACTION_IMAGE: "Dodaj obrazek do fiszki",
     ACTION_LEARN: "Ucz się fiszek z tej notatki",
+    ACTION_QUICK: "Szybkie dodawanie fiszek",
+    QUICK_TITLE: "Dodaj fiszki · ${tag}",
+    FRONT: "Przód (słowo)",
+    BACK: "Tył (tłumaczenie)",
+    BOTH: "Oba kierunki",
+    IMAGE: "Obrazek",
+    IMAGE_CHOSEN: "Obrazek: ${name}",
+    ADD: "Dodaj",
+    ADDED: "Dodane: ${n}",
+    NEED_BOTH: "Wpisz przód i tył (albo dodaj obrazek).",
+    NOT_FISH: "Najpierw otwórz notatkę na fiszki.",
 };
 
 export function fn(key: Keys, params?: Record<string, string | number>): string {

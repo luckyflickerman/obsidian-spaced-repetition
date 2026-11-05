@@ -394,6 +394,7 @@ Osobny rodzaj notatki tylko na fiszki — żeby fiszki nie mieszały się ze zwy
 - To **zwykły plik .md**: przenosisz go do folderów, synchronizuje się i edytujesz jak każdą notatkę. Na górze pliku są dwie właściwości (`cssclasses: fishnote` i `fishcards: "#DEN"`) — ukryte w widoku, żeby było widać tylko fiszki.
 - **Wygląd**: jedna fiszka w linii, cienka kreska między fiszkami, daty powtórek jako ikonki obok podglądu, obrazki jako miniaturki.
 - **Przyciski w nagłówku notatki**: „Nowa fiszka” (szablon `#DEN |:: ` na końcu notatki), „Dodaj obrazek do fiszki” (do fiszki z kursorem), „Ucz się fiszek z tej notatki”.
+- **Szybkie dodawanie fiszek** (przycisk z listą i plusem w nagłówku notatki albo komenda o tej nazwie): małe okno jak „Dodaj” w Anki — pola **Przód** i **Tył**, „Oba kierunki”, przycisk **Obrazek** (galeria, aparat albo plik) i **Dodaj**. Enter w polu „Przód” przechodzi do „Tył”, Enter w „Tył” dodaje fiszkę. Fiszka trafia na koniec notatki jako zwykła linia `#DEN Hund:: pies ![[hund.jpg]]` (nic powyżej się nie zmienia), a okno zostaje otwarte na następną — pod spodem widać licznik i ostatnie dodane.
 - Nowe fiszki w tej notatce dostają tag talii z notatki — także gdy talia ma też inny plik.
 
 Na liście talii przy każdej talii jest **ikonka notatki**: otwiera notatkę z fiszkami tej talii, a gdy fiszki są w kilku notatkach — pokazuje ich listę z liczbą fiszek.
